@@ -1,0 +1,1 @@
+Autonomous drone delivery network for medical organs between hospital helipads with real-time flight telemetry and cold-chain monitoring

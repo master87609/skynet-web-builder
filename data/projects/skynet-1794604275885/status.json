@@ -1,0 +1,152 @@
+{
+  "id": "skynet-1794604275885",
+  "ownerId": "user-1794601647904",
+  "brief": "build a electronic e-commerce website",
+  "status": "done",
+  "currentPhase": "done",
+  "completedPhases": [
+    "requirements-analysis",
+    "product-strategist",
+    "ux-architect",
+    "ui-design",
+    "database-architect",
+    "backend",
+    "frontend",
+    "content-writer",
+    "qa-tester",
+    "security-auditor",
+    "seo-specialist",
+    "project-manager",
+    "devops"
+  ],
+  "artifacts": [
+    {
+      "owner": "requirements-analysis",
+      "phase": "requirements-analysis",
+      "status": "approved",
+      "updated": "2026-11-13T21:11:16.857Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794604275885/requirements.md"
+    },
+    {
+      "owner": "requirements-analysis",
+      "phase": "requirements-analysis",
+      "status": "approved",
+      "updated": "2026-11-13T21:11:16.860Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794604275885/user-stories.md"
+    },
+    {
+      "owner": "product-strategist",
+      "phase": "product-strategist",
+      "status": "approved",
+      "updated": "2026-11-13T21:11:17.589Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794604275885/business-plan.md"
+    },
+    {
+      "owner": "product-strategist",
+      "phase": "product-strategist",
+      "status": "approved",
+      "updated": "2026-11-13T21:11:17.591Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794604275885/mvp-scope.md"
+    },
+    {
+      "owner": "ux-architect",
+      "phase": "ux-architect",
+      "status": "approved",
+      "updated": "2026-11-13T21:11:18.085Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794604275885/sitemap.md"
+    },
+    {
+      "owner": "ux-architect",
+      "phase": "ux-architect",
+      "status": "approved",
+      "updated": "2026-11-13T21:11:18.088Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794604275885/user-flows.md"
+    },
+    {
+      "owner": "ui-design",
+      "phase": "ui-design",
+      "status": "approved",
+      "updated": "2026-11-13T21:11:18.484Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794604275885/design/design-tokens.json"
+    },
+    {
+      "owner": "ui-design",
+      "phase": "ui-design",
+      "status": "approved",
+      "updated": "2026-11-13T21:11:18.490Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794604275885/design/component-specs.md"
+    },
+    {
+      "owner": "database-architect",
+      "phase": "database-architect",
+      "status": "approved",
+      "updated": "2026-11-13T21:11:19.311Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794604275885/data/data-model.md"
+    },
+    {
+      "owner": "backend",
+      "phase": "backend",
+      "status": "approved",
+      "updated": "2026-11-13T21:11:19.818Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794604275885/code/api-contract.md"
+    },
+    {
+      "owner": "frontend",
+      "phase": "frontend",
+      "status": "approved",
+      "updated": "2026-11-13T21:11:20.337Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794604275885/code/index.html"
+    },
+    {
+      "owner": "content-writer",
+      "phase": "content-writer",
+      "status": "approved",
+      "updated": "2026-11-13T21:11:20.760Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794604275885/content/brand-voice.md"
+    },
+    {
+      "owner": "content-writer",
+      "phase": "content-writer",
+      "status": "approved",
+      "updated": "2026-11-13T21:11:20.767Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794604275885/content/copy-review.md"
+    },
+    {
+      "owner": "qa-tester",
+      "phase": "qa-tester",
+      "status": "approved",
+      "updated": "2026-11-13T21:11:21.152Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794604275885/reports/qa.md"
+    },
+    {
+      "owner": "security-auditor",
+      "phase": "security-auditor",
+      "status": "approved",
+      "updated": "2026-11-13T21:11:21.561Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794604275885/reports/security.md"
+    },
+    {
+      "owner": "seo-specialist",
+      "phase": "seo-specialist",
+      "status": "approved",
+      "updated": "2026-11-13T21:11:21.962Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794604275885/reports/seo.md"
+    },
+    {
+      "owner": "project-manager",
+      "phase": "project-manager",
+      "status": "approved",
+      "updated": "2026-11-13T21:11:22.378Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794604275885/status.md"
+    },
+    {
+      "owner": "devops",
+      "phase": "devops",
+      "status": "approved",
+      "updated": "2026-11-13T21:11:22.767Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794604275885/deploy-ready.md"
+    }
+  ],
+  "createdAt": "2026-11-13T21:11:15.888Z",
+  "updatedAt": "2026-11-13T21:11:40.973Z"
+}

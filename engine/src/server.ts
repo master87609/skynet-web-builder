@@ -2,6 +2,14 @@ import express from "express"
 import cors from "cors"
 import cookieParser from "cookie-parser"
 import { z } from "zod"
+import dotenv from "dotenv"
+import { resolve } from "node:path"
+import { writeFile } from "node:fs/promises"
+
+dotenv.config()
+dotenv.config({ path: resolve(process.cwd(), ".env") })
+dotenv.config({ path: resolve(process.cwd(), "../.env") })
+
 import * as archiverModule from "archiver"
 const archiver: any = (archiverModule as any).default || archiverModule
 import { projectStore } from "./project-store.js"
@@ -68,14 +76,21 @@ const ApiKeySchema = z.object({
   apiKey: z.string().min(1, "API key cannot be empty"),
 })
 
-app.post("/settings/api-key", (req, res) => {
+app.post("/settings/api-key", async (req, res) => {
   try {
     const { apiKey } = ApiKeySchema.parse(req.body)
     setApiKey(apiKey)
+    try {
+      const envPath = resolve(process.cwd(), ".env")
+      const rootEnvPath = resolve(process.cwd(), "../.env")
+      const content = `GEMINI_API_KEY=${apiKey}\nPORT=3001\n`
+      await writeFile(envPath, content, "utf8").catch(() => {})
+      await writeFile(rootEnvPath, content, "utf8").catch(() => {})
+    } catch {}
     res.json({
       success: true,
       configured: true,
-      message: "Gemini API key updated successfully in runtime.",
+      message: "Gemini API key updated and persisted successfully.",
     })
   } catch (err) {
     res.status(400).json({ error: "Invalid API key provided" })

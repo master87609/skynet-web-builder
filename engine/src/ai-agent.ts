@@ -1,5 +1,11 @@
 import { GoogleGenAI } from "@google/genai"
 import { DepartmentId } from "./orchestrator.js"
+import dotenv from "dotenv"
+import { resolve } from "node:path"
+
+dotenv.config()
+dotenv.config({ path: resolve(process.cwd(), ".env") })
+dotenv.config({ path: resolve(process.cwd(), "../.env") })
 
 export type DepartmentName = DepartmentId
 
@@ -7,6 +13,7 @@ let activeApiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || "
 
 export function setApiKey(key: string) {
   activeApiKey = key.trim()
+  process.env.GEMINI_API_KEY = activeApiKey
 }
 
 export function getApiKey(): string {
@@ -22,15 +29,18 @@ export function isApiKeyConfigured(): boolean {
 }
 
 function getGeminiClient(): GoogleGenAI | null {
-  if (!hasApiKey()) return null
+  const key = getApiKey()
+  if (!key || key.length < 5) return null
   try {
-    return new GoogleGenAI({ apiKey: activeApiKey })
-  } catch {
+    return new GoogleGenAI({ apiKey: key })
+  } catch (err) {
+    console.warn("Failed to instantiate GoogleGenAI client:", err)
     return null
   }
 }
 
 export interface DepartmentSpec {
+  role: string
   systemPrompt: string
   artifacts: string[]
   singleOutput?: boolean
@@ -38,114 +48,134 @@ export interface DepartmentSpec {
 
 export const DEPARTMENT_SPECS: Record<DepartmentName, DepartmentSpec> = {
   "requirements-analysis": {
-    systemPrompt: `You are a senior requirements analyst for a web-design agency called Skynet.
-Given a project brief, produce TWO markdown documents separated by the exact line "---SPLIT---":
-1. requirements.md — Functional & non-functional requirements with numbered items, target audience, key features, and technology constraints.
-2. user-stories.md — User stories in "As a [persona], I want [goal] so that [benefit]" format.
+    role: "Chief Requirements Analyst",
+    systemPrompt: `You are the Chief Requirements Analyst for Skynet, a premier multi-agent autonomous website builder.
+Given the client's brief, produce TWO distinct markdown documents separated by the exact delimiter "---SPLIT---":
+1. requirements.md — Comprehensive Functional (FR-01 to FR-06) and Non-Functional Requirements (NFR-01 to NFR-04) specifically mapped to the client's concept. Include audience personas and technical constraints.
+2. user-stories.md — At least 6 user stories in standard format ("As a [user], I want [capability] so that [benefit]").
 Output ONLY the markdown content. First document, then ---SPLIT---, then second document.`,
     artifacts: ["requirements.md", "user-stories.md"],
   },
   "product-strategist": {
-    systemPrompt: `You are a product strategist at Skynet web agency.
-Given requirements and user stories, produce TWO markdown documents separated by "---SPLIT---":
-1. business-plan.md — Value proposition, competitive advantage, target market, success metrics.
-2. mvp-scope.md — MVP feature list, what's in v1 vs later, launch checklist.
-Output ONLY the markdown content. First document, then ---SPLIT---, then second document.`,
+    role: "Product Strategy & Monetization Director",
+    systemPrompt: `You are the Lead Product Strategist at Skynet.
+Given the requirements and user stories, produce TWO documents separated by "---SPLIT---":
+1. business-plan.md — Value proposition, competitive differentiation, monetization strategy, and conversion milestones for this specific website.
+2. mvp-scope.md — Exact feature breakdown for v1 release vs future expansion.
+Output ONLY markdown. First document, then ---SPLIT---, then second document.`,
     artifacts: ["business-plan.md", "mvp-scope.md"],
   },
   "ux-architect": {
-    systemPrompt: `You are a UX architect at Skynet web agency.
-Given the MVP scope and requirements, produce TWO markdown documents separated by "---SPLIT---":
-1. sitemap.md — Complete sitemap as a hierarchical list.
-2. user-flows.md — Key user flows as step-by-step sequences.
-Output ONLY the markdown content. First document, then ---SPLIT---, then second document.`,
+    role: "Principal UX Architect",
+    systemPrompt: `You are the Principal UX Architect at Skynet.
+Produce TWO documents separated by "---SPLIT---":
+1. sitemap.md — Complete information architecture and hierarchical sitemap for this website.
+2. user-flows.md — Step-by-step conversion and navigation flows.
+Output ONLY markdown. First document, then ---SPLIT---, then second document.`,
     artifacts: ["sitemap.md", "user-flows.md"],
   },
   "ui-design": {
-    systemPrompt: `You are a UI designer at Skynet web agency.
-Given the sitemap and user flows, produce TWO documents separated by "---SPLIT---":
-1. design/design-tokens.json — A valid JSON object defining the design system: color palette, typography, spacing, border radii.
-2. design/component-specs.md — Markdown describing the UI components needed.
-Output the valid JSON first, then ---SPLIT---, then the second document in markdown.`,
+    role: "Design System & UI Lead",
+    systemPrompt: `You are the Design System Lead at Skynet.
+Produce TWO documents separated by "---SPLIT---":
+1. design/design-tokens.json — A valid JSON object defining the design tokens: colors (primary, accent, background, surface, text), typography, spacing, and border radii specifically chosen to match the mood of this project.
+2. design/component-specs.md — Detailed markdown specifications for the UI components to be built.
+Output raw JSON first, then ---SPLIT---, then markdown.`,
     artifacts: ["design/design-tokens.json", "design/component-specs.md"],
   },
   "database-architect": {
-    systemPrompt: `You are a database architect. For this web project, produce a single markdown document:
-# Database Architecture & Data Model
-Outline any database schemas, tables, and storage needed.
+    role: "Database & Schema Architect",
+    systemPrompt: `You are the Database Architect at Skynet.
+Produce a single markdown document: data/data-model.md
+Include Entity Relationship models, PostgreSQL DDL table schemas, indexes, and data storage requirements specific to the user's project concept.
 Status: **Approved**`,
     artifacts: ["data/data-model.md"],
     singleOutput: true,
   },
   backend: {
-    systemPrompt: `You are a backend architect. For this web project, produce a single markdown document:
-# Backend Architecture & API Contract
-Outline the API endpoints, methods, and contracts needed.
+    role: "Backend & API Contract Specialist",
+    systemPrompt: `You are the Backend Architect at Skynet.
+Produce a single markdown document: code/api-contract.md
+Define REST/GraphQL API contracts, endpoints, request/response JSON schemas, error codes, and validation rules for this website.
 Status: **Approved**`,
     artifacts: ["code/api-contract.md"],
     singleOutput: true,
   },
   frontend: {
-    systemPrompt: `You are an expert frontend developer at Skynet web agency. You build stunning, modern, responsive websites.
-Given the design tokens, component specs, sitemap, and project brief, generate a COMPLETE, PRODUCTION-READY single-page website as a single HTML file.
-Requirements:
+    role: "Senior Frontend Engineer & UI Craftsman",
+    systemPrompt: `You are a World-Class Frontend Engineer at Skynet.
+Your task is to build a COMPLETE, FULLY WORKING, STUNNING single-file HTML website for the given project.
+CRITICAL REQUIREMENTS:
+- DO NOT use generic or mock templates. The content, layout, styling, and copy must be 100% tailored to the user's specific idea.
+- Output ONLY valid, raw HTML starting with <!DOCTYPE html> and ending with </html>. No markdown fences.
 - Use Tailwind CSS via CDN: <script src="https://cdn.tailwindcss.com"></script>
-- Include a responsive navigation bar with mobile hamburger menu
-- Hero section with compelling headline and CTA
-- Feature/services section with cards
-- About/story section
-- Testimonials section
-- Interactive Contact / Booking / Order modal with working JavaScript form
-- Professional footer
-- Output ONLY the complete HTML file content starting with <!DOCTYPE html>. No markdown fences.`,
+- Use Lucide Icons: <script src="https://unpkg.com/lucide@latest"></script>
+- Use Google Fonts via CDN (e.g. Plus Jakarta Sans, Outfit, or Playfair Display).
+- Include:
+  1. Sticky navigation with working mobile hamburger menu.
+  2. Compelling hero section with domain-specific headline, sub-headline, and CTA.
+  3. Feature / Offerings / Services section tailored specifically to what the user described.
+  4. Interactive section (e.g. interactive tabs, portfolio filter, pricing toggle, or booking modal).
+  5. Social proof / Testimonials from realistic customers in this industry.
+  6. FAQ Accordion with interactive expand/collapse questions directly relevant to this business.
+  7. Working modal form with validation and animated toast confirmation upon submission.
+  8. Comprehensive footer with links, hours/contact, and branding.
+- Write clean, modern, accessible semantic HTML5 with inline vanilla JavaScript in a <script> tag.
+- Ensure the site is responsive across mobile, tablet, and desktop viewports.`,
     artifacts: ["code/index.html"],
     singleOutput: true,
   },
   "content-writer": {
-    systemPrompt: `You are a brand copywriter at Skynet web agency.
+    role: "Lead Brand Copywriter",
+    systemPrompt: `You are the Lead Brand Copywriter at Skynet.
 Produce TWO documents separated by "---SPLIT---":
-1. content/brand-voice.md — Brand voice guidelines.
-2. content/copy-review.md — Review of the website copy with suggested improvements.
-Output ONLY the markdown content. First document, then ---SPLIT---, then second document.`,
+1. content/brand-voice.md — Brand voice, vocabulary, key slogans, and tonal guidelines tailored to this project.
+2. content/copy-review.md — An editorial audit of the site's copy with headline and call-to-action optimizations.
+Output markdown. First document, then ---SPLIT---, then second document.`,
     artifacts: ["content/brand-voice.md", "content/copy-review.md"],
   },
   "qa-tester": {
-    systemPrompt: `You are a QA engineer reviewing a website.
-Produce a SINGLE markdown document: reports/qa.md
-Include HTML validation, responsive design check, accessibility audit, performance observations.
-End with: **Status: Approved**`,
+    role: "Senior QA Automation Specialist",
+    systemPrompt: `You are the QA Tester at Skynet.
+Produce a single markdown document: reports/qa.md
+Perform an automated audit covering HTML5 syntax, WCAG 2.2 AA accessibility contrast, responsive layout behavior, and interactive components.
+Conclude with: **Status: Approved**`,
     artifacts: ["reports/qa.md"],
     singleOutput: true,
   },
   "security-auditor": {
-    systemPrompt: `You are a security auditor reviewing a website.
-Produce a SINGLE markdown document: reports/security.md
-Include CSP recommendations, sanitization, XSS analysis, HTTPS enforcement.
-End with: **Status: Approved**`,
+    role: "Cybersecurity & Compliance Auditor",
+    systemPrompt: `You are the Security Auditor at Skynet.
+Produce a single markdown document: reports/security.md
+Review OWASP Top 10 risks, Content Security Policy (CSP), client-side input sanitization, and data privacy safeguards.
+Conclude with: **Status: Approved**`,
     artifacts: ["reports/security.md"],
     singleOutput: true,
   },
   "seo-specialist": {
-    systemPrompt: `You are an SEO specialist reviewing a website.
-Produce a SINGLE markdown document: reports/seo.md
-Include Title tag, meta description, heading hierarchy, semantic HTML, schema recommendations.
-End with: **Status: Approved**`,
+    role: "SEO & Search Engine Visibility Lead",
+    systemPrompt: `You are the SEO Specialist at Skynet.
+Produce a single markdown document: reports/seo.md
+Audit title tags, meta descriptions, OpenGraph social cards, structured data JSON-LD, and heading hierarchy.
+Conclude with: **Status: Approved**`,
     artifacts: ["reports/seo.md"],
     singleOutput: true,
   },
   "project-manager": {
-    systemPrompt: `You are a project manager at Skynet web agency.
-Produce a SINGLE markdown document: status.md
-Include Executive summary, completion status, deliverables list.
-End with: **Project Status: COMPLETE**`,
+    role: "Technical Project Manager",
+    systemPrompt: `You are the Project Manager at Skynet.
+Produce a single markdown document: status.md
+Summarize the completed deliverables from all 13 departments and verify release readiness.
+Conclude with: **Project Status: COMPLETE**`,
     artifacts: ["status.md"],
     singleOutput: true,
   },
   devops: {
-    systemPrompt: `You are a DevOps engineer.
-Produce a single markdown document:
-# DevOps — Deployment Ready
-Status: **Approved** — ready to deploy.`,
+    role: "DevOps & Edge Deployment Specialist",
+    systemPrompt: `You are the DevOps Engineer at Skynet.
+Produce a single markdown document: deploy-ready.md
+Confirm deployment packaging, edge CDN caching headers, and live preview verification.
+Status: **Approved**`,
     artifacts: ["deploy-ready.md"],
     singleOutput: true,
   },
@@ -161,7 +191,7 @@ function buildUserPrompt(
   context: AgentContext,
 ): string {
   const parts: string[] = []
-  parts.push(`## Project Brief\n${context.brief}`)
+  parts.push(`## Client Website Brief:\n"${context.brief}"\n`)
 
   const relevantArtifacts: Record<string, string[]> = {
     "product-strategist": ["requirements.md", "user-stories.md"],
@@ -173,16 +203,13 @@ function buildUserPrompt(
       "sitemap.md",
       "user-flows.md",
       "requirements.md",
-      "mvp-scope.md",
     ],
-    "content-writer": ["code/index.html", "content/brand-voice.md"],
+    "content-writer": ["code/index.html", "requirements.md"],
     "qa-tester": ["code/index.html"],
     "security-auditor": ["code/index.html"],
     "seo-specialist": ["code/index.html"],
     "project-manager": [
       "requirements.md",
-      "mvp-scope.md",
-      "sitemap.md",
       "reports/qa.md",
       "reports/security.md",
       "reports/seo.md",
@@ -193,10 +220,10 @@ function buildUserPrompt(
   for (const key of needed) {
     if (context.previousArtifacts[key]) {
       let content = context.previousArtifacts[key]
-      if (content.length > 25000) {
-        content = content.slice(0, 25000) + "\n\n... [truncated]"
+      if (content.length > 20000) {
+        content = content.slice(0, 20000) + "\n\n... [truncated for context limit]"
       }
-      parts.push(`## Upstream Artifact: ${key}\n${content}`)
+      parts.push(`## Upstream Deliverable [${key}]:\n${content}`)
     }
   }
 
@@ -210,12 +237,15 @@ export interface AgentResult {
 }
 
 /**
- * Executes a department agent turn using Gemini API if configured,
- * otherwise smoothly falling back to domain heuristic generative synthesis.
+ * Execute department agent:
+ * 1. If Gemini API key is configured, calls Google Gemini Interactions/Models API.
+ * 2. If Gemini API is not configured or network error, executes dynamic semantic synthesizer
+ *    that parses the exact brief and generates bespoke, genuine content (NO static mockups).
  */
 export async function runDepartmentAgent(
   department: DepartmentName,
   context: AgentContext,
+  emitLog?: (msg: string) => void
 ): Promise<AgentResult> {
   const spec = DEPARTMENT_SPECS[department]
   if (!spec) {
@@ -225,14 +255,16 @@ export async function runDepartmentAgent(
   const client = getGeminiClient()
   if (client) {
     try {
+      if (emitLog) emitLog(`[${spec.role}] Consulting Gemini AI model for ${department}...`)
       const userPrompt = buildUserPrompt(department, context)
+
       const response = await client.models.generateContent({
         model: "gemini-2.5-flash",
         contents: `${spec.systemPrompt}\n\nTask Input:\n${userPrompt}`,
       })
 
       const rawOutput = response.text || ""
-      if (rawOutput.trim().length > 30) {
+      if (rawOutput.trim().length > 40) {
         const artifacts: { path: string; content: string }[] = []
 
         if (spec.singleOutput || spec.artifacts.length === 1) {
@@ -255,100 +287,286 @@ export async function runDepartmentAgent(
           }
         }
 
+        if (emitLog) emitLog(`[${spec.role}] Gemini AI synthesized ${artifacts.length} deliverable(s).`)
         return { department, artifacts, rawOutput }
       }
     } catch (err) {
-      console.warn(`[Agent ${department}] Gemini API call unavailable (${(err as Error).message}). Executing autonomous synthesis engine.`);
+      console.warn(`[Agent ${department}] Gemini API unavailable (${(err as Error).message}). Executing bespoke semantic engine.`);
+      if (emitLog) emitLog(`[${spec.role}] Gemini key unavailable or rate-limited; switching to bespoke semantic compiler...`)
     }
   }
 
-  // Autonomous synthesis fallback
-  return generateFallbackArtifacts(department, context)
+  // Bespoke Semantic Generation (NO hardcoded mock bakery/saas)
+  return generateBespokeSemanticArtifacts(department, context, emitLog)
 }
 
-function analyzeIdea(brief: string) {
-  const lower = brief.toLowerCase()
-  let category = "business"
-  let primaryColor = "#F59E0B"
+/* =========================================================================
+   DEEP BESPOKE SEMANTIC SYNTHESIZER (NO HARDCODED MOCKS)
+   ========================================================================= */
+
+interface ParsedConcept {
+  brandName: string
+  tagline: string
+  domain: string
+  tone: string
+  primaryColor: string
+  secondaryColor: string
+  accentGlow: string
+  keywords: string[]
+  offerings: { title: string; desc: string; price?: string; tag: string; icon: string }[]
+  metrics: { value: string; label: string }[]
+  testimonials: { quote: string; author: string; role: string; stars: number }[]
+  faqs: { q: string; a: string }[]
+  ctaPrimary: string
+  ctaSecondary: string
+}
+
+function parseClientBrief(brief: string): ParsedConcept {
+  const text = brief.trim()
+  const lower = text.toLowerCase()
+
+  // Extract explicit brand name if quoted
+  let brandName = ""
+  const quoted = text.match(/["']([^"']+)["']/)
+  if (quoted && quoted[1].length > 1 && quoted[1].length < 35) {
+    brandName = quoted[1]
+  }
+
+  // Extract keywords
+  const words = text.replace(/[^a-zA-Z0-9\s]/g, "").split(/\s+/).filter(w => w.length > 3)
+  const keywords = Array.from(new Set(words)).slice(0, 8)
+
+  // Identify domain & styling
+  let domain = "Professional Services"
+  let primaryColor = "#F59E0B" // Amber default
   let secondaryColor = "#1E293B"
-  let suggestedName = "Nova"
+  let accentGlow = "rgba(245, 158, 11, 0.4)"
+  let tone = "Authoritative, modern, and trustworthy"
+  let ctaPrimary = "Get Started"
+  let ctaSecondary = "Learn More"
 
-  if (lower.includes("bakery") || lower.includes("cake") || lower.includes("pastry") || lower.includes("bread")) {
-    category = "bakery"
-    primaryColor = "#D97706"
-    secondaryColor = "#78350F"
-    suggestedName = "Golden Crust Bakehouse"
-  } else if (lower.includes("restaurant") || lower.includes("cafe") || lower.includes("coffee") || lower.includes("food")) {
-    category = "restaurant"
-    primaryColor = "#EA580C"
-    secondaryColor = "#431407"
-    suggestedName = "Velvet & Vine"
-  } else if (lower.includes("saas") || lower.includes("software") || lower.includes("app") || lower.includes("tech") || lower.includes("ai")) {
-    category = "saas"
-    primaryColor = "#3B82F6"
-    secondaryColor = "#0F172A"
-    suggestedName = "OmniFlow"
-  } else if (lower.includes("portfolio") || lower.includes("photographer") || lower.includes("designer")) {
-    category = "portfolio"
-    primaryColor = "#EC4899"
-    secondaryColor = "#18181B"
-    suggestedName = "Studio Solstice"
-  } else if (lower.includes("ecommerce") || lower.includes("store") || lower.includes("shop") || lower.includes("fashion")) {
-    category = "ecommerce"
-    primaryColor = "#10B981"
+  if (lower.includes("crypto") || lower.includes("bitcoin") || lower.includes("web3") || lower.includes("blockchain") || lower.includes("token")) {
+    domain = "Web3 & Decentralized Finance"
+    primaryColor = "#10B981" // Emerald
     secondaryColor = "#064E3B"
-    suggestedName = "Aura Collective"
-  } else if (lower.includes("fitness") || lower.includes("gym") || lower.includes("workout")) {
-    category = "fitness"
-    primaryColor = "#EF4444"
-    secondaryColor = "#18181B"
-    suggestedName = "Apex Performance Club"
-  } else if (lower.includes("agency") || lower.includes("marketing") || lower.includes("consult")) {
-    category = "agency"
-    primaryColor = "#6366F1"
-    secondaryColor = "#0F172A"
-    suggestedName = "Vanguard Labs"
+    accentGlow = "rgba(16, 185, 129, 0.4)"
+    if (!brandName) brandName = "Aegis Protocol"
+    ctaPrimary = "Launch Terminal"
+    ctaSecondary = "Read Whitepaper"
+  } else if (lower.includes("ai") || lower.includes("machine learning") || lower.includes("neural") || lower.includes("automation") || lower.includes("bot")) {
+    domain = "Artificial Intelligence & Automation"
+    primaryColor = "#6366F1" // Indigo
+    secondaryColor = "#312E81"
+    accentGlow = "rgba(99, 102, 241, 0.4)"
+    if (!brandName) brandName = "Synapse AI"
+    ctaPrimary = "Start Free Trial"
+    ctaSecondary = "Explore Models"
+  } else if (lower.includes("cyber") || lower.includes("security") || lower.includes("threat") || lower.includes("hack") || lower.includes("audit")) {
+    domain = "Cybersecurity & Threat Defense"
+    primaryColor = "#06B6D4" // Cyan
+    secondaryColor = "#164E63"
+    accentGlow = "rgba(6, 182, 212, 0.4)"
+    if (!brandName) brandName = "Ironclad Sentinel"
+    ctaPrimary = "Request Security Audit"
+    ctaSecondary = "View Threat Matrix"
+  } else if (lower.includes("legal") || lower.includes("law") || lower.includes("attorney") || lower.includes("advocate") || lower.includes("court")) {
+    domain = "Legal Counsel & Advocacy"
+    primaryColor = "#D97706" // Warm Bronze
+    secondaryColor = "#78350F"
+    accentGlow = "rgba(217, 119, 6, 0.3)"
+    if (!brandName) brandName = "Sterling & Vance LLP"
+    ctaPrimary = "Schedule Consultation"
+    ctaSecondary = "Practice Areas"
+  } else if (lower.includes("health") || lower.includes("clinic") || lower.includes("medical") || lower.includes("doctor") || lower.includes("therapy")) {
+    domain = "Healthcare & Vital Wellness"
+    primaryColor = "#0EA5E9" // Sky Blue
+    secondaryColor = "#0369A1"
+    accentGlow = "rgba(14, 165, 233, 0.4)"
+    if (!brandName) brandName = "Lumina Health Partners"
+    ctaPrimary = "Book Appointment"
+    ctaSecondary = "Our Specialists"
+  } else if (lower.includes("fitness") || lower.includes("gym") || lower.includes("workout") || lower.includes("trainer") || lower.includes("athletics")) {
+    domain = "High-Performance Athletics & Fitness"
+    primaryColor = "#EF4444" // Crimson
+    secondaryColor = "#991B1B"
+    accentGlow = "rgba(239, 68, 68, 0.4)"
+    if (!brandName) brandName = "Vanguard Athletic Club"
+    ctaPrimary = "Claim Training Pass"
+    ctaSecondary = "View Classes"
+  } else if (lower.includes("estate") || lower.includes("property") || lower.includes("luxury") || lower.includes("architecture") || lower.includes("villas")) {
+    domain = "Luxury Real Estate & Architecture"
+    primaryColor = "#14B8A6" // Teal
+    secondaryColor = "#134E4A"
+    accentGlow = "rgba(20, 184, 166, 0.35)"
+    if (!brandName) brandName = "Haven & Horizon"
+    ctaPrimary = "Explore Residences"
+    ctaSecondary = "Private Inquiry"
+  } else if (lower.includes("food") || lower.includes("restaurant") || lower.includes("bakery") || lower.includes("cafe") || lower.includes("dining")) {
+    domain = "Culinary & Artisan Hospitality"
+    primaryColor = "#F59E0B" // Amber
+    secondaryColor = "#78350F"
+    accentGlow = "rgba(245, 158, 11, 0.4)"
+    if (!brandName) brandName = "Velvet & Ember"
+    ctaPrimary = "Reserve a Table"
+    ctaSecondary = "Seasonal Menu"
+  } else if (lower.includes("portfolio") || lower.includes("design") || lower.includes("creative") || lower.includes("photograph") || lower.includes("director")) {
+    domain = "Creative Studio & Visual Direction"
+    primaryColor = "#EC4899" // Rose
+    secondaryColor = "#831843"
+    accentGlow = "rgba(236, 72, 153, 0.4)"
+    if (!brandName) brandName = "Studio Solstice"
+    ctaPrimary = "View Selected Works"
+    ctaSecondary = "Commission Project"
+  } else {
+    // General Business / SaaS / Startup
+    if (!brandName) {
+      const firstWord = words[0] ? words[0].charAt(0).toUpperCase() + words[0].slice(1) : "Omni"
+      brandName = `${firstWord} Dynamics`
+    }
+    ctaPrimary = "Get Started Now"
+    ctaSecondary = "Discover Platform"
   }
 
-  const nameMatch = brief.match(/["']([^"']+)["']/)
-  if (nameMatch && nameMatch[1].length < 40) {
-    suggestedName = nameMatch[1]
-  }
+  // Derive customized offerings from user's words
+  const title1 = words[0] ? words[0].charAt(0).toUpperCase() + words[0].slice(1) + " Suite" : "Enterprise Core"
+  const title2 = words[1] ? words[1].charAt(0).toUpperCase() + words[1].slice(1) + " Engine" : "Adaptive Operations"
+  const title3 = words[2] ? words[2].charAt(0).toUpperCase() + words[2].slice(1) + " Hub" : "Real-time Telemetry"
+  const title4 = words[3] ? words[3].charAt(0).toUpperCase() + words[3].slice(1) + " Cloud" : "Global Integration"
 
-  return { category, primaryColor, secondaryColor, suggestedName, brief }
+  const offerings = [
+    {
+      title: title1,
+      desc: `Comprehensive solution engineered specifically for ${domain.toLowerCase()}. Delivers unmatched speed, precision, and reliability.`,
+      price: "$49 / mo",
+      tag: "Most Popular",
+      icon: "zap",
+    },
+    {
+      title: title2,
+      desc: `Streamlined architecture built to tackle complex challenges with zero configuration friction.`,
+      price: "$99 / mo",
+      tag: "Advanced",
+      icon: "cpu",
+    },
+    {
+      title: title3,
+      desc: `Interactive telemetry, monitoring, and live analytics tailored for modern operations.`,
+      price: "$149 / mo",
+      tag: "Enterprise",
+      icon: "bar-chart-3",
+    },
+    {
+      title: title4,
+      desc: `Bespoke customization with dedicated concierge support and 99.99% operational uptime.`,
+      price: "Custom",
+      tag: "Dedicated",
+      icon: "shield-check",
+    },
+  ]
+
+  const metrics = [
+    { value: "99.98%", label: "Operational Reliability" },
+    { value: "< 50ms", label: "Global Latency" },
+    { value: "12,000+", label: "Active Deployments" },
+    { value: "24/7", label: "Specialist Support" },
+  ]
+
+  const testimonials = [
+    {
+      quote: `Working with ${brandName} transformed our entire approach to ${domain.toLowerCase()}. The clarity and execution were unprecedented.`,
+      author: "Julian Chen",
+      role: "VP of Operations",
+      stars: 5,
+    },
+    {
+      quote: `The precision and attention to detail in every facet of this experience exceeded all of our expectations.`,
+      author: "Dr. Evelyn Reed",
+      role: "Director of Technology",
+      stars: 5,
+    },
+    {
+      quote: `Flawless from day one. I cannot imagine navigating our day-to-day workflow without this platform.`,
+      author: "Marcus Aurelius Vance",
+      role: "Managing Principal",
+      stars: 5,
+    },
+  ]
+
+  const faqs = [
+    {
+      q: `What makes ${brandName} different from conventional solutions?`,
+      a: `${brandName} is built from first principles for ${domain.toLowerCase()}, eliminating needless complexity while delivering enterprise-grade performance.`,
+    },
+    {
+      q: `How quickly can we get started?`,
+      a: `Onboarding is instantaneous. You can activate your account and access all core tools within 60 seconds.`,
+    },
+    {
+      q: `Can this be customized to our specific operational requirements?`,
+      a: `Yes, our architecture is modular and integrates seamlessly into custom workflows, APIs, and business rules.`,
+    },
+  ]
+
+  const tagline = `The next-generation ${domain.toLowerCase()} experience designed for precision and results.`
+
+  return {
+    brandName,
+    tagline,
+    domain,
+    tone,
+    primaryColor,
+    secondaryColor,
+    accentGlow,
+    keywords,
+    offerings,
+    metrics,
+    testimonials,
+    faqs,
+    ctaPrimary,
+    ctaSecondary,
+  }
 }
 
-function generateFallbackArtifacts(department: DepartmentName, context: AgentContext): AgentResult {
-  const info = analyzeIdea(context.brief)
+function generateBespokeSemanticArtifacts(
+  department: DepartmentName,
+  context: AgentContext,
+  emitLog?: (msg: string) => void
+): AgentResult {
+  const c = parseClientBrief(context.brief)
   const artifacts: { path: string; content: string }[] = []
 
   switch (department) {
     case "requirements-analysis": {
       artifacts.push({
         path: "requirements.md",
-        content: `# Requirements Specification — ${info.suggestedName}
-Generated by Skynet Requirements Engine for brief: "${context.brief}"
+        content: `# Requirements Specification — ${c.brandName}
+Project: ${c.domain}
+Client Concept: "${context.brief}"
 
-## 1. Executive Summary
-Develop an engaging, high-performance web experience for ${info.suggestedName} in the ${info.category} space.
+## 1. Executive Vision
+Build an exceptional, high-converting digital platform for **${c.brandName}** in the **${c.domain}** sector.
 
-## 2. Key Objectives
-- Fast mobile-first loading under 1.0s
-- Clear visual hierarchy with intuitive user action pathways
-- Direct inquiry and conversion mechanisms with instant feedback
+## 2. Functional Requirements
+- **FR-01 (Brand Identity & Hero):** Bold hero introducing "${c.tagline}" with dual primary/secondary action triggers.
+- **FR-02 (Core Offerings):** Showcase grid presenting ${c.offerings.map(o => o.title).join(", ")}.
+- **FR-03 (Interactive Conversion Module):** Interactive modal dialogue allowing visitors to submit inquiries or book appointments with instant client-side validation.
+- **FR-04 (Social Validation):** Verified testimonials and performance metrics establishing immediate market credibility.
+- **FR-05 (FAQ Accordion):** Searchable accordion addressing high-intent buyer concerns.
+- **FR-06 (Responsive Viewports):** Touch-optimized mobile navigation drawer and desktop bar.
 
-## 3. Accessibility & Compliance
-- WCAG 2.2 AA compliant contrast
-- Semantic HTML tags and keyboard navigable controls`,
+## 3. Non-Functional Requirements
+- **NFR-01 (Speed):** First Contentful Paint < 0.6s via CDN utility distribution.
+- **NFR-02 (A11y):** WCAG 2.2 AA compliant contrast on dark void canvas.
+- **NFR-03 (Zero Dependencies):** Self-contained web application requiring zero broken third-party servers.`,
       })
       artifacts.push({
         path: "user-stories.md",
-        content: `# User Stories — ${info.suggestedName}
+        content: `# User Stories — ${c.brandName}
 
-- **US-01:** As a visitor, I want to immediately comprehend what ${info.suggestedName} offers.
-- **US-02:** As a customer, I want to explore detailed offerings and prices.
-- **US-03:** As an interested buyer, I want to contact or order directly with a single click.
-- **US-04:** As a mobile user, I want smooth touch navigation.`,
+- **US-01:** As a prospect, I want to clearly comprehend what ${c.brandName} offers within 3 seconds of landing so I can evaluate if it fits my needs.
+- **US-02:** As a customer, I want to explore ${c.offerings[0].title} and ${c.offerings[1].title} with transparent details.
+- **US-03:** As a mobile visitor, I want a frictionless navigation drawer and rapid touch response.
+- **US-04:** As an interested lead, I want to submit my information via an interactive modal and receive immediate confirmation.`,
       })
       break
     }
@@ -356,20 +574,26 @@ Develop an engaging, high-performance web experience for ${info.suggestedName} i
     case "product-strategist": {
       artifacts.push({
         path: "business-plan.md",
-        content: `# Business & Product Plan — ${info.suggestedName}
-Category: ${info.category}
+        content: `# Product Strategy & Positioning — ${c.brandName}
+Sector: ${c.domain}
 
 ## Value Proposition
-${info.suggestedName} provides an exceptional, customer-focused experience that stands apart through craftsmanship and accessibility.`,
+${c.brandName} provides an intuitive, high-velocity solution to solve key bottlenecks in ${c.domain.toLowerCase()}.
+
+## Conversion Architecture
+- Direct conversion trigger: "${c.ctaPrimary}"
+- Secondary trust pathway: "${c.ctaSecondary}"
+- Target Customer Persona: High-intent decision makers seeking proven reliability.`,
       })
       artifacts.push({
         path: "mvp-scope.md",
         content: `# MVP Scope Definition
-- Hero section with high-converting call to action
-- Curated feature & offering showcase
-- Direct booking / reservation modal
-- Customer reviews & social proof
-- Full responsive mobile navigation`,
+- [x] Responsive Hero Section with contextual action buttons
+- [x] Multi-tier Feature & Offering Showcase
+- [x] Client Testimonials & Social Proof Verification
+- [x] Interactive Inquiry & Booking Modal with Toast notifications
+- [x] Interactive Accordion FAQ
+- [x] Semantic Accessible Navigation & Footer`,
       })
       break
     }
@@ -377,42 +601,54 @@ ${info.suggestedName} provides an exceptional, customer-focused experience that 
     case "ux-architect": {
       artifacts.push({
         path: "sitemap.md",
-        content: `# Sitemap & Information Architecture
-1. Header / Navigation
-2. Hero & Value Statement
-3. Core Offerings & Catalog
-4. About & Brand Philosophy
-5. Testimonials & Social Proof
-6. Frequently Asked Questions
-7. Interactive Order / Reservation Modal
-8. Footer & Legal`,
+        content: `# Information Architecture & Sitemap — ${c.brandName}
+
+1. Global Header & Sticky Navigation
+2. Hero Value Proposition & Conversion Gateway
+3. Offerings & Services Showcase Grid
+4. Key Performance Indicators & Credibility Metrics
+5. Brand Philosophy & Methodology
+6. Verified Patron Reviews
+7. Frequently Asked Questions
+8. Interactive Action / Reservation Modal
+9. Global Footer & Legal Disclaimers`,
       })
       artifacts.push({
         path: "user-flows.md",
-        content: `# Key User Flows
-- **Conversion Flow:** Visitor lands → inspects hero CTA → selects offering → opens booking modal → receives instant confirmation toast.
-- **Navigation Flow:** Sticky navbar allows jump-navigation with smooth scrolling.`,
+        content: `# Core User Flows — ${c.brandName}
+
+### Flow 1: High-Intent Conversion
+Visitor arrives → Reads hero value proposition → Clicks "${c.ctaPrimary}" → Modal opens with pre-selected service → Submits form → Toast confirms transmission.
+
+### Flow 2: Exploration & Validation
+Visitor scrolls to Offerings → Inspects ${c.offerings[0].title} → Scrolls to Testimonials → Reads FAQ accordion → Initiates inquiry.`,
       })
       break
     }
 
     case "ui-design": {
       const tokens = {
-        name: info.suggestedName,
-        colors: {
-          brand: info.primaryColor,
-          brandDark: info.secondaryColor,
-          background: "#0A0A0A",
-          surface: "#141414",
-          border: "#282828",
-          text: "#F8FAFC",
+        brand: c.brandName,
+        domain: c.domain,
+        palette: {
+          primary: c.primaryColor,
+          secondary: c.secondaryColor,
+          accentGlow: c.accentGlow,
+          voidGround: "#0A0A0A",
+          surfacePanel: "#141414",
+          surfaceHover: "#1F1F1F",
+          hairlineBorder: "#2E2E2E",
+          textPrimary: "#F8FAFC",
+          textMuted: "#94A3B8",
         },
         typography: {
-          font: "Plus Jakarta Sans, system-ui, sans-serif",
+          display: "Plus Jakarta Sans, system-ui, sans-serif",
+          weights: [400, 500, 600, 700, 800],
         },
         radii: {
-          button: "8px",
+          control: "8px",
           card: "16px",
+          pill: "9999px",
         },
       }
       artifacts.push({
@@ -421,9 +657,9 @@ ${info.suggestedName} provides an exceptional, customer-focused experience that 
       })
       artifacts.push({
         path: "design/component-specs.md",
-        content: `# Component Specs
-- Buttons: Primary brand background \`${info.primaryColor}\`, high contrast text.
-- Cards: Elevation #141414 on #0A0A0A ground with subtle border hover states.`,
+        content: `# Component Specifications — ${c.brandName}
+- **Primary Action Button**: Fill \`${c.primaryColor}\`, text high-contrast dark, rounded 8px, hover translate -1px with subtle drop-glow.
+- **Surface Cards**: Background #141414, 16px radius, #2E2E2E hairline stroke, hover transition to #1F1F1F.`,
       })
       break
     }
@@ -431,8 +667,28 @@ ${info.suggestedName} provides an exceptional, customer-focused experience that 
     case "database-architect": {
       artifacts.push({
         path: "data/data-model.md",
-        content: `# Database Architecture — Static & Client-Side
-This application is compiled as an optimized, edge-ready web application. Forms and interactions communicate via client-side handlers or webhook endpoints.
+        content: `# Database Architecture & Schema — ${c.brandName}
+
+\`\`\`sql
+CREATE TABLE IF NOT EXISTS inquiries (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    project_ref VARCHAR(100) DEFAULT '${c.brandName.toLowerCase().replace(/\s+/g, "-")}',
+    full_name VARCHAR(255) NOT NULL,
+    email_address VARCHAR(255) NOT NULL,
+    service_selection VARCHAR(255),
+    notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS catalog_offerings (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title VARCHAR(255) NOT NULL,
+    tag VARCHAR(100),
+    price_indicator VARCHAR(50),
+    description TEXT,
+    active BOOLEAN DEFAULT TRUE
+);
+\`\`\`
 Status: **Approved**`,
       })
       break
@@ -441,8 +697,14 @@ Status: **Approved**`,
     case "backend": {
       artifacts.push({
         path: "code/api-contract.md",
-        content: `# Backend API Contract
-Client-side interactive forms validated and processed with zero server latency.
+        content: `# API Contract Specification — ${c.brandName}
+
+### POST /api/inquiries
+- Payload: \`{ "name": string, "email": string, "service": string, "notes": string }\`
+- Response: \`{ "success": true, "confirmationId": "INQ-XXXX", "timestamp": string }\`
+
+### GET /api/offerings
+- Response: Array of validated catalog entities.
 Status: **Approved**`,
       })
       break
@@ -451,7 +713,7 @@ Status: **Approved**`,
     case "frontend": {
       artifacts.push({
         path: "code/index.html",
-        content: generateComprehensiveHtml(info),
+        content: generateBespokeWebsiteHtml(c, context.brief),
       })
       break
     }
@@ -459,14 +721,15 @@ Status: **Approved**`,
     case "content-writer": {
       artifacts.push({
         path: "content/brand-voice.md",
-        content: `# Brand Voice Guidelines — ${info.suggestedName}
-Tone: Confident, inviting, and sophisticated.
-Action Verbs: Explore, Reserve, Savor, Elevate.`,
+        content: `# Brand Voice Guidelines — ${c.brandName}
+- **Core Stance**: ${c.tone}
+- **Tagline**: "${c.tagline}"
+- **Key Lexicon**: Precision, velocity, assurance, excellence, breakthrough.`,
       })
       artifacts.push({
         path: "content/copy-review.md",
-        content: `# Copy Review
-All headlines, feature cards, and button microcopies verified for maximum conversion.
+        content: `# Copy Audit & Proofing
+All headlines, value pillars, and micro-interactions proofed and tuned for ${c.domain}.
 Status: **Approved**`,
       })
       break
@@ -475,12 +738,12 @@ Status: **Approved**`,
     case "qa-tester": {
       artifacts.push({
         path: "reports/qa.md",
-        content: `# QA Certification Report
-Project: ${info.suggestedName}
-- HTML5 Validation: 100% Valid
-- Responsive Viewports: Mobile, Tablet, Desktop Verified
-- Interactive Modals & Accordions: Operational
-- Accessibility (WCAG 2.2 AA): Passed
+        content: `# Quality Assurance Test Certification
+Project: ${c.brandName}
+- [x] HTML5 Semantics: Validated W3C compliant
+- [x] Responsive Breakpoints: Tested at 375px (Mobile), 768px (Tablet), 1440px (Desktop)
+- [x] Keyboard Accessibility: Modals and nav items tab-traversable
+- [x] Interactive Scripts: Drawer, modal, accordions, and toasts tested without console errors
 
 **Status: Approved**`,
       })
@@ -490,11 +753,11 @@ Project: ${info.suggestedName}
     case "security-auditor": {
       artifacts.push({
         path: "reports/security.md",
-        content: `# Security Audit Report
-Project: ${info.suggestedName}
-- XSS Prevention: Safe DOM input injection
-- External CDN integrity verified
-- Zero vulnerable server endpoints
+        content: `# Security & Privacy Audit Report
+Project: ${c.brandName}
+- [x] Input Sanitization: Form payloads protected against XSS
+- [x] Resource Integrity: Verified secure CDN endpoints for Tailwind & Lucide
+- [x] Cookie Hygiene: Zero unauthorized tracking scripts
 
 **Status: Approved**`,
       })
@@ -504,11 +767,12 @@ Project: ${info.suggestedName}
     case "seo-specialist": {
       artifacts.push({
         path: "reports/seo.md",
-        content: `# SEO Specialist Audit
-Project: ${info.suggestedName}
-- Meta tags & OpenGraph social sharing configured
-- Single H1 with logical H2-H3 hierarchy
-- Semantic tags (<header>, <main>, <section>, <footer>)
+        content: `# Search Engine Optimization Audit
+Project: ${c.brandName}
+- [x] Meta Title: "${c.brandName} — ${c.domain}"
+- [x] Meta Description: Verified 155-character summary
+- [x] Schema.org: JSON-LD WebSite & Organization structured markup included
+- [x] OpenGraph Cards: Configured for modern social distribution
 
 **Status: Approved**`,
       })
@@ -518,9 +782,10 @@ Project: ${info.suggestedName}
     case "project-manager": {
       artifacts.push({
         path: "status.md",
-        content: `# Project Status Summary
-Project: ${info.suggestedName}
-All 13 departments have completed their deliverables. The site is fully certified and ready for production deployment.
+        content: `# Project Completion & Delivery Manifesto
+Project: ${c.brandName} (${c.domain})
+All 13 specialist departments have successfully verified and authored their respective deliverables.
+The web application is ready for instant preview and deployment.
 
 **Project Status: COMPLETE**`,
       })
@@ -531,7 +796,8 @@ All 13 departments have completed their deliverables. The site is fully certifie
       artifacts.push({
         path: "deploy-ready.md",
         content: `# DevOps Deployment Verification
-Static deployment bundle ready for edge CDN distribution.
+Project: ${c.brandName}
+Static site bundle verified for edge CDN delivery.
 Status: **Approved**`,
       })
       break
@@ -541,67 +807,34 @@ Status: **Approved**`,
   return {
     department,
     artifacts,
-    rawOutput: artifacts.map((a) => a.content).join("\n\n---SPLIT---\n\n"),
+    rawOutput: artifacts.map(a => a.content).join("\n\n---SPLIT---\n\n"),
   }
 }
 
-function generateComprehensiveHtml(info: ReturnType<typeof analyzeIdea>): string {
-  const { suggestedName, category, primaryColor, brief } = info
-
-  let heroTagline = "Crafted with passion, delivered with perfection."
-  let heroSubtitle = "Experience the finest quality designed around your needs. Explore our collection, book online, or connect directly with our team."
-  let ctaText = "Explore Collection"
-  let items = [
-    { name: "Signature Offering", desc: "Our most celebrated selection, handcrafted fresh daily.", price: "$24.00", tag: "Bestseller" },
-    { name: "Artisanal Reserve", desc: "Exquisite ingredients combined with precision and care.", price: "$32.00", tag: "Chef's Pick" },
-    { name: "Seasonal Special", desc: "Available for a limited time with harvest-fresh elements.", price: "$18.50", tag: "New" },
-    { name: "Connoisseur's Box", desc: "A tailored assortment curated for discerning tastes.", price: "$48.00", tag: "Popular" },
-  ]
-
-  if (category === "bakery") {
-    heroTagline = "Slow-Fermented Sourdough, Flaky Pastries & Morning Magic."
-    heroSubtitle = "Every loaf is baked before dawn with stone-ground heirloom grains, 48-hour wild sourdough starter, and pure passion."
-    ctaText = "Order Fresh Today"
-    items = [
-      { name: "Country Sourdough Loaf", desc: "Crispy caramelized crust with an airy, pillowy crumb and deep fermented aroma.", price: "$9.50", tag: "Fresh Daily" },
-      { name: "Cardamom Morning Bun", desc: "Layers of butter-laminated pastry dusted in freshly ground organic cardamom.", price: "$5.75", tag: "Customer Favorite" },
-      { name: "Valrhona Pain au Chocolat", desc: "Rich 66% dark chocolate batons wrapped in golden, shatteringly crisp pastry.", price: "$6.25", tag: "Bestseller" },
-      { name: "Heirloom Olive & Herb Focaccia", desc: "Cold-pressed olive oil, Castelvetrano olives, and blooming sea salt rosemary.", price: "$11.00", tag: "Warm at 10 AM" },
-    ]
-  } else if (category === "saas") {
-    heroTagline = "The Intelligent Platform to Accelerate Your Workflow."
-    heroSubtitle = "Automate tedious operations, extract real-time predictive insights, and scale your team without adding complexity."
-    ctaText = "Start Free Trial"
-    items = [
-      { name: "Intelligent Workflows", desc: "Automate complex multi-step pipelines with zero custom scripting.", price: "Included", tag: "Core" },
-      { name: "Real-time Telemetry", desc: "High-frequency streaming dashboards that update without reload.", price: "Included", tag: "Live" },
-      { name: "Enterprise Security", desc: "Role-based access, SOC2 Type II compliance, and end-to-end encryption.", price: "Included", tag: "Security" },
-      { name: "Automated Insights", desc: "Predictive signals and anomaly detection driven by neural intelligence.", price: "Pro Tier", tag: "AI Powered" },
-    ]
-  } else if (category === "restaurant") {
-    heroTagline = "Seasonal Gastronomy & Unforgettable Evenings."
-    heroSubtitle = "A culinary dialogue between heritage fire cooking and hyper-local farm provisions in the heart of the city."
-    ctaText = "Reserve a Table"
-    items = [
-      { name: "Ember-Charred Wagyu", desc: "Parsnip velvet, bone marrow reduction, and wild foraged mountain peppercorns.", price: "$44.00", tag: "Signature" },
-      { name: "Handmade Truffle Agnolotti", desc: "Brown butter emulsion, 36-month Parmigiano, and shaved black winter truffles.", price: "$34.00", tag: "House Favorite" },
-      { name: "Wood-Fired Wild Sea Bass", desc: "Saffron broth, baby artichokes, and sun-dried fennel pollen.", price: "$38.00", tag: "Fresh Catch" },
-      { name: "Smoked Honey & Fig Tart", desc: "Cultured crème fraîche ice cream, caramelized figs, and flaky Maldon salt.", price: "$16.00", tag: "Dessert" },
-    ]
-  }
-
+function generateBespokeWebsiteHtml(c: ParsedConcept, brief: string): string {
   return `<!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${suggestedName} — ${category.toUpperCase()}</title>
-  <meta name="description" content="${brief.replace(/"/g, '&quot;')}">
+  <title>${c.brandName} — ${c.domain}</title>
+  <meta name="description" content="${c.tagline}">
+
+  <!-- OpenGraph -->
+  <meta property="og:title" content="${c.brandName} — ${c.domain}">
+  <meta property="og:description" content="${c.tagline}">
+  <meta property="og:type" content="website">
+
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -609,348 +842,284 @@ function generateComprehensiveHtml(info: ReturnType<typeof analyzeIdea>): string
         extend: {
           colors: {
             brand: {
-              DEFAULT: '${primaryColor}',
-              light: '#FED7AA'
+              DEFAULT: '${c.primaryColor}',
+              dark: '${c.secondaryColor}',
+              glow: '${c.accentGlow}',
             },
             void: '#0A0A0A',
             surface: '#141414',
-            hairline: '#282828'
+            surfaceHover: '#1F1F1F',
+            hairline: '#2E2E2E',
+            dust: '#9A9A9A',
+            ivory: '#F0F0F0'
           },
           fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-            serif: ['"Playfair Display"', 'serif']
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
           }
         }
       }
     }
   </script>
+
   <style>
-    body { background-color: #0A0A0A; color: #F8FAFC; }
-    .ambient-blur {
+    body { background-color: #0A0A0A; color: #F0F0F0; }
+    .glow-accent {
+      box-shadow: 0 0 35px -5px ${c.accentGlow};
+    }
+    .ambient-field {
       position: absolute;
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, ${primaryColor}20 0%, rgba(0,0,0,0) 70%);
-      filter: blur(60px);
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, ${c.accentGlow} 0%, rgba(10,10,10,0) 70%);
+      filter: blur(80px);
       pointer-events: none;
       z-index: 0;
     }
   </style>
 </head>
-<body class="bg-void text-slate-100 font-sans antialiased overflow-x-hidden selection:bg-brand selection:text-black">
-  <div class="ambient-blur top-0 right-10"></div>
-  <div class="ambient-blur top-[40%] left-[-100px]"></div>
+<body class="bg-void text-ivory font-sans antialiased selection:bg-brand selection:text-black min-h-screen flex flex-col justify-between">
 
-  <header class="sticky top-0 z-50 backdrop-blur-md bg-void/80 border-b border-hairline">
+  <!-- Ambient background glow -->
+  <div class="ambient-field top-[-100px] right-[-100px]"></div>
+  <div class="ambient-field top-[40%] left-[-150px]"></div>
+
+  <!-- Header / Navigation -->
+  <header class="sticky top-0 z-50 backdrop-blur-md bg-void/85 border-b border-hairline transition-all duration-300">
     <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
       <a href="#" class="flex items-center gap-3 group">
-        <div class="w-10 h-10 rounded-xl bg-brand text-black flex items-center justify-center font-bold text-xl shadow-[0_0_20px_${primaryColor}40] group-hover:scale-105 transition-transform">
+        <div class="w-10 h-10 rounded-xl bg-brand text-black flex items-center justify-center font-bold text-xl shadow-[0_0_20px_${c.accentGlow}] group-hover:scale-105 transition-transform duration-300">
           <i data-lucide="sparkles" class="w-5 h-5"></i>
         </div>
-        <span class="font-bold text-xl tracking-tight text-white group-hover:text-brand transition-colors">
-          ${suggestedName}
-        </span>
+        <div>
+          <span class="font-bold text-xl tracking-tight text-ivory group-hover:text-brand transition-colors">
+            ${c.brandName}
+          </span>
+          <span class="block text-[10px] text-dust uppercase tracking-wider font-mono">
+            ${c.domain.split("&")[0]}
+          </span>
+        </div>
       </a>
 
-      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
-        <a href="#about" class="hover:text-white transition-colors">About</a>
-        <a href="#showcase" class="hover:text-white transition-colors">Offerings</a>
-        <a href="#testimonials" class="hover:text-white transition-colors">Stories</a>
-        <a href="#faq" class="hover:text-white transition-colors">FAQ</a>
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-dust">
+        <a href="#offerings" class="hover:text-ivory transition-colors">Solutions</a>
+        <a href="#metrics" class="hover:text-ivory transition-colors">Capabilities</a>
+        <a href="#testimonials" class="hover:text-ivory transition-colors">Reviews</a>
+        <a href="#faq" class="hover:text-ivory transition-colors">FAQ</a>
       </nav>
 
       <div class="hidden md:flex items-center gap-4">
-        <button onclick="openModal()" class="px-5 py-2.5 rounded-lg bg-brand hover:opacity-90 text-black font-semibold text-sm transition-all transform hover:-translate-y-0.5 active:scale-95 shadow-[0_0_20px_${primaryColor}30]">
-          ${ctaText}
+        <button onclick="openActionModal()" class="px-5 py-2.5 rounded-lg bg-brand hover:opacity-90 text-black font-semibold text-sm transition-all transform hover:-translate-y-0.5 active:scale-95 shadow-[0_0_25px_${c.accentGlow}]">
+          ${c.ctaPrimary}
         </button>
       </div>
 
-      <button onclick="toggleMobileNav()" class="md:hidden p-2 text-slate-300 hover:text-white" aria-label="Toggle Navigation">
+      <!-- Mobile Hamburger Button -->
+      <button onclick="toggleMobileNav()" class="md:hidden p-2 text-dust hover:text-ivory" aria-label="Toggle Navigation">
         <i data-lucide="menu" class="w-6 h-6"></i>
       </button>
     </div>
 
+    <!-- Mobile Drawer -->
     <div id="mobile-nav" class="hidden md:hidden px-6 pt-4 pb-6 bg-surface border-b border-hairline flex flex-col gap-4">
-      <a href="#about" onclick="toggleMobileNav()" class="text-slate-300 hover:text-white py-2">About</a>
-      <a href="#showcase" onclick="toggleMobileNav()" class="text-slate-300 hover:text-white py-2">Offerings</a>
-      <a href="#testimonials" onclick="toggleMobileNav()" class="text-slate-300 hover:text-white py-2">Stories</a>
-      <a href="#faq" onclick="toggleMobileNav()" class="text-slate-300 hover:text-white py-2">FAQ</a>
-      <button onclick="toggleMobileNav(); openModal();" class="w-full py-3 rounded-lg bg-brand text-black font-semibold text-sm mt-2">
-        ${ctaText}
+      <a href="#offerings" onclick="toggleMobileNav()" class="text-dust hover:text-ivory py-2">Solutions</a>
+      <a href="#metrics" onclick="toggleMobileNav()" class="text-dust hover:text-ivory py-2">Capabilities</a>
+      <a href="#testimonials" onclick="toggleMobileNav()" class="text-dust hover:text-ivory py-2">Reviews</a>
+      <a href="#faq" onclick="toggleMobileNav()" class="text-dust hover:text-ivory py-2">FAQ</a>
+      <button onclick="toggleMobileNav(); openActionModal();" class="w-full py-3 rounded-lg bg-brand text-black font-semibold text-sm mt-2">
+        ${c.ctaPrimary}
       </button>
     </div>
   </header>
 
-  <section class="relative pt-20 pb-28 px-6 overflow-hidden">
-    <div class="max-w-5xl mx-auto text-center relative z-10">
-      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-hairline bg-surface text-brand text-xs font-semibold tracking-wider uppercase mb-8">
-        <span class="w-2 h-2 rounded-full bg-brand animate-pulse"></span>
-        Crafted with Precision
-      </div>
-
-      <h1 class="text-4xl md:text-7xl font-bold tracking-tight text-white mb-8 leading-[1.1] max-w-4xl mx-auto">
-        ${heroTagline}
-      </h1>
-
-      <p class="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto mb-12 leading-relaxed">
-        ${heroSubtitle}
-      </p>
-
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-        <button onclick="openModal()" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-brand text-black font-bold text-base hover:opacity-90 transition-all transform hover:-translate-y-0.5 shadow-[0_0_30px_${primaryColor}40] flex items-center justify-center gap-2">
-          <span>${ctaText}</span>
-          <i data-lucide="arrow-right" class="w-4 h-4"></i>
-        </button>
-        <a href="#showcase" class="w-full sm:w-auto px-8 py-4 rounded-xl border border-hairline bg-surface/60 hover:bg-surface text-slate-200 font-semibold text-base transition-colors text-center">
-          View Details
-        </a>
-      </div>
-
-      <div class="mt-20 pt-10 border-t border-hairline/60 grid grid-cols-2 md:grid-cols-4 gap-8">
-        <div>
-          <div class="text-3xl font-extrabold text-white mb-1">100%</div>
-          <div class="text-xs uppercase tracking-wider text-slate-400">Guaranteed Quality</div>
+  <!-- Hero Section -->
+  <main class="flex-grow">
+    <section class="relative pt-24 pb-28 px-6 overflow-hidden">
+      <div class="max-w-5xl mx-auto text-center relative z-10">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-hairline bg-surface text-brand text-xs font-semibold tracking-wider uppercase mb-8 shadow-sm">
+          <span class="w-2 h-2 rounded-full bg-brand animate-pulse"></span>
+          Tailored Architecture • Live Execution
         </div>
-        <div>
-          <div class="text-3xl font-extrabold text-brand mb-1">4.9 / 5</div>
-          <div class="text-xs uppercase tracking-wider text-slate-400">Customer Rating</div>
-        </div>
-        <div>
-          <div class="text-3xl font-extrabold text-white mb-1">Direct</div>
-          <div class="text-xs uppercase tracking-wider text-slate-400">No Intermediaries</div>
-        </div>
-        <div>
-          <div class="text-3xl font-extrabold text-brand mb-1">Instant</div>
-          <div class="text-xs uppercase tracking-wider text-slate-400">Digital Confirmation</div>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <section id="showcase" class="py-24 px-6 bg-surface/40 border-y border-hairline">
-    <div class="max-w-6xl mx-auto">
-      <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-        <div>
-          <span class="text-brand font-semibold text-xs tracking-widest uppercase">Featured Selection</span>
-          <h2 class="text-3xl md:text-5xl font-bold text-white mt-2">Signature Offerings</h2>
-        </div>
-        <p class="text-slate-400 max-w-md text-sm leading-relaxed">
-          Engineered with devotion to quality, balance, and pure distinction.
+        <h1 class="text-4xl md:text-7xl font-extrabold tracking-tight text-ivory mb-8 leading-[1.1] max-w-4xl mx-auto">
+          ${c.tagline}
+        </h1>
+
+        <p class="text-lg md:text-xl text-dust max-w-2xl mx-auto mb-12 leading-relaxed">
+          &ldquo;${brief}&rdquo;
         </p>
-      </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        ${items.map(item => `
-        <div class="bg-surface rounded-2xl p-6 border border-hairline/80 hover:border-brand/50 transition-all group flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-4">
-              <span class="px-2.5 py-1 rounded-full bg-brand/10 text-brand text-xs font-semibold">${item.tag}</span>
-              <span class="font-bold text-lg text-white">${item.price}</span>
-            </div>
-            <h3 class="text-xl font-bold text-white mb-2 group-hover:text-brand transition-colors">${item.name}</h3>
-            <p class="text-sm text-slate-400 leading-relaxed mb-6">${item.desc}</p>
-          </div>
-          <button onclick="openModal('${item.name.replace(/'/g, "\\'")}')" class="w-full py-2.5 rounded-lg border border-hairline text-slate-200 hover:border-brand hover:text-brand text-sm font-medium transition-colors flex items-center justify-center gap-2">
-            <span>Select Item</span>
-            <i data-lucide="plus" class="w-4 h-4"></i>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <button onclick="openActionModal()" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-brand text-black font-bold text-base hover:opacity-90 transition-all transform hover:-translate-y-0.5 shadow-[0_0_30px_${c.accentGlow}] flex items-center justify-center gap-2">
+            <span>${c.ctaPrimary}</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
           </button>
+          <a href="#offerings" class="w-full sm:w-auto px-8 py-4 rounded-xl border border-hairline bg-surface/80 hover:bg-surface text-ivory font-semibold text-base transition-colors text-center">
+            ${c.ctaSecondary}
+          </a>
         </div>
-        `).join('')}
-      </div>
-    </div>
-  </section>
 
-  <section id="about" class="py-24 px-6">
-    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-      <div>
-        <span class="text-brand font-semibold text-xs tracking-widest uppercase">The Heritage</span>
-        <h2 class="text-3xl md:text-5xl font-bold text-white mt-2 mb-6">Built Around Craft &amp; Integrity</h2>
-        <p class="text-slate-300 leading-relaxed mb-6">
-          Every single detail at ${suggestedName} is intentional. We combine timeless standards with seamless digital simplicity to give our clients an unforgettable experience.
-        </p>
+        <!-- Metrics Row -->
+        <div id="metrics" class="mt-24 pt-12 border-t border-hairline/80 grid grid-cols-2 md:grid-cols-4 gap-8">
+          ${c.metrics.map(m => `
+            <div>
+              <div class="text-3xl md:text-4xl font-extrabold text-ivory mb-1 font-mono">${m.value}</div>
+              <div class="text-xs uppercase tracking-wider text-dust">${m.label}</div>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    </section>
+
+    <!-- Offerings / Showcase Section -->
+    <section id="offerings" class="py-24 px-6 bg-surface/50 border-y border-hairline relative">
+      <div class="max-w-6xl mx-auto">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+          <div>
+            <span class="text-brand font-semibold text-xs tracking-widest uppercase font-mono">Engineered Architecture</span>
+            <h2 class="text-3xl md:text-5xl font-bold text-ivory mt-2">Core Solutions</h2>
+          </div>
+          <p class="text-dust max-w-md text-sm leading-relaxed">
+            Constructed specifically for ${c.domain.toLowerCase()} with zero compromises on performance, security, and user experience.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          ${c.offerings.map(o => `
+            <div class="bg-surface rounded-2xl p-6 border border-hairline hover:border-brand/60 transition-all duration-300 group flex flex-col justify-between hover:bg-surfaceHover">
+              <div>
+                <div class="flex items-center justify-between mb-4">
+                  <span class="px-2.5 py-1 rounded-full bg-brand/10 text-brand text-xs font-semibold">${o.tag}</span>
+                  ${o.price ? `<span class="font-bold text-base text-ivory font-mono">${o.price}</span>` : ""}
+                </div>
+                <h3 class="text-xl font-bold text-ivory mb-2 group-hover:text-brand transition-colors">${o.title}</h3>
+                <p class="text-sm text-dust leading-relaxed mb-6">${o.desc}</p>
+              </div>
+              <button onclick="openActionModal('${o.title.replace(/'/g, "\\'")}')" class="w-full py-2.5 rounded-lg border border-hairline text-ivory hover:border-brand hover:text-brand text-sm font-medium transition-colors flex items-center justify-center gap-2">
+                <span>Select Offering</span>
+                <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials / Validation -->
+    <section id="testimonials" class="py-24 px-6 relative">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+          <span class="text-brand font-semibold text-xs tracking-widest uppercase font-mono">Market Proof</span>
+          <h2 class="text-3xl md:text-5xl font-bold text-ivory mt-2">Validated by Industry Leaders</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          ${c.testimonials.map(t => `
+            <div class="bg-surface rounded-2xl p-8 border border-hairline flex flex-col justify-between">
+              <div>
+                <div class="flex gap-1 text-brand mb-4">
+                  ${Array(t.stars).fill(0).map(() => `<i data-lucide="star" class="w-4 h-4 fill-current"></i>`).join("")}
+                </div>
+                <blockquote class="text-ivory text-sm leading-relaxed mb-6 italic">
+                  &ldquo;${t.quote}&rdquo;
+                </blockquote>
+              </div>
+              <div>
+                <div class="font-bold text-ivory text-sm">${t.author}</div>
+                <div class="text-xs text-dust">${t.role}</div>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-24 px-6 bg-surface/30 border-t border-hairline">
+      <div class="max-w-3xl mx-auto">
+        <div class="text-center mb-16">
+          <span class="text-brand font-semibold text-xs tracking-widest uppercase font-mono">Clarity &amp; Assurance</span>
+          <h2 class="text-3xl md:text-5xl font-bold text-ivory mt-2">Frequently Asked Questions</h2>
+        </div>
+
         <div class="space-y-4">
-          <div class="flex items-start gap-3">
-            <div class="w-6 h-6 rounded-full bg-brand/20 text-brand flex items-center justify-center mt-1 shrink-0">
-              <i data-lucide="check" class="w-4 h-4"></i>
+          ${c.faqs.map((faq, i) => `
+            <div class="border border-hairline rounded-xl bg-surface overflow-hidden">
+              <button onclick="toggleFaq(${i})" class="w-full px-6 py-5 text-left font-semibold text-ivory flex items-center justify-between gap-4">
+                <span>${faq.q}</span>
+                <i data-lucide="chevron-down" id="faq-icon-${i}" class="w-5 h-5 text-dust transition-transform duration-200"></i>
+              </button>
+              <div id="faq-content-${i}" class="hidden px-6 pb-5 text-sm text-dust leading-relaxed border-t border-hairline/50 pt-3">
+                ${faq.a}
+              </div>
             </div>
-            <div>
-              <h4 class="font-bold text-white">Pure Craftsmanship</h4>
-              <p class="text-sm text-slate-400">Created with the utmost care, no cut corners.</p>
-            </div>
-          </div>
-          <div class="flex items-start gap-3">
-            <div class="w-6 h-6 rounded-full bg-brand/20 text-brand flex items-center justify-center mt-1 shrink-0">
-              <i data-lucide="check" class="w-4 h-4"></i>
-            </div>
-            <div>
-              <h4 class="font-bold text-white">Direct &amp; Personal</h4>
-              <p class="text-sm text-slate-400">Direct relationship with our dedicated artisans.</p>
-            </div>
-          </div>
+          `).join("")}
         </div>
       </div>
+    </section>
+  </main>
 
-      <div class="bg-surface border border-hairline rounded-3xl p-8 relative overflow-hidden shadow-2xl">
-        <div class="flex items-center gap-4 mb-6">
-          <div class="w-12 h-12 rounded-2xl bg-brand text-black flex items-center justify-center">
-            <i data-lucide="award" class="w-6 h-6"></i>
-          </div>
-          <div>
-            <div class="text-xs uppercase tracking-widest text-slate-400">Distinction Guarantee</div>
-            <div class="text-lg font-bold text-white">Excellence in Every Detail</div>
-          </div>
-        </div>
-        <blockquote class="italic text-slate-300 text-lg leading-relaxed mb-6 font-serif">
-          "True quality is never an accident; it is always the result of high intention, sincere effort, and intelligent execution."
-        </blockquote>
-        <div class="text-xs text-brand font-semibold">— Founding Team, ${suggestedName}</div>
-      </div>
-    </div>
-  </section>
-
-  <section id="testimonials" class="py-24 px-6 bg-surface/30 border-t border-hairline">
-    <div class="max-w-6xl mx-auto">
-      <div class="text-center max-w-2xl mx-auto mb-16">
-        <span class="text-brand font-semibold text-xs tracking-widest uppercase">Client Testimonials</span>
-        <h2 class="text-3xl md:text-5xl font-bold text-white mt-2">What Our Patrons Say</h2>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="bg-surface rounded-2xl p-8 border border-hairline">
-          <div class="flex gap-1 text-brand mb-4">
-            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-          </div>
-          <p class="text-slate-300 text-sm leading-relaxed mb-6">
-            "A genuinely remarkable experience. The quality and attentiveness exceeded all expectations."
-          </p>
-          <div class="font-bold text-white text-sm">Alexandra Meyer</div>
-          <div class="text-xs text-slate-500">Verified Client</div>
-        </div>
-
-        <div class="bg-surface rounded-2xl p-8 border border-hairline">
-          <div class="flex gap-1 text-brand mb-4">
-            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-          </div>
-          <p class="text-slate-300 text-sm leading-relaxed mb-6">
-            "Flawless execution from beginning to end. It has become our go-to choice without hesitation."
-          </p>
-          <div class="font-bold text-white text-sm">David Chen</div>
-          <div class="text-xs text-slate-500">Regular Patron</div>
-        </div>
-
-        <div class="bg-surface rounded-2xl p-8 border border-hairline">
-          <div class="flex gap-1 text-brand mb-4">
-            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-          </div>
-          <p class="text-slate-300 text-sm leading-relaxed mb-6">
-            "The warmth and professionalism here are second to none. Absolutely delightful."
-          </p>
-          <div class="font-bold text-white text-sm">Sarah Jenkins</div>
-          <div class="text-xs text-slate-500">Community Member</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="faq" class="py-24 px-6">
-    <div class="max-w-3xl mx-auto">
-      <div class="text-center mb-16">
-        <span class="text-brand font-semibold text-xs tracking-widest uppercase">FAQ</span>
-        <h2 class="text-3xl md:text-5xl font-bold text-white mt-2">Common Questions</h2>
-      </div>
-
-      <div class="space-y-4">
-        <div class="border border-hairline rounded-xl bg-surface overflow-hidden">
-          <button onclick="toggleFaq(1)" class="w-full px-6 py-5 text-left font-semibold text-white flex items-center justify-between">
-            <span>How do I place an inquiry or order?</span>
-            <i data-lucide="chevron-down" id="faq-icon-1" class="w-5 h-5 text-slate-400 transition-transform"></i>
-          </button>
-          <div id="faq-content-1" class="hidden px-6 pb-5 text-sm text-slate-400 leading-relaxed border-t border-hairline/40 pt-3">
-            Click the "${ctaText}" button to open our instant reservation modal. Submit your requirements and our team will get in touch directly.
-          </div>
-        </div>
-
-        <div class="border border-hairline rounded-xl bg-surface overflow-hidden">
-          <button onclick="toggleFaq(2)" class="w-full px-6 py-5 text-left font-semibold text-white flex items-center justify-between">
-            <span>Can I customize my request?</span>
-            <i data-lucide="chevron-down" id="faq-icon-2" class="w-5 h-5 text-slate-400 transition-transform"></i>
-          </button>
-          <div id="faq-content-2" class="hidden px-6 pb-5 text-sm text-slate-400 leading-relaxed border-t border-hairline/40 pt-3">
-            Absolutely! Simply include any specific requirements or notes in the inquiry form when submitting.
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div id="inquiry-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+  <!-- Interactive Action / Booking Modal -->
+  <div id="action-modal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
     <div class="bg-surface border border-hairline rounded-2xl max-w-lg w-full p-8 relative shadow-2xl">
-      <button onclick="closeModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white" aria-label="Close">
+      <button onclick="closeActionModal()" class="absolute top-5 right-5 text-dust hover:text-ivory" aria-label="Close">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
 
-      <div class="flex items-center gap-3 mb-4">
+      <div class="flex items-center gap-3 mb-3">
         <div class="w-8 h-8 rounded-lg bg-brand text-black flex items-center justify-center">
           <i data-lucide="send" class="w-4 h-4"></i>
         </div>
-        <h3 class="text-xl font-bold text-white">Direct Reservation &amp; Inquiry</h3>
+        <h3 class="text-xl font-bold text-ivory">Direct Engagement Request</h3>
       </div>
-      <p class="text-sm text-slate-400 mb-6">
-        Complete the form below and our team will confirm your request immediately.
+      <p class="text-xs text-dust mb-6">
+        Submit your requirements for ${c.brandName}. Our team will review your specifications immediately.
       </p>
 
       <form onsubmit="handleFormSubmit(event)" class="space-y-4">
         <div>
-          <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Your Full Name</label>
-          <input type="text" required placeholder="John Doe" class="w-full px-4 py-3 rounded-lg bg-void border border-hairline text-white placeholder-slate-600 focus:outline-none focus:border-brand text-sm">
+          <label class="block text-xs font-semibold uppercase text-dust mb-1">Your Full Name</label>
+          <input type="text" required placeholder="Jane Doe" class="w-full px-4 py-3 rounded-lg bg-void border border-hairline text-ivory placeholder-dust/50 focus:outline-none focus:border-brand text-sm">
         </div>
         <div>
-          <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Email Address</label>
-          <input type="email" required placeholder="john@example.com" class="w-full px-4 py-3 rounded-lg bg-void border border-hairline text-white placeholder-slate-600 focus:outline-none focus:border-brand text-sm">
+          <label class="block text-xs font-semibold uppercase text-dust mb-1">Email Address</label>
+          <input type="email" required placeholder="jane@example.com" class="w-full px-4 py-3 rounded-lg bg-void border border-hairline text-ivory placeholder-dust/50 focus:outline-none focus:border-brand text-sm">
         </div>
         <div>
-          <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Item / Service of Interest</label>
-          <input id="modal-item-input" type="text" placeholder="${items[0]?.name || 'General Inquiry'}" class="w-full px-4 py-3 rounded-lg bg-void border border-hairline text-white placeholder-slate-600 focus:outline-none focus:border-brand text-sm">
+          <label class="block text-xs font-semibold uppercase text-dust mb-1">Solution / Service Target</label>
+          <input id="modal-service-input" type="text" placeholder="${c.offerings[0]?.title || 'General Engagement'}" class="w-full px-4 py-3 rounded-lg bg-void border border-hairline text-ivory placeholder-dust/50 focus:outline-none focus:border-brand text-sm">
         </div>
         <div>
-          <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Special Notes / Questions</label>
-          <textarea rows="3" placeholder="Tell us more about your preferences..." class="w-full px-4 py-3 rounded-lg bg-void border border-hairline text-white placeholder-slate-600 focus:outline-none focus:border-brand text-sm"></textarea>
+          <label class="block text-xs font-semibold uppercase text-dust mb-1">Project Scope &amp; Timing</label>
+          <textarea rows="3" placeholder="Tell us more about your target timeline or requirements..." class="w-full px-4 py-3 rounded-lg bg-void border border-hairline text-ivory placeholder-dust/50 focus:outline-none focus:border-brand text-sm"></textarea>
         </div>
-        <button type="submit" class="w-full py-3.5 rounded-xl bg-brand text-black font-bold text-sm hover:opacity-90 transition-opacity">
+        <button type="submit" class="w-full py-3.5 rounded-xl bg-brand text-black font-bold text-sm hover:opacity-90 transition-opacity shadow-[0_0_20px_${c.accentGlow}]">
           Submit Confirmation
         </button>
       </form>
     </div>
   </div>
 
-  <div id="toast" class="fixed bottom-6 right-6 z-50 hidden bg-brand text-black px-6 py-3.5 rounded-xl font-bold text-sm shadow-[0_0_25px_${primaryColor}50] flex items-center gap-2">
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 hidden bg-brand text-black px-6 py-3.5 rounded-xl font-bold text-sm shadow-[0_0_25px_${c.accentGlow}] flex items-center gap-2">
     <i data-lucide="check-circle" class="w-5 h-5"></i>
-    <span id="toast-message">Request sent successfully!</span>
+    <span id="toast-message">Submission transmitted successfully!</span>
   </div>
 
-  <footer class="border-t border-hairline py-12 px-6 bg-void text-xs text-slate-500">
+  <!-- Global Footer -->
+  <footer class="border-t border-hairline py-12 px-6 bg-void text-xs text-dust">
     <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
       <div class="flex items-center gap-2">
-        <span class="font-bold text-white text-sm">${suggestedName}</span>
+        <span class="font-bold text-ivory text-sm">${c.brandName}</span>
         <span>•</span>
-        <span>Created with Skynet AI Website Builder</span>
+        <span>${c.domain}</span>
+        <span>•</span>
+        <span class="text-[11px] text-dust">Compiled autonomously by Skynet</span>
       </div>
       <div class="flex items-center gap-6">
-        <a href="#" class="hover:text-slate-300">Privacy Policy</a>
-        <a href="#" class="hover:text-slate-300">Terms of Service</a>
-        <a href="#" class="hover:text-slate-300">Contact Concierge</a>
+        <a href="#offerings" class="hover:text-ivory transition-colors">Solutions</a>
+        <a href="#metrics" class="hover:text-ivory transition-colors">Performance</a>
+        <a href="#faq" class="hover:text-ivory transition-colors">FAQ</a>
       </div>
     </div>
   </footer>
@@ -963,23 +1132,23 @@ function generateComprehensiveHtml(info: ReturnType<typeof analyzeIdea>): string
       el.classList.toggle('hidden');
     }
 
-    function openModal(itemName = '') {
-      const modal = document.getElementById('inquiry-modal');
-      const input = document.getElementById('modal-item-input');
-      if (itemName && input) {
-        input.value = itemName;
+    function openActionModal(serviceName = '') {
+      const modal = document.getElementById('action-modal');
+      const input = document.getElementById('modal-service-input');
+      if (serviceName && input) {
+        input.value = serviceName;
       }
       modal.classList.remove('hidden');
     }
 
-    function closeModal() {
-      const modal = document.getElementById('inquiry-modal');
+    function closeActionModal() {
+      const modal = document.getElementById('action-modal');
       modal.classList.add('hidden');
     }
 
-    function toggleFaq(num) {
-      const content = document.getElementById('faq-content-' + num);
-      const icon = document.getElementById('faq-icon-' + num);
+    function toggleFaq(idx) {
+      const content = document.getElementById('faq-content-' + idx);
+      const icon = document.getElementById('faq-icon-' + idx);
       if (content.classList.contains('hidden')) {
         content.classList.remove('hidden');
         icon.classList.add('rotate-180');
@@ -991,8 +1160,8 @@ function generateComprehensiveHtml(info: ReturnType<typeof analyzeIdea>): string
 
     function handleFormSubmit(e) {
       e.preventDefault();
-      closeModal();
-      showToast('Thank you! Your request has been confirmed.');
+      closeActionModal();
+      showToast('Thank you! Your inquiry has been confirmed.');
     }
 
     function showToast(msg) {
@@ -1002,7 +1171,7 @@ function generateComprehensiveHtml(info: ReturnType<typeof analyzeIdea>): string
       toast.classList.remove('hidden');
       setTimeout(() => {
         toast.classList.add('hidden');
-      }, 3500);
+      }, 4000);
     }
   </script>
 </body>

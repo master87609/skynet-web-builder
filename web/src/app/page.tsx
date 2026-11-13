@@ -7,10 +7,10 @@ import { Zap, Check, Sparkles, Rocket, Pencil, ArrowRight } from "lucide-react"
 import { me, createProject } from "@/lib/api"
 
 const EXAMPLE_PROMPTS = [
-  "Artisan Sourdough Bakery with daily fresh loaves, pastry catalog, and online preorder pickup",
-  "High-performance SaaS developer telemetry platform with interactive feature cards and pricing tiers",
-  "Minimalist Architecture & Interior Design Studio with project portfolio and consultation booking",
-  "Boutique Japanese Roastery with single-origin beans, tasting notes, and coffee subscription club",
+  "Boutique Japanese Roastery in Kyoto with single-origin beans, tasting notes, and coffee subscription club",
+  "High-performance developer telemetry platform with interactive incident metrics and pricing tiers",
+  "Minimalist Architecture Studio in Zurich with residential project portfolio and consultation booking",
+  "Cybersecurity Threat Defense firm specializing in cloud infrastructure audits and incident response",
 ]
 
 export default function HomePage() {
@@ -29,7 +29,7 @@ export default function HomePage() {
           setUser(res.data.user)
         }
       } catch {
-        // not logged in — stay on landing
+        // not logged in
       }
     })()
   }, [])
@@ -45,7 +45,7 @@ export default function HomePage() {
       setStatus("ok")
       const id = res.data?.projectId
       setMessage(
-        `Project "${id}" created. Launching 13 specialist AI departments...`,
+        `Project created. 13 specialist AI departments are now building your site.`,
       )
       setBrief("")
       setTimeout(() => {
@@ -54,7 +54,7 @@ export default function HomePage() {
         } else {
           router.push(`/dashboard`)
         }
-      }, 1000)
+      }, 900)
     } catch (err) {
       setStatus("error")
       setMessage(err instanceof Error ? err.message : "Something went wrong")
@@ -73,17 +73,12 @@ export default function HomePage() {
           <div className="dust-layer dust-near" />
         </div>
 
-        <div className="relative z-10 max-w-5xl mx-auto px-4 pt-24 pb-16 md:pt-32 md:pb-20">
+        <div className="relative z-10 max-w-5xl mx-auto px-4 pt-24 pb-16 md:pt-32 md:pb-24">
           <div className="max-w-4xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-skynet-border bg-skynet-surface text-skynet-amber text-xs font-medium mb-6">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Multi-Agent Autonomous Web Creator</span>
-            </div>
-
             <h1 className="text-5xl md:text-7xl font-bold text-skynet-ivory text-balance tracking-[-0.03em] leading-[1.05] mb-8">
               Build your website by describing it.
             </h1>
-            <p className="text-lg text-skynet-dust max-w-2xl leading-relaxed mb-10">
+            <p className="text-lg md:text-xl text-skynet-dust max-w-2xl leading-relaxed mb-10">
               Type your idea in plain language. A team of 13 specialist AI agents researches, plans, designs, codes, tests, secures, and deploys a production website for you.
             </p>
 
@@ -94,17 +89,17 @@ export default function HomePage() {
                 </label>
                 <textarea
                   id="brief"
-                  className="block w-full px-4 py-3 rounded-md bg-transparent border border-skynet-border text-skynet-ivory placeholder-skynet-dust-sm focus:border-skynet-amber focus:ring-1 focus:ring-skynet-amber transition-colors"
+                  className="block w-full px-4 py-3 rounded-md bg-transparent border border-skynet-border text-skynet-ivory placeholder-skynet-dust-sm focus:border-skynet-amber focus:ring-1 focus:ring-skynet-amber transition-colors text-base"
                   rows={3}
-                  placeholder="e.g. A bakery website with online ordering and a photo gallery"
+                  placeholder="e.g. A boutique hotel in Kyoto with room showcase, guest reviews, and online booking inquiry"
                   value={brief}
                   onChange={(e) => setBrief(e.target.value)}
                   disabled={submitting}
                 />
 
                 {/* Example prompt pills */}
-                <div className="space-y-1.5">
-                  <div className="text-[11px] text-skynet-dust uppercase tracking-wider">Try an idea:</div>
+                <div className="space-y-1.5 pt-1">
+                  <div className="text-[11px] text-skynet-dust uppercase tracking-wider">Example concepts:</div>
                   <div className="flex flex-wrap gap-2">
                     {EXAMPLE_PROMPTS.map((prompt, i) => (
                       <button
@@ -113,7 +108,7 @@ export default function HomePage() {
                         onClick={() => setBrief(prompt)}
                         className="text-left text-xs px-2.5 py-1 rounded-md bg-skynet-surface hover:bg-skynet-surface-hover border border-skynet-border text-skynet-dust hover:text-skynet-ivory transition-colors line-clamp-1"
                       >
-                        {prompt.split(" with ")[0]}...
+                        {prompt.split(" with ")[0]}
                       </button>
                     ))}
                   </div>
@@ -124,7 +119,7 @@ export default function HomePage() {
                   disabled={submitting || !brief.trim()}
                   className="btn-primary mt-4 disabled:opacity-50 disabled:pointer-events-none flex items-center gap-2"
                 >
-                  <span>{submitting ? "Deploying Agents…" : "Build my website"}</span>
+                  <span>{submitting ? "Launching Agents…" : "Build my website"}</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </form>
@@ -142,15 +137,14 @@ export default function HomePage() {
                   </Link>
                 </div>
 
-                {/* Example prompt preview pills */}
                 <div className="pt-4 border-t border-skynet-border/50">
-                  <div className="text-[11px] text-skynet-dust uppercase tracking-wider mb-2">Example prompts:</div>
+                  <div className="text-[11px] text-skynet-dust uppercase tracking-wider mb-2">Example concepts:</div>
                   <div className="flex flex-wrap gap-2">
                     {EXAMPLE_PROMPTS.map((prompt, i) => (
                       <Link
                         key={i}
                         href="/login"
-                        className="text-xs px-3 py-1 rounded-md bg-skynet-surface hover:border-skynet-amber border border-skynet-border text-skynet-dust hover:text-skynet-ivory transition-colors"
+                        className="text-xs px-3 py-1.5 rounded-md bg-skynet-surface hover:border-skynet-amber border border-skynet-border text-skynet-dust hover:text-skynet-ivory transition-colors"
                       >
                         {prompt.split(" with ")[0]}
                       </Link>
@@ -177,7 +171,7 @@ export default function HomePage() {
       </div>
 
       {/* How it works */}
-      <div className="relative max-w-5xl mx-auto px-4 pt-10 pb-24 md:pt-12">
+      <div className="relative max-w-5xl mx-auto px-4 pt-12 pb-24">
         <h2 className="text-3xl md:text-4xl font-semibold text-skynet-ivory tracking-[-0.03em]">
           How Skynet works
         </h2>
@@ -186,7 +180,7 @@ export default function HomePage() {
             n="01"
             icon={<Sparkles className="w-4 h-4" />}
             title="Describe your vision"
-            description="Type what you want in ordinary language. No wireframes, coding, or technical jargon needed."
+            description="Type what you want in plain words. No wireframes, design tools, or server setup needed."
           />
           <Step
             n="02"
@@ -203,7 +197,7 @@ export default function HomePage() {
         </ol>
       </div>
 
-      {/* Trust Row */}
+      {/* Trust row */}
       <div className="relative py-16 border-t border-skynet-border/50">
         <div className="max-w-5xl mx-auto px-4">
           <ul className="flex flex-col sm:flex-row gap-6 sm:gap-12 justify-center">
@@ -221,10 +215,10 @@ export default function HomePage() {
           <div className="flex items-center gap-2">
             <span className="font-bold text-skynet-ivory text-sm">Skynet</span>
             <span>•</span>
-            <span>Multi-agent website generation engine</span>
+            <span>Multi-agent autonomous website platform</span>
           </div>
           <div className="flex items-center gap-4 text-skynet-dust">
-            <span>Built with Next.js 14 &amp; Google Gemini</span>
+            <span>Powered by Next.js 14 &amp; Google Gemini</span>
           </div>
         </div>
       </footer>

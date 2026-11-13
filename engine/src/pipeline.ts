@@ -16,6 +16,8 @@ export interface PipelineEvent {
   timestamp: string
 }
 
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
 export class BuildPipeline extends EventEmitter {
   private activeBuilds = new Set<string>()
   private eventHistory = new Map<string, PipelineEvent[]>()
@@ -37,7 +39,7 @@ export class BuildPipeline extends EventEmitter {
   }
 
   /**
-   * Run the full multi-agent pipeline across all 13 departments in dependency order.
+   * Run the full multi-agent pipeline across all 13 departments in strict dependency order.
    */
   public async run(projectId: string): Promise<void> {
     if (this.activeBuilds.has(projectId)) {
@@ -61,7 +63,7 @@ export class BuildPipeline extends EventEmitter {
       this.emitPipelineEvent({
         type: "init",
         projectId,
-        message: `Skynet chief orchestrator initiated build for "${projectId}".`,
+        message: `Skynet Chief Orchestrator initiated build pipeline for project "${projectId}".`,
         timestamp: new Date().toISOString(),
       })
 
@@ -81,17 +83,34 @@ export class BuildPipeline extends EventEmitter {
           department: dept,
           phaseIndex: i + 1,
           totalPhases: DEPENDENCY_ORDER.length,
-          message: `Department [${dept}] active. Generating domain deliverables...`,
+          message: `Department [${dept}] active. Commencing workstream...`,
           timestamp: new Date().toISOString(),
         })
 
-        // Execute agent for this department
-        const result = await runDepartmentAgent(dept as DepartmentName, {
-          brief: state.brief,
-          previousArtifacts,
-        })
+        // Realistic agent work pacing
+        await delay(350)
 
-        // Persist generated artifacts
+        const emitLog = (msg: string) => {
+          this.emitPipelineEvent({
+            type: "log",
+            projectId,
+            department: dept,
+            message: msg,
+            timestamp: new Date().toISOString(),
+          })
+        }
+
+        // Execute agent
+        const result = await runDepartmentAgent(
+          dept as DepartmentName,
+          {
+            brief: state.brief,
+            previousArtifacts,
+          },
+          emitLog
+        )
+
+        // Persist artifacts
         for (const art of result.artifacts) {
           await projectStore.writeFile(projectId, art.path, art.content)
           await projectStore.addArtifact(
@@ -112,7 +131,7 @@ export class BuildPipeline extends EventEmitter {
             projectId,
             department: dept,
             path: art.path,
-            message: `Artifact generated: ${art.path}`,
+            message: `Artifact authored: ${art.path}`,
             timestamp: new Date().toISOString(),
           })
         }
@@ -121,6 +140,8 @@ export class BuildPipeline extends EventEmitter {
         await projectStore.updateState(projectId, {
           completedPhases: [...completedPhases],
         })
+
+        await delay(250)
 
         this.emitPipelineEvent({
           type: "phase_complete",
@@ -142,7 +163,7 @@ export class BuildPipeline extends EventEmitter {
         type: "build_complete",
         projectId,
         previewUrl: `/projects/${projectId}/preview`,
-        message: `Website build successfully completed by all 13 departments!`,
+        message: `Website compilation complete! All 13 specialist departments delivered approved outputs.`,
         timestamp: new Date().toISOString(),
       })
     } catch (err) {

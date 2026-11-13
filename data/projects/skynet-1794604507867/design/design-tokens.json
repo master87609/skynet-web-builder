@@ -1,0 +1,18 @@
+{
+  "name": "Nova",
+  "colors": {
+    "brand": "#F59E0B",
+    "brandDark": "#1E293B",
+    "background": "#0A0A0A",
+    "surface": "#141414",
+    "border": "#282828",
+    "text": "#F8FAFC"
+  },
+  "typography": {
+    "font": "Plus Jakarta Sans, system-ui, sans-serif"
+  },
+  "radii": {
+    "button": "8px",
+    "card": "16px"
+  }
+}

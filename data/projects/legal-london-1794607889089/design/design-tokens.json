@@ -1,0 +1,30 @@
+{
+  "brand": "Sterling & Vance LLP",
+  "domain": "Legal Counsel & Advocacy",
+  "palette": {
+    "primary": "#D97706",
+    "secondary": "#78350F",
+    "accentGlow": "rgba(217, 119, 6, 0.3)",
+    "voidGround": "#0A0A0A",
+    "surfacePanel": "#141414",
+    "surfaceHover": "#1F1F1F",
+    "hairlineBorder": "#2E2E2E",
+    "textPrimary": "#F8FAFC",
+    "textMuted": "#94A3B8"
+  },
+  "typography": {
+    "display": "Plus Jakarta Sans, system-ui, sans-serif",
+    "weights": [
+      400,
+      500,
+      600,
+      700,
+      800
+    ]
+  },
+  "radii": {
+    "control": "8px",
+    "card": "16px",
+    "pill": "9999px"
+  }
+}
