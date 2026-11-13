@@ -1,0 +1,19 @@
+{
+  "id": "skynet-1794483253131",
+  "ownerId": "user-1794483252889",
+  "brief": "A portfolio site for my photography with a contact form",
+  "status": "todo",
+  "currentPhase": "intake",
+  "completedPhases": [],
+  "artifacts": [
+    {
+      "owner": "skynet-master",
+      "phase": "delegation",
+      "status": "review",
+      "updated": "2026-11-12T12:11:36.577Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794483253131/delegations/requirements-analysis.md"
+    }
+  ],
+  "createdAt": "2026-11-12T11:34:13.131Z",
+  "updatedAt": "2026-11-12T12:11:36.577Z"
+}

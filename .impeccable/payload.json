@@ -1,0 +1,113 @@
+{
+  "title": "Choose the visual world",
+  "question": "Safer register — pick your direction. My grounded candidates at the conventional end, plus the category standard measured against named competitors.",
+  "options": [
+    {
+      "id": "cracktro-safe",
+      "kind": "grounded",
+      "label": "Cracktro Scroller — Approachable",
+      "kicker": "GROUND 1",
+      "lineage": "ivory bitmap text on emissive black void, softened for non-coders",
+      "thesis": "Emissive black void with one signal amber accent; readable type (not bitmap) rides clean baselines; depth is brightness and letterspacing, not jargon.",
+      "palette": [
+        "#0A0A0A",
+        "#FFFFFF",
+        "#F0F0F0",
+        "#FFB900"
+      ],
+      "materials": [
+        "emissive black void",
+        "four dust neutrals ash to ivory",
+        "signal amber for active state"
+      ],
+      "viewport": "A black void with clear white copy, one amber CTA button, and a gentle drift of neutral dust behind the content — nothing technical, no terminal.",
+      "risk": "Still risks reading edgy; the copy and button must sell 'no code' unambiguously.",
+      "comp": ".impeccable/mocks/decision/cracktro-safe.webp",
+      "hero": "https://impeccable.style/worlds/cards/operate-c-cracktro-scroller-queue-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/operate-c-cracktro-scroller-queue.webp"
+    },
+    {
+      "id": "editorial-dark",
+      "kind": "grounded",
+      "label": "Editorial Dark",
+      "kicker": "GROUND 2",
+      "lineage": "broadsheet editorial at full craft, dark register",
+      "thesis": "Near-black ground, off-white body text, one restrained accent; serif display at hero scale, body set in a measured 65–75ch column.",
+      "palette": [
+        "#0B0B0B",
+        "#F0F0F0",
+        "#888888",
+        "#DC2626"
+      ],
+      "materials": [
+        "near-black paper",
+        "off-white ink",
+        "serif display face",
+        "one restrained accent"
+      ],
+      "viewport": "A hero with serif display headline and a single primary button; sections below keep steady vertical rhythm, no competing elements.",
+      "risk": "Reads like a magazine, not a builder; needs the primary action to feel like software.",
+      "comp": ".impeccable/mocks/decision/editorial-dark.webp",
+      "hero": null,
+      "board": null
+    },
+    {
+      "id": "clean-slate",
+      "kind": "grounded",
+      "label": "Clean Slate",
+      "kicker": "GROUND 3",
+      "lineage": "modern no-code builder at full craft",
+      "thesis": "White ground, slate-900 text, indigo primary; geometric sans, generous negative space, every section one clear idea.",
+      "palette": [
+        "#FFFFFF",
+        "#0F172A",
+        "#334155",
+        "#4F46E5"
+      ],
+      "materials": [
+        "white paper",
+        "slate-900 ink",
+        "indigo primary",
+        "geometric sans"
+      ],
+      "viewport": "Hero headline over subcopy and one primary button; feature sections as single cards with steady rhythm, nothing competing for attention.",
+      "risk": "Indistinguishable from Wix/Squarespace/Webflow at a glance.",
+      "comp": ".impeccable/mocks/decision/clean-slate.webp",
+      "hero": null,
+      "board": null
+    }
+  ],
+  "reroll": {
+    "registers": [
+      "safer",
+      "bolder"
+    ]
+  },
+  "buildPath": {
+    "value": "comp",
+    "toggle": true
+  },
+  "canon": true,
+  "canonCard": {
+    "kind": "canon",
+    "label": "The category standard",
+    "thesis": "What this category ships, executed impeccably — measured against Wix, Squarespace, Webflow.",
+    "palette": [
+      "#ffffff",
+      "#111827",
+      "#2563eb"
+    ],
+    "materials": [
+      "clean grid",
+      "product photography"
+    ],
+    "viewport": "Headline over subcopy and a primary button; feature cards below; the arrangement every visitor expects.",
+    "risk": "Indistinguishable from the competition by design.",
+    "comp": ".impeccable/mocks/decision/canon.webp",
+    "competitors": [
+      "Wix",
+      "Squarespace",
+      "Webflow"
+    ]
+  }
+}

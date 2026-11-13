@@ -1,0 +1,152 @@
+{
+  "id": "test-bakery-1794600765830",
+  "ownerId": "user-test",
+  "brief": "Artisan bakery in Brooklyn with fresh sourdough loaves, pastries, and online preorder pickup",
+  "status": "done",
+  "currentPhase": "done",
+  "completedPhases": [
+    "requirements-analysis",
+    "product-strategist",
+    "ux-architect",
+    "ui-design",
+    "database-architect",
+    "backend",
+    "frontend",
+    "content-writer",
+    "qa-tester",
+    "security-auditor",
+    "seo-specialist",
+    "project-manager",
+    "devops"
+  ],
+  "artifacts": [
+    {
+      "owner": "requirements-analysis",
+      "phase": "requirements-analysis",
+      "status": "approved",
+      "updated": "2026-11-13T20:12:45.836Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/test-bakery-1794600765830/requirements.md"
+    },
+    {
+      "owner": "requirements-analysis",
+      "phase": "requirements-analysis",
+      "status": "approved",
+      "updated": "2026-11-13T20:12:45.836Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/test-bakery-1794600765830/user-stories.md"
+    },
+    {
+      "owner": "product-strategist",
+      "phase": "product-strategist",
+      "status": "approved",
+      "updated": "2026-11-13T20:12:45.838Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/test-bakery-1794600765830/business-plan.md"
+    },
+    {
+      "owner": "product-strategist",
+      "phase": "product-strategist",
+      "status": "approved",
+      "updated": "2026-11-13T20:12:45.843Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/test-bakery-1794600765830/mvp-scope.md"
+    },
+    {
+      "owner": "ux-architect",
+      "phase": "ux-architect",
+      "status": "approved",
+      "updated": "2026-11-13T20:12:45.843Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/test-bakery-1794600765830/sitemap.md"
+    },
+    {
+      "owner": "ux-architect",
+      "phase": "ux-architect",
+      "status": "approved",
+      "updated": "2026-11-13T20:12:45.844Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/test-bakery-1794600765830/user-flows.md"
+    },
+    {
+      "owner": "ui-design",
+      "phase": "ui-design",
+      "status": "approved",
+      "updated": "2026-11-13T20:12:45.844Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/test-bakery-1794600765830/design/design-tokens.json"
+    },
+    {
+      "owner": "ui-design",
+      "phase": "ui-design",
+      "status": "approved",
+      "updated": "2026-11-13T20:12:45.845Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/test-bakery-1794600765830/design/component-specs.md"
+    },
+    {
+      "owner": "database-architect",
+      "phase": "database-architect",
+      "status": "approved",
+      "updated": "2026-11-13T20:12:45.845Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/test-bakery-1794600765830/data/data-model.md"
+    },
+    {
+      "owner": "backend",
+      "phase": "backend",
+      "status": "approved",
+      "updated": "2026-11-13T20:12:45.846Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/test-bakery-1794600765830/code/api-contract.md"
+    },
+    {
+      "owner": "frontend",
+      "phase": "frontend",
+      "status": "approved",
+      "updated": "2026-11-13T20:12:45.847Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/test-bakery-1794600765830/code/index.html"
+    },
+    {
+      "owner": "content-writer",
+      "phase": "content-writer",
+      "status": "approved",
+      "updated": "2026-11-13T20:12:45.847Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/test-bakery-1794600765830/content/brand-voice.md"
+    },
+    {
+      "owner": "content-writer",
+      "phase": "content-writer",
+      "status": "approved",
+      "updated": "2026-11-13T20:12:45.848Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/test-bakery-1794600765830/content/copy-review.md"
+    },
+    {
+      "owner": "qa-tester",
+      "phase": "qa-tester",
+      "status": "approved",
+      "updated": "2026-11-13T20:12:45.848Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/test-bakery-1794600765830/reports/qa.md"
+    },
+    {
+      "owner": "security-auditor",
+      "phase": "security-auditor",
+      "status": "approved",
+      "updated": "2026-11-13T20:12:45.849Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/test-bakery-1794600765830/reports/security.md"
+    },
+    {
+      "owner": "seo-specialist",
+      "phase": "seo-specialist",
+      "status": "approved",
+      "updated": "2026-11-13T20:12:45.850Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/test-bakery-1794600765830/reports/seo.md"
+    },
+    {
+      "owner": "project-manager",
+      "phase": "project-manager",
+      "status": "approved",
+      "updated": "2026-11-13T20:12:45.851Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/test-bakery-1794600765830/status.md"
+    },
+    {
+      "owner": "devops",
+      "phase": "devops",
+      "status": "approved",
+      "updated": "2026-11-13T20:12:45.852Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/test-bakery-1794600765830/deploy-ready.md"
+    }
+  ],
+  "createdAt": "2026-11-13T20:12:45.833Z",
+  "updatedAt": "2026-11-13T20:12:45.852Z"
+}

@@ -1,0 +1,514 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-12T12:09:01.008Z",
+  "title": "Design System: Skynet",
+  "extensions": {
+    "colorMeta": {
+      "void": {
+        "role": "neutral",
+        "displayName": "Void",
+        "canonical": "oklch(14.5% 0.0000 89.9)",
+        "tonalRamp": [
+          "oklch(15.0% 0.0000 89.9)",
+          "oklch(26.0% 0.0000 89.9)",
+          "oklch(38.0% 0.0000 89.9)",
+          "oklch(50.0% 0.0000 89.9)",
+          "oklch(62.0% 0.0000 89.9)",
+          "oklch(73.0% 0.0000 89.9)",
+          "oklch(84.0% 0.0000 89.9)",
+          "oklch(95.0% 0.0000 89.9)"
+        ],
+        "purpose": "The page ground; body, nav scrim, scrollbar track, nested rows."
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface",
+        "canonical": "oklch(19.1% 0.0000 89.9)",
+        "tonalRamp": [
+          "oklch(15.0% 0.0000 89.9)",
+          "oklch(26.0% 0.0000 89.9)",
+          "oklch(38.0% 0.0000 89.9)",
+          "oklch(50.0% 0.0000 89.9)",
+          "oklch(62.0% 0.0000 89.9)",
+          "oklch(73.0% 0.0000 89.9)",
+          "oklch(84.0% 0.0000 89.9)",
+          "oklch(95.0% 0.0000 89.9)"
+        ],
+        "purpose": "Cards, panels, small controls; first brightness step above void."
+      },
+      "surface-hover": {
+        "role": "neutral",
+        "displayName": "Surface Hover",
+        "canonical": "oklch(23.9% 0.0000 89.9)",
+        "tonalRamp": [
+          "oklch(15.0% 0.0000 89.9)",
+          "oklch(26.0% 0.0000 89.9)",
+          "oklch(38.0% 0.0000 89.9)",
+          "oklch(50.0% 0.0000 89.9)",
+          "oklch(62.0% 0.0000 89.9)",
+          "oklch(73.0% 0.0000 89.9)",
+          "oklch(84.0% 0.0000 89.9)",
+          "oklch(95.0% 0.0000 89.9)"
+        ],
+        "purpose": "Hover fill for cards, ghost buttons and small controls."
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "oklch(30.1% 0.0000 89.9)",
+        "tonalRamp": [
+          "oklch(15.0% 0.0000 89.9)",
+          "oklch(26.0% 0.0000 89.9)",
+          "oklch(38.0% 0.0000 89.9)",
+          "oklch(50.0% 0.0000 89.9)",
+          "oklch(62.0% 0.0000 89.9)",
+          "oklch(73.0% 0.0000 89.9)",
+          "oklch(84.0% 0.0000 89.9)",
+          "oklch(95.0% 0.0000 89.9)"
+        ],
+        "purpose": "1px stroke on inputs and small controls only."
+      },
+      "dust": {
+        "role": "neutral",
+        "displayName": "Dust",
+        "canonical": "oklch(68.6% 0.0000 89.9)",
+        "tonalRamp": [
+          "oklch(15.0% 0.0000 89.9)",
+          "oklch(26.0% 0.0000 89.9)",
+          "oklch(38.0% 0.0000 89.9)",
+          "oklch(50.0% 0.0000 89.9)",
+          "oklch(62.0% 0.0000 89.9)",
+          "oklch(73.0% 0.0000 89.9)",
+          "oklch(84.0% 0.0000 89.9)",
+          "oklch(95.0% 0.0000 89.9)"
+        ],
+        "purpose": "Secondary text and icons; 7.04:1 on void."
+      },
+      "dust-light": {
+        "role": "neutral",
+        "displayName": "Dust Light",
+        "canonical": "oklch(77.3% 0.0000 89.9)",
+        "tonalRamp": [
+          "oklch(15.0% 0.0000 89.9)",
+          "oklch(26.0% 0.0000 89.9)",
+          "oklch(38.0% 0.0000 89.9)",
+          "oklch(50.0% 0.0000 89.9)",
+          "oklch(62.0% 0.0000 89.9)",
+          "oklch(73.0% 0.0000 89.9)",
+          "oklch(84.0% 0.0000 89.9)",
+          "oklch(95.0% 0.0000 89.9)"
+        ],
+        "purpose": "Placeholders, meta lines, small status copy; 9.66:1 on void."
+      },
+      "ivory": {
+        "role": "neutral",
+        "displayName": "Ivory",
+        "canonical": "oklch(95.5% 0.0000 89.9)",
+        "tonalRamp": [
+          "oklch(15.0% 0.0000 89.9)",
+          "oklch(26.0% 0.0000 89.9)",
+          "oklch(38.0% 0.0000 89.9)",
+          "oklch(50.0% 0.0000 89.9)",
+          "oklch(62.0% 0.0000 89.9)",
+          "oklch(73.0% 0.0000 89.9)",
+          "oklch(84.0% 0.0000 89.9)",
+          "oklch(95.0% 0.0000 89.9)"
+        ],
+        "purpose": "Primary text and all headlines; 17.37:1 on void."
+      },
+      "white": {
+        "role": "neutral",
+        "displayName": "White",
+        "canonical": "oklch(100.0% 0.0000 89.9)",
+        "tonalRamp": [
+          "oklch(15.0% 0.0000 89.9)",
+          "oklch(26.0% 0.0000 89.9)",
+          "oklch(38.0% 0.0000 89.9)",
+          "oklch(50.0% 0.0000 89.9)",
+          "oklch(62.0% 0.0000 89.9)",
+          "oklch(73.0% 0.0000 89.9)",
+          "oklch(84.0% 0.0000 89.9)",
+          "oklch(95.0% 0.0000 89.9)"
+        ],
+        "purpose": "Top of the neutral ramp; rare true-white emphasis."
+      },
+      "signal-amber": {
+        "role": "primary",
+        "displayName": "Signal Amber",
+        "canonical": "oklch(82.9% 0.1712 81.0)",
+        "tonalRamp": [
+          "oklch(15.0% 0.0983 81.0)",
+          "oklch(26.0% 0.1527 81.0)",
+          "oklch(38.0% 0.1712 81.0)",
+          "oklch(50.0% 0.1712 81.0)",
+          "oklch(62.0% 0.1712 81.0)",
+          "oklch(73.0% 0.1663 81.0)",
+          "oklch(84.0% 0.1094 81.0)",
+          "oklch(95.0% 0.0432 81.0)"
+        ],
+        "purpose": "The only saturated colour: primary CTA, focus ring, caret, selection, active state."
+      },
+      "signal-amber-deep": {
+        "role": "primary",
+        "displayName": "Deep Signal",
+        "canonical": "oklch(76.3% 0.1565 84.4)",
+        "tonalRamp": [
+          "oklch(15.0% 0.0899 84.4)",
+          "oklch(26.0% 0.1396 84.4)",
+          "oklch(38.0% 0.1565 84.4)",
+          "oklch(50.0% 0.1565 84.4)",
+          "oklch(62.0% 0.1565 84.4)",
+          "oklch(73.0% 0.1520 84.4)",
+          "oklch(84.0% 0.1000 84.4)",
+          "oklch(95.0% 0.0394 84.4)"
+        ],
+        "purpose": "The amber fill one step down; primary button hover/press."
+      },
+      "signal-amber-bright": {
+        "role": "primary",
+        "displayName": "Bright Signal",
+        "canonical": "oklch(88.0% 0.1535 89.8)",
+        "tonalRamp": [
+          "oklch(15.0% 0.0882 89.8)",
+          "oklch(26.0% 0.1369 89.8)",
+          "oklch(38.0% 0.1535 89.8)",
+          "oklch(50.0% 0.1535 89.8)",
+          "oklch(62.0% 0.1535 89.8)",
+          "oklch(73.0% 0.1491 89.8)",
+          "oklch(84.0% 0.0981 89.8)",
+          "oklch(95.0% 0.0387 89.8)"
+        ],
+        "purpose": "The amber one step up; link hover."
+      },
+      "success": {
+        "role": "status",
+        "displayName": "Success",
+        "canonical": "oklch(80.0% 0.1821 151.7)",
+        "tonalRamp": [
+          "oklch(15.0% 0.1046 151.7)",
+          "oklch(26.0% 0.1624 151.7)",
+          "oklch(38.0% 0.1821 151.7)",
+          "oklch(50.0% 0.1821 151.7)",
+          "oklch(62.0% 0.1821 151.7)",
+          "oklch(73.0% 0.1768 151.7)",
+          "oklch(84.0% 0.1164 151.7)",
+          "oklch(95.0% 0.0459 151.7)"
+        ],
+        "purpose": "A live, deployed or approved state — the Live pill dot, an approved gate, a passed deploy gate."
+      },
+      "warning": {
+        "role": "status",
+        "displayName": "Warning",
+        "canonical": "oklch(86.1% 0.1731 91.9)",
+        "tonalRamp": [
+          "oklch(15.0% 0.0994 91.9)",
+          "oklch(26.0% 0.1544 91.9)",
+          "oklch(38.0% 0.1731 91.9)",
+          "oklch(50.0% 0.1731 91.9)",
+          "oklch(62.0% 0.1731 91.9)",
+          "oklch(73.0% 0.1682 91.9)",
+          "oklch(84.0% 0.1106 91.9)",
+          "oklch(95.0% 0.0436 91.9)"
+        ],
+        "purpose": "A blocked or awaiting-review state."
+      },
+      "error": {
+        "role": "status",
+        "displayName": "Error",
+        "canonical": "oklch(71.1% 0.1661 22.2)",
+        "tonalRamp": [
+          "oklch(15.0% 0.0954 22.2)",
+          "oklch(26.0% 0.1482 22.2)",
+          "oklch(38.0% 0.1661 22.2)",
+          "oklch(50.0% 0.1661 22.2)",
+          "oklch(62.0% 0.1661 22.2)",
+          "oklch(73.0% 0.1614 22.2)",
+          "oklch(84.0% 0.1062 22.2)",
+          "oklch(95.0% 0.0419 22.2)"
+        ],
+        "purpose": "The error role — failed requests and error copy in every form, and the blocked status on the project page."
+      },
+      "scrollbar-thumb": {
+        "role": "neutral",
+        "displayName": "Scrollbar Thumb",
+        "canonical": "oklch(26.9% 0.0000 89.9)",
+        "tonalRamp": [
+          "oklch(15.0% 0.0000 89.9)",
+          "oklch(26.0% 0.0000 89.9)",
+          "oklch(38.0% 0.0000 89.9)",
+          "oklch(50.0% 0.0000 89.9)",
+          "oklch(62.0% 0.0000 89.9)",
+          "oklch(73.0% 0.0000 89.9)",
+          "oklch(84.0% 0.0000 89.9)",
+          "oklch(95.0% 0.0000 89.9)"
+        ],
+        "purpose": "Browser scrollbar thumb on the void track."
+      },
+      "scrollbar-thumb-hover": {
+        "role": "neutral",
+        "displayName": "Scrollbar Thumb Hover",
+        "canonical": "oklch(34.1% 0.0000 89.9)",
+        "tonalRamp": [
+          "oklch(15.0% 0.0000 89.9)",
+          "oklch(26.0% 0.0000 89.9)",
+          "oklch(38.0% 0.0000 89.9)",
+          "oklch(50.0% 0.0000 89.9)",
+          "oklch(62.0% 0.0000 89.9)",
+          "oklch(73.0% 0.0000 89.9)",
+          "oklch(84.0% 0.0000 89.9)",
+          "oklch(95.0% 0.0000 89.9)"
+        ],
+        "purpose": "Scrollbar thumb on hover."
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero headline only — 48px base, 72px at 768px+, weight 700, -0.03em tracking, 1.05 line-height."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Page and section titles — weight 600, 30px base (36px on the homepage section title), -0.03em/-0.02em tracking."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Card, panel and step headings — weight 500, 18px to 24px, -0.01em to -0.02em tracking."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Paragraph and form copy — weight 400, 16px, 1.625 line-height, max 65ch measure."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field labels, buttons, nav links, inline controls — weight 500, 14px, -0.01em tracking. Micro-labels drop to 12px and 10px uppercase with positive tracking."
+      }
+    },
+    "shadows": [
+      {
+        "name": "emission-glow",
+        "value": "0 0 20px rgba(255,185,0,0.35)",
+        "purpose": "The primary button's resting halo — the CTA always looks lit."
+      },
+      {
+        "name": "emission-glow-active",
+        "value": "0 0 30px rgba(255,185,0,0.55)",
+        "purpose": "The primary button on hover, widened as the fill deepens to #E0A800."
+      },
+      {
+        "name": "mark-glow",
+        "value": "0 0 15px rgba(255,185,0,0.4)",
+        "purpose": "The 28px amber brand tile in the nav."
+      },
+      {
+        "name": "mark-glow-lg",
+        "value": "0 0 20px rgba(255,185,0,0.5)",
+        "purpose": "The 40px amber brand tile on the login screen."
+      },
+      {
+        "name": "nav-scrim",
+        "value": "0 8px 30px rgba(0,0,0,0.55)",
+        "purpose": "The fixed header, so scrolled content dissolves under it."
+      },
+      {
+        "name": "floating-panel",
+        "value": "0 0 40px rgba(0,0,0,0.6)",
+        "purpose": "The login card only — the one surface that reads as lifted off the void."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-standard",
+        "value": "cubic-bezier(0, 0, 0.2, 1)",
+        "purpose": "Tailwind ease-out — the default for every state transition in the system."
+      },
+      {
+        "name": "duration-fast",
+        "value": "200ms",
+        "purpose": "Colour transitions on links, inputs and text states."
+      },
+      {
+        "name": "duration-base",
+        "value": "300ms",
+        "purpose": "Buttons, cards, nav chrome and every hover transition."
+      },
+      {
+        "name": "dust-far",
+        "value": "96s linear infinite",
+        "purpose": "Fine, faintest, slowest dust layer on a 26px tile, drifting 78px (3 tiles)."
+      },
+      {
+        "name": "dust-mid",
+        "value": "54s linear infinite",
+        "purpose": "Mid dust layer on a 44px tile, drifting 88px (2 tiles)."
+      },
+      {
+        "name": "dust-near",
+        "value": "31s linear infinite",
+        "purpose": "Coarse, brightest dust layer on a 78px tile, drifting 78px (1 tile)."
+      },
+      {
+        "name": "pulse",
+        "value": "1.6s ease-in-out infinite",
+        "purpose": "The building status dot and loading placeholders."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      },
+      {
+        "name": "2xl",
+        "value": "1536px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single saturated action on a screen: signal amber fill, void text, permanent emission glow.",
+      "html": "<button class=\"ds-btn-primary\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg>Build my website</button>",
+      "css": ".ds-btn-primary {\n  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;\n  padding: 0.75rem 1.5rem; border: none; border-radius: 6px;\n  background: #FFB900; color: #0A0A0A;\n  font-family: var(--font-archivo, system-ui, sans-serif); font-size: 0.875rem; font-weight: 600;\n  line-height: 1.25rem; letter-spacing: -0.02em;\n  cursor: pointer;\n  box-shadow: 0 0 20px rgba(255,185,0,0.35);\n  transition: background 300ms cubic-bezier(0, 0, 0.2, 1), box-shadow 300ms cubic-bezier(0, 0, 0.2, 1), transform 300ms cubic-bezier(0, 0, 0.2, 1);\n}\n.ds-btn-primary:hover { background: #E0A800; box-shadow: 0 0 30px rgba(255,185,0,0.55); transform: translateY(-1px); }\n.ds-btn-primary:active { transform: scale(0.95); }\n.ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px #0A0A0A, 0 0 0 4px #FFB900, 0 0 30px rgba(255,185,0,0.55); }\n.ds-btn-primary:disabled { opacity: 0.5; pointer-events: none; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary action: ivory text on the void with a hairline edge that turns amber on hover.",
+      "html": "<button class=\"ds-btn-ghost\" type=\"button\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"/><path d=\"M12 5v14\"/></svg>Build a new site</button>",
+      "css": ".ds-btn-ghost {\n  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;\n  padding: 0.75rem 1.5rem; border: 1px solid #2E2E2E; border-radius: 6px;\n  background: transparent; color: #F0F0F0;\n  font-family: var(--font-archivo, system-ui, sans-serif); font-size: 0.875rem; font-weight: 500;\n  line-height: 1.25rem; letter-spacing: -0.02em;\n  cursor: pointer;\n  transition: background 300ms cubic-bezier(0, 0, 0.2, 1), border-color 300ms cubic-bezier(0, 0, 0.2, 1), color 300ms cubic-bezier(0, 0, 0.2, 1);\n}\n.ds-btn-ghost:hover { background: #141414; border-color: #FFB900; color: #FFB900; }\n.ds-btn-ghost:focus-visible { outline: none; box-shadow: 0 0 0 2px #0A0A0A, 0 0 0 4px #FFB900; }\n.ds-btn-ghost:disabled { opacity: 0.5; pointer-events: none; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "A container on the void: one brightness step up, 16px corners, no border and no shadow.",
+      "html": "<div class=\"ds-card\"><h3 class=\"ds-card-title\">Start a new website</h3><p class=\"ds-card-body\">Describe the site you want and Skynet's agents build, test, secure and deploy it.</p></div>",
+      "css": ".ds-card {\n  border-radius: 16px; background: #141414; color: #F0F0F0;\n  padding: 1.5rem;\n  font-family: var(--font-archivo, system-ui, sans-serif);\n  transition: background-color 300ms cubic-bezier(0, 0, 0.2, 1);\n}\n.ds-card:hover { background: #1F1F1F; }\n.ds-card-title { margin: 0 0 1.25rem; font-size: 1.125rem; font-weight: 500; letter-spacing: -0.01em; color: #F0F0F0; }\n.ds-card-body { margin: 0; font-size: 0.875rem; line-height: 1.625; color: #9A9A9A; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Label above, hairline stroke, transparent fill; the border and ring turn amber on focus.",
+      "html": "<div class=\"ds-field\"><label class=\"ds-field-label\" for=\"ds-input-email\">Email address</label><div class=\"ds-field-wrap\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect width=\"20\" height=\"16\"/><path d=\"m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7\"/></svg><input class=\"ds-input\" id=\"ds-input-email\" type=\"email\" placeholder=\"you@example.com\" /></div></div>",
+      "css": ".ds-field { font-family: var(--font-archivo, system-ui, sans-serif); }\n.ds-field-label { display: block; margin-bottom: 0.375rem; font-size: 0.875rem; font-weight: 500; letter-spacing: -0.01em; color: #F0F0F0; }\n.ds-field-wrap { position: relative; }\n.ds-field-wrap svg { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #9A9A9A; }\n.ds-input {\n  display: block; width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem;\n  border: 1px solid #2E2E2E; border-radius: 6px;\n  background: transparent; color: #F0F0F0; caret-color: #FFB900;\n  font-family: var(--font-archivo, system-ui, sans-serif); font-size: 0.875rem; line-height: 1.25rem;\n  transition: border-color 200ms cubic-bezier(0, 0, 0.2, 1), box-shadow 200ms cubic-bezier(0, 0, 0.2, 1);\n}\n.ds-input::placeholder { color: #B5B5B5; }\n.ds-input:focus { outline: none; border-color: #FFB900; box-shadow: 0 0 0 1px #FFB900; }\n.ds-input:focus-visible { outline: none; border-color: #FFB900; box-shadow: 0 0 0 1px #FFB900, 0 0 0 3px #0A0A0A, 0 0 0 5px #FFB900; }\n.ds-input:disabled { opacity: 0.5; }"
+    },
+    {
+      "name": "Navigation",
+      "kind": "nav",
+      "refersTo": "nav-bar",
+      "description": "Fixed 64px chrome: void scrim with a soft shadow, amber brand tile, dust links, and exactly one auth control.",
+      "html": "<nav class=\"ds-nav\"><div class=\"ds-nav-inner\"><a class=\"ds-brand\" href=\"#\"><span class=\"ds-brand-mark\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z\"/><path d=\"M20 3v4\"/><path d=\"M22 5h-4\"/><path d=\"M4 17v2\"/><path d=\"M5 18H3\"/></svg></span><span class=\"ds-brand-name\">Skynet</span></a><div class=\"ds-nav-links\"><a class=\"ds-nav-link\" href=\"#\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect width=\"7\" height=\"9\"/><rect width=\"7\" height=\"5\"/><rect width=\"7\" height=\"9\"/><rect width=\"7\" height=\"5\"/></svg>Dashboard</a><a class=\"ds-nav-link\" href=\"#\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A2 2 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A2 2 0 0 0 11 14z\"/></svg>Build a site</a></div><a class=\"ds-nav-auth\" href=\"#\">Log in</a></div></nav>",
+      "css": ".ds-nav { position: sticky; top: 0; z-index: 50; background: rgba(10,10,10,0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 8px 30px rgba(0,0,0,0.55); font-family: var(--font-archivo, system-ui, sans-serif); }\n.ds-nav-inner { max-width: 64rem; margin: 0 auto; padding: 0 1rem; height: 4rem; display: flex; align-items: center; justify-content: space-between; }\n.ds-brand { display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; }\n.ds-brand-mark { width: 1.75rem; height: 1.75rem; border-radius: 6px; background: #FFB900; color: #0A0A0A; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(255,185,0,0.4); transition: transform 300ms cubic-bezier(0, 0, 0.2, 1); }\n.ds-brand:hover .ds-brand-mark { transform: scale(1.05); }\n.ds-brand-name { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; color: #F0F0F0; transition: color 300ms cubic-bezier(0, 0, 0.2, 1); }\n.ds-brand:hover .ds-brand-name { color: #FFB900; }\n.ds-nav-links { display: flex; align-items: center; gap: 2rem; }\n.ds-nav-link { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; font-weight: 500; color: #9A9A9A; text-decoration: none; transition: color 300ms cubic-bezier(0, 0, 0.2, 1); }\n.ds-nav-link:hover { color: #F0F0F0; }\n.ds-nav-auth { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.375rem 1rem; border: 1px solid #2E2E2E; border-radius: 6px; background: transparent; color: #F0F0F0; font-family: var(--font-archivo, system-ui, sans-serif); font-size: 0.875rem; font-weight: 500; text-decoration: none; transition: background 300ms cubic-bezier(0, 0, 0.2, 1), color 300ms cubic-bezier(0, 0, 0.2, 1), border-color 300ms cubic-bezier(0, 0, 0.2, 1); }\n.ds-nav-auth:hover { background: #141414; border-color: #FFB900; color: #FFB900; }\n.ds-nav-auth:focus-visible { outline: none; box-shadow: 0 0 0 2px #0A0A0A, 0 0 0 4px #FFB900; }\n@media (max-width: 767px) { .ds-nav-links { display: none; } }\n.ds-nav-signout { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.375rem 0.75rem; border: 1px solid transparent; border-radius: 6px; background: #141414; color: #9A9A9A; font-family: var(--font-archivo, system-ui, sans-serif); font-size: 0.875rem; cursor: pointer; transition: background 300ms cubic-bezier(0, 0, 0.2, 1), color 300ms cubic-bezier(0, 0, 0.2, 1); }\n.ds-nav-signout:hover { background: #1F1F1F; color: #F0F0F0; }"
+    },
+    {
+      "name": "Status Pill",
+      "kind": "chip",
+      "refersTo": "status-pill",
+      "description": "Full-round state chip with a 6px dot: live, building, queued, or a named state.",
+      "html": "<span class=\"ds-pill ds-pill--live\"><span class=\"ds-pill-dot\"></span>Live</span>",
+      "css": ".ds-pill { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.125rem 0.625rem; border-radius: 9999px; background: #141414; color: #B5B5B5; font-family: var(--font-archivo, system-ui, sans-serif); font-size: 0.75rem; font-weight: 500; }\n.ds-pill-dot { width: 0.375rem; height: 0.375rem; border-radius: 9999px; background: #9A9A9A; }\n.ds-pill--live { color: #4ADE80; } .ds-pill--live .ds-pill-dot { background: #4ADE80; }\n.ds-pill--building { color: #FFB900; } .ds-pill--building .ds-pill-dot { background: #FFB900; animation: ds-pulse 1.6s ease-in-out infinite; }\n.ds-pill--warning { color: #FACC15; } .ds-pill--warning .ds-pill-dot { background: #FACC15; }\n@keyframes ds-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }"
+    },
+    {
+      "name": "Accent Link",
+      "kind": "custom",
+      "refersTo": "link-primary",
+      "description": "In-page action in signal amber with a low-opacity underline that solidifies on hover.",
+      "html": "<a class=\"ds-link\" href=\"#\">Sign up</a>",
+      "css": ".ds-link { color: #FFB900; text-decoration: underline; text-underline-offset: 2px; text-decoration-color: rgba(255,185,0,0.3); font-family: var(--font-archivo, system-ui, sans-serif); font-size: 0.875rem; transition: color 200ms cubic-bezier(0, 0, 0.2, 1), text-decoration-color 200ms cubic-bezier(0, 0, 0.2, 1); }\n.ds-link:hover { color: #FFD24D; text-decoration-color: #FFB900; }\n.ds-link:focus-visible { outline: none; box-shadow: 0 0 0 2px #0A0A0A, 0 0 0 4px #FFB900; border-radius: 2px; }"
+    },
+    {
+      "name": "Dust Field",
+      "kind": "custom",
+      "description": "The world's signature material: three depths of drifting dust behind the content, drawn entirely in CSS.",
+      "html": "<div class=\"ds-dust-field\"><div class=\"ds-dust-layer ds-dust-far\"></div><div class=\"ds-dust-layer ds-dust-mid\"></div><div class=\"ds-dust-layer ds-dust-near\"></div><div class=\"ds-dust-content\"><h2 class=\"ds-dust-title\">Build your website by describing it.</h2></div></div>",
+      "css": ".ds-dust-field { position: relative; overflow: hidden; background: #0A0A0A; border-radius: 16px; font-family: var(--font-archivo, system-ui, sans-serif); }\n.ds-dust-layer { position: absolute; inset: -25%; background-repeat: repeat; pointer-events: none; }\n.ds-dust-far { --dust-drift: 78px; background-image: radial-gradient(circle, rgba(240,240,240,0.14) 1px, transparent 1.1px); background-size: 26px 26px; animation: ds-dust-drift 96s linear infinite; }\n.ds-dust-mid { --dust-drift: 88px; background-image: radial-gradient(circle, rgba(240,240,240,0.28) 1.6px, transparent 1.7px); background-size: 44px 44px; animation: ds-dust-drift 54s linear infinite; }\n.ds-dust-near { --dust-drift: 78px; background-image: radial-gradient(circle, rgba(240,240,240,0.5) 2.6px, transparent 2.7px); background-size: 78px 78px; animation: ds-dust-drift 31s linear infinite; }\n.ds-dust-content { position: relative; padding: 3rem 2rem; }\n.ds-dust-title { margin: 0; max-width: 18ch; font-size: 3rem; font-weight: 700; line-height: 1.05; letter-spacing: -0.03em; color: #F0F0F0; }\n@keyframes ds-dust-drift { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(calc(-1 * var(--dust-drift)), calc(-1 * var(--dust-drift)), 0); } }\n@media (prefers-reduced-motion: reduce) { .ds-dust-layer { animation: none; } }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Signal in the Void",
+    "overview": "Skynet is a black room with the lights off and one amber signal burning in it. Everything else in the system — surfaces, borders, secondary type, icons — is a quiet graphite or off-white. That is the whole idea: a wide, dark, calm field in which a single saturated amber element is the only thing that asks to be touched. The palette was chosen so that the primary action can never be ambiguous, on any screen, at any brightness.\n\nThe register is professional and capable rather than swaggering. Skynet is for people who have never written code, so the system refuses the two things that would push them away: the category-default SaaS landing (centred headline over a row of equal feature cards) and the edgy developer-terminal look. Instead the type is a plain, well-set grotesque in two scales, the copy sits left-aligned in a single 1024px column, and the space is generous — the hero alone occupies the top half of the first viewport, and the process steps are set 56px apart.\n\nDepth is tonal. A surface on the void is one brightness step up; the next step up is a hover state or a nested row; a row nested inside a card goes back down to the void. Nothing is outlined, and no card carries a drop shadow. The only ambient motion in the product is a three-depth field of drifting dust behind the hero, rendered entirely in CSS, which gives the black ground texture without ever competing with the content. The confirmed visual rejections are the category-default centred-hero-plus-equal-cards arrangement and the terminal/bitmap type register.",
+    "keyCharacteristics": [
+      "One saturated accent in the whole system, spent on exactly one primary action per screen.",
+      "Depth by brightness step (void → surface → surface-hover) — surfaces are separated by tone, not by an outline or a raised edge.",
+      "One type family, two scales; hierarchy from size and weight contrast.",
+      "A three-depth drifting dust field as the only ambient motion, disabled under prefers-reduced-motion.",
+      "Three radii only: 6px controls, 16px cards, full-round pills.",
+      "Browser surfaces (focus ring, caret, selection, scrollbar) themed from the same palette."
+    ],
+    "rules": [
+      {
+        "name": "The One Signal Rule",
+        "body": "Signal amber is the only saturated hue in the system and it is spent once per screen — on the single primary action. Success, warning and error appear only as state markers. Rarity is the point.",
+        "section": "colors"
+      },
+      {
+        "name": "The Brightness-Step Rule",
+        "body": "A surface separates from the ground by being brighter, never by being outlined: void (#0A0A0A) → surface (#141414) → surface-hover (#1F1F1F). A row nested inside a card goes back down to void.",
+        "section": "colors"
+      },
+      {
+        "name": "The Hairline-Is-A-Control Rule",
+        "body": "The 1px hairline belongs to inputs and small controls. A card is defined by its fill and its radius; its edge is never drawn.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Face Rule",
+        "body": "One family — Archivo — at two scales. Hierarchy comes from size and weight contrast (700/600 against 500/400), never from a second typeface.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tight-Upper Rule",
+        "body": "Every size above 20px is set tight: -0.03em at display, -0.02em at headline, -0.01em at title. Tracking loosens only as the size drops, and turns positive only on uppercase micro-labels.",
+        "section": "typography"
+      },
+      {
+        "name": "The Single-Column Rule",
+        "body": "Every surface is one centred column of at most 1024px (64rem) with 16px gutters. The column may contain a grid; the page never runs edge to edge — even the nav's inner content uses the same 1024px measure. The login surface narrows the same rule to 448px (28rem).",
+        "section": "layout"
+      },
+      {
+        "name": "The Ambient-Only Shadow Rule",
+        "body": "A shadow in this system always means \"this is emitting light\" or \"this is floating above scrolled content\". There is no third job for a shadow, and brightness steps do the work that shadows do everywhere else.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Three Radii Rule",
+        "body": "A new element picks one of 6px, 16px, or full-round, and a component family never mixes them. Controls are the tightest thing on screen; containers are the softest.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "Do spend the amber signal once per screen on the single primary action, and let every other action be a ghost button or a quiet link.",
+      "Do separate a surface from the ground with one brightness step — surface, then surface-hover — rather than with an outline.",
+      "Do keep body copy to roughly 65 characters per line, left-aligned, and set anything above 20px tight.",
+      "Do give every interactive element the global focus treatment: a 2px amber ring with a 2px void offset.",
+      "Do pick from the three radii only — 6px controls, 16px cards, full-round pills — and keep a component family on one radius.",
+      "Do keep icons from lucide-react at a single stroke weight — 16px in most places, 14px in the wordmark, 12px on the project page's small action icons.",
+      "Do place the dust field behind content, never over it, and switch it off under prefers-reduced-motion: reduce."
+    ],
+    "donts": [
+      "Don't introduce a second saturated accent; success, warning and error are states, and signal amber stays the one accent.",
+      "Don't put a border on a card, or reach for a shadow to separate a card from its neighbour — a brightness step does that.",
+      "Don't place more than one filled amber element in a viewport.",
+      "Don't mix radii inside one component family, and don't use a radius outside 6px, 16px or full-round.",
+      "Don't widen body copy past ~65ch or centre it; the system's voice is left-aligned inside the column.",
+      "Don't drop the focus ring, the amber caret, or the amber-on-void selection treatment — the browser surface is part of the system."
+    ]
+  }
+}

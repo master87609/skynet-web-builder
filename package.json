@@ -1,0 +1,16 @@
+{
+  "name": "skynet-website-builder",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Skynet — a professional website builder for non-coders. Describe your site, log in, and let AI agents build and deploy it — no code required.",
+  "scripts": {
+    "dev:engine": "cd engine && npm run dev",
+    "dev:web": "cd web && npm run dev",
+    "install:all": "npm install && cd engine && npm install && cd ../web && npm install",
+    "build:engine": "cd engine && npm run build",
+    "build:web": "cd web && npm run build"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

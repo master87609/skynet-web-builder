@@ -1,0 +1,1 @@
+An online bakery website with ordering, a photo gallery, and a location map

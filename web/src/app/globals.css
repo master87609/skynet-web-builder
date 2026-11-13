@@ -1,0 +1,156 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-skynet-void text-skynet-ivory antialiased font-sans selection:bg-skynet-amber selection:text-skynet-void;
+    font-feature-settings: "cv01" 1, "cv02" 1;
+  }
+
+  /* Focus rings — part of the browser surface, themed from the palette */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-skynet-amber ring-offset-2 ring-offset-skynet-void;
+  }
+
+  /* Custom scrollbar — themed from the palette */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0A0A0A;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #262626;
+    border: 2px solid #0A0A0A;
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #383838;
+  }
+
+  /* Caret */
+  input, textarea, [contenteditable] {
+    caret-color: #FFB900;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer components {
+  /* Primary button — signal amber on void, the single saturated accent */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md bg-skynet-amber text-skynet-void font-semibold text-sm tracking-[-0.02em] transition-all duration-300 ease-out shadow-[0_0_20px_rgba(255,185,0,0.35)] hover:shadow-[0_0_30px_rgba(255,185,0,0.55)] hover:bg-skynet-amber-deep hover:-translate-y-[1px] active:scale-95 focus-visible:ring-2 focus-visible:ring-skynet-amber focus-visible:ring-offset-2 focus-visible:ring-offset-skynet-void disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  /* Ghost button — white text on void, subtle hover */
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md bg-transparent text-skynet-ivory font-medium text-sm tracking-[-0.02em] border border-skynet-border transition-all duration-300 ease-out hover:bg-skynet-surface hover:border-skynet-amber hover:text-skynet-amber focus-visible:ring-2 focus-visible:ring-skynet-amber focus-visible:ring-offset-2 focus-visible:ring-offset-skynet-void disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  /* Card — tonal layering on void. No border under a wide soft shadow (ghost card). */
+  .card {
+    @apply rounded-xl bg-skynet-surface p-6 transition-colors duration-300 ease-out;
+  }
+
+  /* Input — stroke on void, amber focus */
+  .input-field {
+    @apply block w-full pl-10 pr-4 py-3 rounded-md bg-transparent border border-skynet-border text-skynet-ivory placeholder-skynet-dust-sm text-sm focus:border-skynet-amber focus:ring-1 focus:ring-skynet-amber transition-colors duration-200 ease-out;
+  }
+
+  /* Label */
+  .field-label {
+    @apply block text-sm font-medium text-skynet-ivory mb-1.5 tracking-[-0.01em];
+  }
+
+  /* Link — amber on hover */
+  .link-primary {
+    @apply text-skynet-amber hover:text-skynet-amber-bright underline underline-offset-2 decoration-skynet-amber/30 hover:decoration-skynet-amber transition-colors duration-200 ease-out;
+  }
+}
+
+/*
+ * Dust field — the world's signature material.
+ * Three depths of neutral dust drifting behind the content at layered speeds:
+ * far (fine, faint, slowest), mid (parallax), near (coarse, brightest, fastest).
+ * Each layer's drift distance is an exact multiple of its own tile size, so no
+ * layer jumps when its animation loops.
+ */
+.dust-field {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dust-layer {
+  position: absolute;
+  inset: -25%;
+  background-repeat: repeat;
+  will-change: transform;
+}
+
+.dust-far {
+  --dust-drift: 78px;
+  background-image: radial-gradient(
+    circle,
+    rgba(240, 240, 240, 0.14) 1px,
+    transparent 1.1px
+  );
+  background-size: 26px 26px;
+  animation: dust-drift 96s linear infinite;
+}
+
+.dust-mid {
+  --dust-drift: 88px;
+  background-image: radial-gradient(
+    circle,
+    rgba(240, 240, 240, 0.28) 1.6px,
+    transparent 1.7px
+  );
+  background-size: 44px 44px;
+  animation: dust-drift 54s linear infinite;
+}
+
+.dust-near {
+  --dust-drift: 78px;
+  background-image: radial-gradient(
+    circle,
+    rgba(240, 240, 240, 0.5) 2.6px,
+    transparent 2.7px
+  );
+  background-size: 78px 78px;
+  animation: dust-drift 31s linear infinite;
+}
+
+@keyframes dust-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(
+      calc(-1 * var(--dust-drift)),
+      calc(-1 * var(--dust-drift)),
+      0
+    );
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dust-layer {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
