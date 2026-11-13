@@ -31,3 +31,8 @@ This file records all architectural enhancements, multi-agent implementations, b
   - Real-time agent telemetry stream showing internal thoughts and actions.
   - Device viewport switcher (**Desktop**, **Tablet**, **Mobile**).
   - Deploy Gate certification card.
+
+
+## 3. ZIP Export Engine (`engine/src/server.ts`)
+- **Archiver v8 Compatibility**:
+  - Upgraded zip streaming endpoint `/projects/:id/download` to support Archiver v8 module interface (`new ZipArchive()`), fixing a runtime error and providing seamless instant one-click ZIP packaging with `index.html`, `app.js`, `README.md`, and `skynet-spec.json`.

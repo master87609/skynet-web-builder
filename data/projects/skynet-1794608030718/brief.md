@@ -1,0 +1,1 @@
+Next-generation orbital satellite imaging platform for precision agriculture

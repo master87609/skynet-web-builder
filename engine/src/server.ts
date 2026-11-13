@@ -11,7 +11,19 @@ dotenv.config({ path: resolve(process.cwd(), ".env") })
 dotenv.config({ path: resolve(process.cwd(), "../.env") })
 
 import * as archiverModule from "archiver"
-const archiver: any = (archiverModule as any).default || archiverModule
+function createZipArchive(options?: any) {
+  const mod: any = archiverModule
+  if (typeof mod.ZipArchive === "function") {
+    return new mod.ZipArchive(options)
+  }
+  if (typeof mod.default === "function") {
+    return mod.default("zip", options)
+  }
+  if (typeof mod === "function") {
+    return mod("zip", options)
+  }
+  throw new Error("Unable to initialize zip archive stream")
+}
 import { projectStore } from "./project-store.js"
 import {
   authenticateUser,
@@ -387,7 +399,7 @@ app.get("/projects/:id/download", async (req, res) => {
     res.setHeader("Content-Type", "application/zip")
     res.setHeader("Content-Disposition", `attachment; filename="${projectId}.zip"`)
 
-    const archive = archiver("zip", { zlib: { level: 9 } })
+    const archive = createZipArchive({ zlib: { level: 9 } })
     archive.pipe(res)
 
     // Add code/ files if they exist

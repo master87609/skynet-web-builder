@@ -1,0 +1,152 @@
+{
+  "id": "skynet-1794608030718",
+  "ownerId": "user-1794608026548",
+  "brief": "Next-generation orbital satellite imaging platform for precision agriculture",
+  "status": "done",
+  "currentPhase": "done",
+  "completedPhases": [
+    "requirements-analysis",
+    "product-strategist",
+    "ux-architect",
+    "ui-design",
+    "database-architect",
+    "backend",
+    "frontend",
+    "content-writer",
+    "qa-tester",
+    "security-auditor",
+    "seo-specialist",
+    "project-manager",
+    "devops"
+  ],
+  "artifacts": [
+    {
+      "owner": "requirements-analysis",
+      "phase": "requirements-analysis",
+      "status": "approved",
+      "updated": "2026-11-13T22:13:51.074Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794608030718/requirements.md"
+    },
+    {
+      "owner": "requirements-analysis",
+      "phase": "requirements-analysis",
+      "status": "approved",
+      "updated": "2026-11-13T22:13:51.076Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794608030718/user-stories.md"
+    },
+    {
+      "owner": "product-strategist",
+      "phase": "product-strategist",
+      "status": "approved",
+      "updated": "2026-11-13T22:13:51.679Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794608030718/business-plan.md"
+    },
+    {
+      "owner": "product-strategist",
+      "phase": "product-strategist",
+      "status": "approved",
+      "updated": "2026-11-13T22:13:51.679Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794608030718/mvp-scope.md"
+    },
+    {
+      "owner": "ux-architect",
+      "phase": "ux-architect",
+      "status": "approved",
+      "updated": "2026-11-13T22:13:52.282Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794608030718/sitemap.md"
+    },
+    {
+      "owner": "ux-architect",
+      "phase": "ux-architect",
+      "status": "approved",
+      "updated": "2026-11-13T22:13:52.283Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794608030718/user-flows.md"
+    },
+    {
+      "owner": "ui-design",
+      "phase": "ui-design",
+      "status": "approved",
+      "updated": "2026-11-13T22:13:52.886Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794608030718/design/design-tokens.json"
+    },
+    {
+      "owner": "ui-design",
+      "phase": "ui-design",
+      "status": "approved",
+      "updated": "2026-11-13T22:13:52.888Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794608030718/design/component-specs.md"
+    },
+    {
+      "owner": "database-architect",
+      "phase": "database-architect",
+      "status": "approved",
+      "updated": "2026-11-13T22:13:53.492Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794608030718/data/data-model.md"
+    },
+    {
+      "owner": "backend",
+      "phase": "backend",
+      "status": "approved",
+      "updated": "2026-11-13T22:13:54.096Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794608030718/code/api-contract.md"
+    },
+    {
+      "owner": "frontend",
+      "phase": "frontend",
+      "status": "approved",
+      "updated": "2026-11-13T22:13:54.701Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794608030718/code/index.html"
+    },
+    {
+      "owner": "content-writer",
+      "phase": "content-writer",
+      "status": "approved",
+      "updated": "2026-11-13T22:13:55.305Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794608030718/content/brand-voice.md"
+    },
+    {
+      "owner": "content-writer",
+      "phase": "content-writer",
+      "status": "approved",
+      "updated": "2026-11-13T22:13:55.306Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794608030718/content/copy-review.md"
+    },
+    {
+      "owner": "qa-tester",
+      "phase": "qa-tester",
+      "status": "approved",
+      "updated": "2026-11-13T22:13:55.910Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794608030718/reports/qa.md"
+    },
+    {
+      "owner": "security-auditor",
+      "phase": "security-auditor",
+      "status": "approved",
+      "updated": "2026-11-13T22:13:56.514Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794608030718/reports/security.md"
+    },
+    {
+      "owner": "seo-specialist",
+      "phase": "seo-specialist",
+      "status": "approved",
+      "updated": "2026-11-13T22:13:57.119Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794608030718/reports/seo.md"
+    },
+    {
+      "owner": "project-manager",
+      "phase": "project-manager",
+      "status": "approved",
+      "updated": "2026-11-13T22:13:57.836Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794608030718/status.md"
+    },
+    {
+      "owner": "devops",
+      "phase": "devops",
+      "status": "approved",
+      "updated": "2026-11-13T22:13:58.441Z",
+      "path": "/home/Ujjwal/Projects/Website-builder(Skynet)/data/projects/skynet-1794608030718/deploy-ready.md"
+    }
+  ],
+  "createdAt": "2026-11-13T22:13:50.719Z",
+  "updatedAt": "2026-11-13T22:13:58.695Z"
+}

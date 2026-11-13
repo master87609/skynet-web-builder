@@ -1,0 +1,7 @@
+{
+  "id": "user-1794608026548",
+  "email": "test@example.com",
+  "name": "Test User",
+  "createdAt": "2026-11-13T22:13:46.548Z",
+  "passwordHash": "$2a$12$jClztNyUKAX79b3Zi/GZLOjbqUqQ6caNXSqExtXT7rt/qqMoUzxvK"
+}
