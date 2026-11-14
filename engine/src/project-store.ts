@@ -22,11 +22,23 @@ export interface ProjectArtifact {
   updated: string
 }
 
+export type SubscriptionPlan = "free" | "advance" | "host"
+
 export interface UserSession {
   id: string
   email: string
   name: string
+  plan?: SubscriptionPlan
   createdAt: string
+}
+
+export interface DeployedHostConfig {
+  domain: string
+  target: string
+  url: string
+  deployedAt: string
+  status: "active" | "pending"
+  ssl: "active" | "provisioning"
 }
 
 export interface ProjectState {
@@ -38,6 +50,7 @@ export interface ProjectState {
   currentPhase: string
   completedPhases: string[]
   artifacts: ProjectArtifact[]
+  deployedHost?: DeployedHostConfig
   createdAt: string
   updatedAt: string
 }
@@ -101,6 +114,7 @@ export class ProjectStore {
       id: `user-${Date.now()}`,
       email: input.email,
       name: input.name,
+      plan: "free",
       createdAt: now,
     }
     await writeFile(
@@ -134,6 +148,38 @@ export class ProjectStore {
         const user = JSON.parse(raw) as UserSession & { passwordHash: string }
         if (user.id === id) {
           const { passwordHash, ...rest } = user
+          return {
+            ...rest,
+            plan: rest.plan || "free",
+          }
+        }
+      } catch {
+        continue
+      }
+    }
+    return null
+  }
+
+  async updateUser(
+    id: string,
+    patch: Partial<UserSession>,
+  ): Promise<UserSession | null> {
+    await this.ensureDirs()
+    const entries = await readdir(this.usersDir)
+    for (const entry of entries) {
+      if (!entry.endsWith(".json")) continue
+      try {
+        const filePath = join(this.usersDir, entry)
+        const raw = await readFile(filePath, "utf8")
+        const user = JSON.parse(raw) as UserSession & { passwordHash: string }
+        if (user.id === id) {
+          const updated = {
+            ...user,
+            ...patch,
+            plan: patch.plan || user.plan || "free",
+          }
+          await writeFile(filePath, JSON.stringify(updated, null, 2), "utf8")
+          const { passwordHash, ...rest } = updated
           return rest
         }
       } catch {

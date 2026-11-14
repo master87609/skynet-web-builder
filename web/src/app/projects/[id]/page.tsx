@@ -21,6 +21,10 @@ import {
   ShieldCheck,
   Search,
   Check,
+  Server,
+  Globe,
+  Lock,
+  X,
 } from "lucide-react"
 import {
   getProjectStatus,
@@ -31,7 +35,12 @@ import {
   getProjectStreamUrl,
   getProjectPreviewUrl,
   getProjectDownloadUrl,
+  deployToHost,
+  me,
+  SubscriptionPlan,
+  DeployedHostConfig,
 } from "@/lib/api"
+import PlanUpgradeModal from "@/components/PlanUpgradeModal"
 
 interface Artifact {
   path: string
@@ -70,6 +79,7 @@ export default function ProjectPage({
     currentPhase: string
     completedPhases: string[]
     artifactCount: number
+    deployedHost?: DeployedHostConfig
     updatedAt: string
   } | null>(null)
   const [artifacts, setArtifacts] = useState<Artifact[]>([])
@@ -86,6 +96,25 @@ export default function ProjectPage({
     text: string
   } | null>(null)
 
+  // Plan & Host states
+  const [userPlan, setUserPlan] = useState<SubscriptionPlan>("free")
+  const [showPlanModal, setShowPlanModal] = useState(false)
+  const [planModalConfig, setPlanModalConfig] = useState<{
+    requiredPlan: SubscriptionPlan
+    featureRequested: string
+  }>({ requiredPlan: "advance", featureRequested: "" })
+
+  const [showHostDeployModal, setShowHostDeployModal] = useState(false)
+  const [customDomain, setCustomDomain] = useState("")
+  const [hostTarget, setHostTarget] = useState<"custom-host" | "vercel" | "netlify" | "github-pages" | "ftp">("custom-host")
+  const [ftpHost, setFtpHost] = useState("")
+  const [serverIp, setServerIp] = useState("")
+  const [deployingToHost, setDeployingToHost] = useState(false)
+  const [deployedHostResult, setDeployedHostResult] = useState<{
+    url: string
+    dns: { type: string; name: string; target: string; ttl: number; sslStatus: string }
+  } | null>(null)
+
   // Live preview state
   const [previewDevice, setPreviewDevice] = useState<"desktop" | "tablet" | "mobile">("desktop")
   const [iframeKey, setIframeKey] = useState(Date.now())
@@ -96,6 +125,7 @@ export default function ProjectPage({
   useEffect(() => {
     loadProject()
     checkGate()
+    loadUser()
 
     let eventSource: EventSource | null = null
 
@@ -201,6 +231,75 @@ export default function ProjectPage({
     }
   }
 
+  async function loadUser() {
+    try {
+      const res = await me()
+      if (res.ok && res.data?.user) {
+        setUserPlan(res.data.user.plan || "free")
+      }
+    } catch {}
+  }
+
+  const handleDownloadClick = (e: React.MouseEvent) => {
+    if (userPlan === "free") {
+      e.preventDefault()
+      setPlanModalConfig({
+        requiredPlan: "advance",
+        featureRequested: "Using this website and downloading production code",
+      })
+      setShowPlanModal(true)
+    }
+  }
+
+  const handleHostDeployClick = () => {
+    if (userPlan !== "host") {
+      setPlanModalConfig({
+        requiredPlan: "host",
+        featureRequested: "Deploying with your own host and custom domain",
+      })
+      setShowPlanModal(true)
+    } else {
+      setShowHostDeployModal(true)
+    }
+  }
+
+  const handleHostDeploySubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!customDomain.trim()) return
+    setDeployingToHost(true)
+    try {
+      const res = await deployToHost(projectId, {
+        domain: customDomain.trim(),
+        target: hostTarget,
+        ftpHost: ftpHost.trim() || undefined,
+        serverIp: serverIp.trim() || undefined,
+      })
+      if (res.ok && res.data) {
+        setDeployedHostResult({
+          url: res.data.deployedHost.url,
+          dns: res.data.dns,
+        })
+        setNotice({
+          tone: "ok",
+          text: `Successfully linked and deployed to your own host: ${res.data.deployedHost.url}`,
+        })
+        loadProject()
+      } else {
+        setNotice({
+          tone: "error",
+          text: res.error || "Host deployment failed",
+        })
+      }
+    } catch (err) {
+      setNotice({
+        tone: "error",
+        text: (err as Error).message || "Host deployment failed",
+      })
+    } finally {
+      setDeployingToHost(false)
+    }
+  }
+
   const completedSet = new Set(status?.completedPhases || [])
   const isFinished = status?.status === "done"
   const isBuilding = status?.status === "in_progress"
@@ -268,25 +367,58 @@ export default function ProjectPage({
               <RefreshCw className={`w-3.5 h-3.5 ${rebuilding ? "animate-spin" : ""}`} />
               Re-run Build
             </button>
+
+            {/* Download ZIP button (Advance $19 pack) */}
             <a
-              href={getProjectDownloadUrl(projectId)}
-              download
-              className="btn-ghost py-2 px-3 text-xs flex items-center gap-1.5"
+              href={userPlan === "free" ? "#" : getProjectDownloadUrl(projectId)}
+              onClick={handleDownloadClick}
+              download={userPlan === "free" ? undefined : `${projectId}.zip`}
+              className={`py-2 px-3 text-xs flex items-center gap-1.5 rounded-md border transition-all ${
+                userPlan === "free"
+                  ? "bg-skynet-surface border-skynet-border text-skynet-dust hover:border-skynet-amber hover:text-skynet-amber"
+                  : "btn-ghost"
+              }`}
+              title={userPlan === "free" ? "Upgrade to Advance Plan ($19) to download and use website" : "Download production code (.zip)"}
             >
               <Download className="w-3.5 h-3.5 text-skynet-amber" />
-              Download ZIP
+              <span>Download ZIP</span>
+              {userPlan === "free" && (
+                <span className="text-[10px] uppercase font-bold text-skynet-amber bg-skynet-amber/15 px-1.5 py-0.2 rounded border border-skynet-amber/30">
+                  $19
+                </span>
+              )}
             </a>
+
+            {/* Standard Preview Deploy */}
             <button
               onClick={handleDeploy}
               disabled={deploying || !deploy?.allowed}
-              className={`py-2 px-4 rounded-md text-xs font-semibold flex items-center gap-1.5 transition-all ${
+              className={`py-2 px-3 rounded-md text-xs font-semibold flex items-center gap-1.5 transition-all ${
                 deploy?.allowed
-                  ? "btn-primary"
+                  ? "bg-skynet-surface hover:bg-skynet-surface-hover text-skynet-ivory border border-skynet-border"
                   : "bg-skynet-surface text-skynet-dust border border-skynet-border cursor-not-allowed opacity-60"
               }`}
             >
-              <Rocket className="w-3.5 h-3.5" />
-              {deploying ? "Deploying…" : deploy?.allowed ? "Deploy to Live" : "Deploy (Gate Check)"}
+              <Rocket className="w-3.5 h-3.5 text-skynet-amber" />
+              {deploying ? "Deploying…" : "Deploy to Preview"}
+            </button>
+
+            {/* Deploy with Own Host button (Custom Host $29 pack) */}
+            <button
+              onClick={handleHostDeployClick}
+              className={`py-2 px-3.5 rounded-md text-xs font-bold flex items-center gap-1.5 transition-all shadow-md ${
+                userPlan === "host"
+                  ? "bg-skynet-success text-skynet-void hover:bg-emerald-400"
+                  : "bg-skynet-surface border border-skynet-success/50 text-skynet-success hover:bg-skynet-success/10"
+              }`}
+            >
+              <Server className="w-3.5 h-3.5" />
+              <span>Deploy with Own Host</span>
+              {userPlan !== "host" && (
+                <span className="text-[10px] uppercase font-bold bg-skynet-success/20 px-1.5 py-0.2 rounded border border-skynet-success/40">
+                  $29
+                </span>
+              )}
             </button>
           </div>
         </div>
@@ -502,6 +634,62 @@ export default function ProjectPage({
               </div>
             </div>
 
+            {/* Deploy with Own Host Card ($29) */}
+            <div className="card space-y-3 border-skynet-success/40 bg-skynet-surface/80">
+              <div className="flex items-center justify-between border-b border-skynet-border pb-2.5">
+                <div className="flex items-center gap-2">
+                  <Server className="w-4 h-4 text-skynet-success" />
+                  <h3 className="font-semibold text-sm text-skynet-ivory">Deploy with Own Host</h3>
+                </div>
+                <span className="text-[10px] font-bold text-skynet-success bg-skynet-success/15 px-2 py-0.5 rounded border border-skynet-success/30">
+                  $29 Pack
+                </span>
+              </div>
+
+              {status?.deployedHost || deployedHostResult ? (
+                <div className="space-y-2 text-xs">
+                  <div className="p-3 rounded-lg bg-skynet-void border border-skynet-success/40 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] text-skynet-dust uppercase">Connected Domain</span>
+                      <span className="text-[10px] text-skynet-success font-semibold flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-skynet-success animate-pulse" />
+                        SSL Active (TLS 1.3)
+                      </span>
+                    </div>
+                    <a
+                      href={deployedHostResult?.url || status?.deployedHost?.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-skynet-success font-bold font-mono text-sm hover:underline flex items-center gap-1.5"
+                    >
+                      <Globe className="w-3.5 h-3.5" />
+                      <span>{deployedHostResult?.url || status?.deployedHost?.url}</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+                  <button
+                    onClick={() => setShowHostDeployModal(true)}
+                    className="w-full py-1.5 text-xs text-skynet-dust hover:text-skynet-ivory border border-skynet-border rounded-md hover:bg-skynet-surface"
+                  >
+                    Update DNS &amp; Host Settings
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-3 text-xs">
+                  <p className="text-skynet-dust text-[11px] leading-relaxed">
+                    Deploy this website directly to your own hosting server, VPS, or connect your custom domain (e.g. <code className="text-skynet-success font-mono">mybrand.com</code>) with free automated SSL.
+                  </p>
+                  <button
+                    onClick={handleHostDeployClick}
+                    className="w-full py-2 px-3 rounded-lg text-xs font-bold bg-skynet-success text-skynet-void hover:bg-emerald-400 transition-all flex items-center justify-center gap-2 shadow-sm"
+                  >
+                    <Server className="w-3.5 h-3.5" />
+                    <span>{userPlan === "host" ? "Configure Host & Custom Domain" : "Unlock Own Host Deploy ($29)"}</span>
+                  </button>
+                </div>
+              )}
+            </div>
+
             {/* Agent Terminal Feed */}
             <div className="card space-y-2">
               <div className="flex items-center gap-2 border-b border-skynet-border pb-2">
@@ -559,6 +747,132 @@ export default function ProjectPage({
           </div>
         </div>
       </div>
+
+      {/* Own Host Deployment Configuration Modal */}
+      {showHostDeployModal && (
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-skynet-surface border border-skynet-border rounded-2xl max-w-lg w-full p-6 relative shadow-2xl space-y-5">
+            <button
+              onClick={() => setShowHostDeployModal(false)}
+              className="absolute top-4 right-4 text-skynet-dust hover:text-skynet-ivory p-1.5 rounded-lg bg-skynet-void"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-skynet-success/20 text-skynet-success flex items-center justify-center font-bold">
+                <Server className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-skynet-ivory">Deploy with Your Own Host</h3>
+                <p className="text-xs text-skynet-dust">Custom Host Pack ($29) Active</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleHostDeploySubmit} className="space-y-4 text-xs">
+              <div>
+                <label className="field-label">Custom Domain or Subdomain</label>
+                <div className="relative">
+                  <Globe className="w-4 h-4 text-skynet-dust absolute left-3 top-3" />
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. www.mybakeryparis.com or app.mybrand.org"
+                    value={customDomain}
+                    onChange={(e) => setCustomDomain(e.target.value)}
+                    className="input-field pl-9 text-xs"
+                  />
+                </div>
+                <p className="text-[10px] text-skynet-dust mt-1">
+                  Point this domain's CNAME record to <code className="text-skynet-amber font-mono">host.skynet.app</code>
+                </p>
+              </div>
+
+              <div>
+                <label className="field-label">Hosting Target</label>
+                <select
+                  value={hostTarget}
+                  onChange={(e) => setHostTarget(e.target.value as any)}
+                  className="input-field text-xs bg-skynet-void cursor-pointer"
+                >
+                  <option value="custom-host">Custom Host / VPS (FTP / Webhook)</option>
+                  <option value="vercel">Vercel Cloud Integration</option>
+                  <option value="netlify">Netlify Edge Deploy</option>
+                  <option value="github-pages">GitHub Pages Repository</option>
+                  <option value="ftp">Direct FTP / SFTP Server</option>
+                </select>
+              </div>
+
+              {(hostTarget === "ftp" || hostTarget === "custom-host") && (
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="field-label">Server IP / Host (Optional)</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. 192.168.1.100"
+                      value={serverIp}
+                      onChange={(e) => setServerIp(e.target.value)}
+                      className="input-field text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="field-label">FTP Host / Port (Optional)</label>
+                    <input
+                      type="text"
+                      placeholder="ftp.myhost.com:21"
+                      value={ftpHost}
+                      onChange={(e) => setFtpHost(e.target.value)}
+                      className="input-field text-xs"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* DNS Guidance Box */}
+              <div className="p-3 rounded-lg bg-skynet-void border border-skynet-border/70 space-y-1">
+                <div className="text-[10px] uppercase font-bold text-skynet-ivory">DNS Records Required:</div>
+                <div className="font-mono text-[11px] text-skynet-amber flex justify-between">
+                  <span>Type: CNAME</span>
+                  <span>Host: @ or www</span>
+                  <span>Value: host.skynet.app</span>
+                </div>
+                <div className="text-[10px] text-skynet-success mt-1 flex items-center gap-1">
+                  <Check className="w-3 h-3" />
+                  <span>Free automated Let's Encrypt SSL provisioned automatically</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowHostDeployModal(false)}
+                  className="px-3 py-2 text-xs text-skynet-dust hover:text-skynet-ivory"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={deployingToHost || !customDomain.trim()}
+                  className="btn-primary py-2 px-4 text-xs font-bold bg-skynet-success text-skynet-void hover:bg-emerald-400 flex items-center gap-1.5"
+                >
+                  <Server className="w-3.5 h-3.5" />
+                  <span>{deployingToHost ? "Deploying to Host..." : "Deploy to My Host"}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Plan Upgrade Modal */}
+      <PlanUpgradeModal
+        isOpen={showPlanModal}
+        onClose={() => setShowPlanModal(false)}
+        currentPlan={userPlan}
+        requiredPlan={planModalConfig.requiredPlan}
+        featureRequested={planModalConfig.featureRequested}
+        onPlanUpdated={(newPlan) => setUserPlan(newPlan)}
+      />
     </div>
   )
 }

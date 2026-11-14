@@ -2,6 +2,7 @@ import { EventEmitter } from "node:events"
 import { projectStore } from "./project-store.js"
 import { DEPENDENCY_ORDER, DepartmentId } from "./orchestrator.js"
 import { runDepartmentAgent, DepartmentName } from "./ai-agent.js"
+import { neuralEngine } from "./neural-network.js"
 
 export interface PipelineEvent {
   type: "init" | "phase_start" | "phase_complete" | "artifact" | "log" | "build_complete" | "error"
@@ -67,8 +68,19 @@ export class BuildPipeline extends EventEmitter {
         timestamp: new Date().toISOString(),
       })
 
+      // Run Native Neural Network Latent Analysis
+      const neuralAnalysis = neuralEngine.analyzeBrief(state.brief)
+      this.emitPipelineEvent({
+        type: "log",
+        projectId,
+        message: `[Neural Network] 32-dim feature embedding computed. Predicted Domain: "${neuralAnalysis.topCategory}" (${neuralAnalysis.confidence}% confidence, complexity: ${neuralAnalysis.complexityIndex}). Aesthetic tone: "${neuralAnalysis.predictedTokens.designTone}".`,
+        timestamp: new Date().toISOString(),
+      })
+
       const completedPhases: string[] = []
-      const previousArtifacts: Record<string, string> = {}
+      const previousArtifacts: Record<string, string> = {
+        "neural/analysis.json": JSON.stringify(neuralAnalysis, null, 2),
+      }
 
       for (let i = 0; i < DEPENDENCY_ORDER.length; i++) {
         const dept = DEPENDENCY_ORDER[i]
@@ -134,6 +146,17 @@ export class BuildPipeline extends EventEmitter {
             message: `Artifact authored: ${art.path}`,
             timestamp: new Date().toISOString(),
           })
+
+          if (dept === "frontend" && art.path === "code/index.html") {
+            const audit = neuralEngine.evaluateCode(art.content)
+            this.emitPipelineEvent({
+              type: "log",
+              projectId,
+              department: dept,
+              message: `[Neural Quality Gate] Code evaluation score: ${audit.qualityScore}/100. Hierarchy rating: ${audit.visualHierarchyRating}%. Detected: ${audit.featuresDetected.join(", ")}.`,
+              timestamp: new Date().toISOString(),
+            })
+          }
         }
 
         completedPhases.push(dept)

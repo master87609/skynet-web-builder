@@ -1,0 +1,160 @@
+{
+  "id": "skynet-1794632888138",
+  "ownerId": "user-1794632830692",
+  "brief": "Artisanal sourdough bakery with preorders",
+  "status": "done",
+  "currentPhase": "done",
+  "completedPhases": [
+    "requirements-analysis",
+    "product-strategist",
+    "ux-architect",
+    "ui-design",
+    "database-architect",
+    "backend",
+    "frontend",
+    "content-writer",
+    "qa-tester",
+    "security-auditor",
+    "seo-specialist",
+    "project-manager",
+    "devops"
+  ],
+  "artifacts": [
+    {
+      "owner": "requirements-analysis",
+      "phase": "requirements-analysis",
+      "status": "approved",
+      "updated": "2026-11-14T05:08:14.891Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794632888138\\requirements.md"
+    },
+    {
+      "owner": "requirements-analysis",
+      "phase": "requirements-analysis",
+      "status": "approved",
+      "updated": "2026-11-14T05:08:14.898Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794632888138\\user-stories.md"
+    },
+    {
+      "owner": "product-strategist",
+      "phase": "product-strategist",
+      "status": "approved",
+      "updated": "2026-11-14T05:08:21.154Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794632888138\\business-plan.md"
+    },
+    {
+      "owner": "product-strategist",
+      "phase": "product-strategist",
+      "status": "approved",
+      "updated": "2026-11-14T05:08:21.162Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794632888138\\mvp-scope.md"
+    },
+    {
+      "owner": "ux-architect",
+      "phase": "ux-architect",
+      "status": "approved",
+      "updated": "2026-11-14T05:08:30.687Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794632888138\\sitemap.md"
+    },
+    {
+      "owner": "ux-architect",
+      "phase": "ux-architect",
+      "status": "approved",
+      "updated": "2026-11-14T05:08:30.697Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794632888138\\user-flows.md"
+    },
+    {
+      "owner": "ui-design",
+      "phase": "ui-design",
+      "status": "approved",
+      "updated": "2026-11-14T05:08:39.080Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794632888138\\design\\design-tokens.json"
+    },
+    {
+      "owner": "ui-design",
+      "phase": "ui-design",
+      "status": "approved",
+      "updated": "2026-11-14T05:08:39.087Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794632888138\\design\\component-specs.md"
+    },
+    {
+      "owner": "database-architect",
+      "phase": "database-architect",
+      "status": "approved",
+      "updated": "2026-11-14T05:08:45.486Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794632888138\\data\\data-model.md"
+    },
+    {
+      "owner": "backend",
+      "phase": "backend",
+      "status": "approved",
+      "updated": "2026-11-14T05:08:53.690Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794632888138\\code\\api-contract.md"
+    },
+    {
+      "owner": "frontend",
+      "phase": "frontend",
+      "status": "approved",
+      "updated": "2026-11-14T05:10:07.743Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794632888138\\code\\index.html"
+    },
+    {
+      "owner": "content-writer",
+      "phase": "content-writer",
+      "status": "approved",
+      "updated": "2026-11-14T05:10:14.306Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794632888138\\content\\brand-voice.md"
+    },
+    {
+      "owner": "content-writer",
+      "phase": "content-writer",
+      "status": "approved",
+      "updated": "2026-11-14T05:10:14.317Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794632888138\\content\\copy-review.md"
+    },
+    {
+      "owner": "qa-tester",
+      "phase": "qa-tester",
+      "status": "approved",
+      "updated": "2026-11-14T05:10:19.742Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794632888138\\reports\\qa.md"
+    },
+    {
+      "owner": "security-auditor",
+      "phase": "security-auditor",
+      "status": "approved",
+      "updated": "2026-11-14T05:10:26.028Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794632888138\\reports\\security.md"
+    },
+    {
+      "owner": "seo-specialist",
+      "phase": "seo-specialist",
+      "status": "approved",
+      "updated": "2026-11-14T05:10:31.689Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794632888138\\reports\\seo.md"
+    },
+    {
+      "owner": "project-manager",
+      "phase": "project-manager",
+      "status": "approved",
+      "updated": "2026-11-14T05:10:36.016Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794632888138\\status.md"
+    },
+    {
+      "owner": "devops",
+      "phase": "devops",
+      "status": "approved",
+      "updated": "2026-11-14T05:10:41.306Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794632888138\\deploy-ready.md"
+    }
+  ],
+  "createdAt": "2026-11-14T05:08:08.140Z",
+  "updatedAt": "2026-11-14T05:10:41.596Z",
+  "deployedHost": {
+    "domain": "www.parissourdough.com",
+    "target": "custom-host",
+    "url": "https://www.parissourdough.com",
+    "deployedAt": "2026-11-14T05:08:08.165Z",
+    "status": "active",
+    "ssl": "active"
+  }
+}

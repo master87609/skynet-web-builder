@@ -1,0 +1,71 @@
+{
+  "colors": {
+    "primary": "#0A0A0C",
+    "accent": "#D4AF37",
+    "background": "#050507",
+    "surface": "#121217",
+    "surface-elevated": "#1A1A22",
+    "text": {
+      "primary": "#F4F4F6",
+      "secondary": "#9BA1A6",
+      "muted": "#5C6166"
+    },
+    "border": "#272730",
+    "overlay": "rgba(5, 5, 7, 0.85)"
+  },
+  "typography": {
+    "fontFamily": {
+      "heading": "'Cinzel', 'Playfair Display', serif",
+      "body": "'Inter', 'Helvetica Neue', sans-serif",
+      "mono": "'JetBrains Mono', monospace"
+    },
+    "fontSize": {
+      "xs": "0.75rem",
+      "sm": "0.875rem",
+      "base": "1rem",
+      "lg": "1.125rem",
+      "xl": "1.25rem",
+      "2xl": "1.75rem",
+      "3xl": "2.5rem",
+      "4xl": "3.75rem",
+      "5xl": "5rem"
+    },
+    "fontWeight": {
+      "light": 300,
+      "regular": 400,
+      "medium": 500,
+      "bold": 700
+    },
+    "lineHeight": {
+      "tight": 1.1,
+      "normal": 1.5,
+      "relaxed": 1.75
+    },
+    "letterSpacing": {
+      "tighter": "-0.05em",
+      "normal": "0",
+      "widest": "0.15em"
+    }
+  },
+  "spacing": {
+    "px": "1px",
+    "0": "0",
+    "1": "0.25rem",
+    "2": "0.5rem",
+    "3": "0.75rem",
+    "4": "1rem",
+    "6": "1.5rem",
+    "8": "2rem",
+    "12": "3rem",
+    "16": "4rem",
+    "24": "6rem",
+    "32": "8rem"
+  },
+  "borderRadius": {
+    "none": "0",
+    "sm": "2px",
+    "md": "4px",
+    "lg": "8px",
+    "full": "9999px"
+  }
+}

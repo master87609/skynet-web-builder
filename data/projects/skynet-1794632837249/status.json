@@ -1,0 +1,73 @@
+{
+  "id": "skynet-1794632837249",
+  "ownerId": "guest-user",
+  "brief": "Artisanal sourdough bakery with preorders",
+  "status": "in_progress",
+  "currentPhase": "database-architect",
+  "completedPhases": [
+    "requirements-analysis",
+    "product-strategist",
+    "ux-architect",
+    "ui-design"
+  ],
+  "artifacts": [
+    {
+      "owner": "requirements-analysis",
+      "phase": "requirements-analysis",
+      "status": "approved",
+      "updated": "2026-11-14T05:07:22.916Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794632837249\\requirements.md"
+    },
+    {
+      "owner": "requirements-analysis",
+      "phase": "requirements-analysis",
+      "status": "approved",
+      "updated": "2026-11-14T05:07:22.926Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794632837249\\user-stories.md"
+    },
+    {
+      "owner": "product-strategist",
+      "phase": "product-strategist",
+      "status": "approved",
+      "updated": "2026-11-14T05:07:28.985Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794632837249\\business-plan.md"
+    },
+    {
+      "owner": "product-strategist",
+      "phase": "product-strategist",
+      "status": "approved",
+      "updated": "2026-11-14T05:07:28.997Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794632837249\\mvp-scope.md"
+    },
+    {
+      "owner": "ux-architect",
+      "phase": "ux-architect",
+      "status": "approved",
+      "updated": "2026-11-14T05:07:36.961Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794632837249\\sitemap.md"
+    },
+    {
+      "owner": "ux-architect",
+      "phase": "ux-architect",
+      "status": "approved",
+      "updated": "2026-11-14T05:07:36.972Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794632837249\\user-flows.md"
+    },
+    {
+      "owner": "ui-design",
+      "phase": "ui-design",
+      "status": "approved",
+      "updated": "2026-11-14T05:07:43.985Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794632837249\\design\\design-tokens.json"
+    },
+    {
+      "owner": "ui-design",
+      "phase": "ui-design",
+      "status": "approved",
+      "updated": "2026-11-14T05:07:43.996Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794632837249\\design\\component-specs.md"
+    }
+  ],
+  "createdAt": "2026-11-14T05:07:17.251Z",
+  "updatedAt": "2026-11-14T05:07:44.266Z"
+}

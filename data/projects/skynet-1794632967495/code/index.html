@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHRONOS // Cinematic 3D Garment Runway</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0A0A0C',
+                        accent: '#D4AF37',
+                        background: '#050507',
+                        surface: '#121217',
+                        'surface-elevated': '#1A1A22',
+                        text: {
+                            primary: '#F4F4F6',
+                            secondary: '#9BA1A6',
+                            muted: '#5C6166'
+                        },
+                        border: '#272730',
+                        overlay: 'rgba(5, 5, 7, 0.85)'
+                    },
+                    fontFamily: {
+                        heading: ["'Cinzel'", "'Playfair Display'", "serif"],
+                        body: ["'Inter'", "'Helvetica Neue'", "sans-serif"],
+                        mono: ["'JetBrains Mono'", "monospace"]
+                    },
+                    borderRadius: {
+                        sm: '2px',
+                        md: '4px',
+                        lg: '8px',
+                        full: '9999px'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Three.js & GSAP for 3D Cinematic Scroll & Visuals -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050507;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #272730;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #D4AF37;
+        }
+
+        .glass-panel {
+            background: rgba(18, 18, 23, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(39, 39, 48, 0.6);
+        }
+
+        .glow-gold {
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .cinematic-vignette {
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.9);
+        }
+    </style>
+</head>
+<body class="bg-[#050507] text-[#F4F4F6] font-body antialiased overflow-x-hidden selection:bg-[#D4AF37] selection:text-black">
+
+    <!-- Preloader & Audio Prompt Overlay -->
+    <div id="preloader" class="fixed inset-0 z-50 bg-[#050507] flex flex-col items-center justify-center transition-opacity duration-1000">
+        <div class="text-center space-y-6 max-w-md px-6">
+            <h1 class="font-heading text-3xl md:text-4xl tracking-widest text-[#F4F4F6] glow-gold">CHRONOS</h1>
+            <div class="w-48 h-[2px] bg-[#272730] mx-auto overflow-hidden relative">
+                <div id="loading-bar" class="absolute inset-y-0 left-0 bg-[#D4AF37] w-0 transition-all duration-300"></div>
+            </div>
+            <p id="loading-status" class="font-mono text-xs text-[#9BA1A6] tracking-widest uppercase">INITIALIZING NEURAL SHADERS...</p>
+            
+            <div id="audio-prompt" class="hidden pt-6 space-y-4">
+                <p class="font-body text-sm text-[#9BA1A6]">Experience the capsule collection with spatial acoustic soundscape.</p>
+                <div class="flex items-center justify-center gap-4">
+                    <button onclick="initExperience(true)" class="px-6 py-3 bg-[#D4AF37] text-black font-medium text-xs tracking-widest uppercase rounded hover:bg-white transition-all flex items-center gap-2">
+                        <i data-lucide="volume-2" class="w-4 h-4"></i> Enable Audio & Enter
+                    </button>
+                    <button onclick="initExperience(false)" class="px-6 py-3 bg-transparent border border-[#272730] text-[#F4F4F6] font-medium text-xs tracking-widest uppercase rounded hover:border-[#D4AF37] transition-all">
+                        Mute & Enter
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WebGL Canvas Container -->
+    <div id="webgl-container" class="fixed inset-0 z-0 pointer-events-none"></div>
+    <div class="fixed inset-0 z-0 bg-gradient-to-b from-transparent via-[#050507]/40 to-[#050507] pointer-events-none cinematic-vignette"></div>
+
+    <!-- Global Navigation -->
+    <header class="fixed top-0 left-0 right-0 z-40 glass-panel border-b border-[#272730]/50 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" onclick="resetCamera()" class="font-heading text-xl tracking-[0.2em] font-bold text-white hover:text-[#D4AF37] transition-colors flex items-center gap-2">
+                CHRONOS <span class="font-mono text-[10px] text-[#D4AF37] border border-[#D4AF37]/40 px-1.5 py-0.5 rounded">FW25</span>
+            </a>
+
+            <!-- Center Controls -->
+            <div class="hidden md:flex items-center gap-6">
+                <!-- Soundscape Toggle -->
+                <button id="sound-toggle" onclick="toggleAudio()" class="flex items-center gap-2 text-xs font-mono text-[#9BA1A6] hover:text-white transition-colors group">
+                    <span class="w-6 h-6 rounded-full border border-[#272730] flex items-center justify-center group-hover:border-[#D4AF37] transition-colors">
+                        <i data-lucide="volume-x" id="sound-icon" class="w-3.5 h-3.5"></i>
+                    </span>
+                    <span id="sound-label">SOUND: OFF</span>
+                </button>
+                
+                <span class="text-[#272730]">|</span>
+
+                <!-- Accessibility / Reduced Motion Toggle -->
+                <button onclick="toggleAccessibilityMode()" class="flex items-center gap-2 text-xs font-mono text-[#9BA1A6] hover:text-white transition-colors group">
+                    <span class="w-6 h-6 rounded-full border border-[#272730] flex items-center justify-center group-hover:border-[#D4AF37] transition-colors">
+                        <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                    </span>
+                    <span>EDITORIAL GRID</span>
+                </button>
+            </div>
+
+            <!-- Right Utilities -->
+            <div class="flex items-center gap-4">
+                <button onclick="toggleCart()" class="px-4 py-2 bg-[#1A1A22] border border-[#272730] hover:border-[#D4AF37] transition-all rounded text-xs font-mono flex items-center gap-2 group">
+                    <i data-lucide="shopping-bag" class="w-4 h-4 text-[#D4AF37]"></i>
+                    <span>BAG</span>
+                    <span id="cart-badge" class="bg-[#D4AF37] text-black px-1.5 py-0.2 rounded-full font-bold text-[10px]">0</span>
+                </button>
+
+                <!-- Mobile Menu Trigger -->
+                <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-[#9BA1A6] hover:text-white">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Nav Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 z-50 bg-[#050507]/95 backdrop-blur-2xl flex flex-col justify-center px-8 transition-transform duration-500 translate-x-full md:hidden">
+        <button onclick="toggleMobileMenu()" class="absolute top-6 right-6 p-3 text-[#9BA1A6] hover:text-white">
+            <i data-lucide="x" class="w-8 h-8"></i>
+        </button>
+        <div class="space-y-6 text-center">
+            <a href="#runway" onclick="toggleMobileMenu()" class="block font-heading text-2xl tracking-widest text-white hover:text-[#D4AF37]">The Runway</a>
+            <a href="#looks" onclick="toggleMobileMenu()" class="block font-heading text-2xl tracking-widest text-white hover:text-[#D4AF37]">Capsule Looks</a>
+            <a href="#manifesto" onclick="toggleMobileMenu()" class="block font-heading text-2xl tracking-widest text-white hover:text-[#D4AF37]">Manifesto</a>
+            <a href="#faq" onclick="toggleMobileMenu()" class="block font-heading text-2xl tracking-widest text-white hover:text-[#D4AF37]">FAQ</a>
+        </div>
+    </div>
+
+    <!-- Main Cinematic Scroll Container -->
+    <main class="relative z-10 pointer-events-auto">
+
+        <!-- Act I: Hero / Atmosphere -->
+        <section id="runway" class="min-h-screen flex flex-col items-center justify-center text-center px-6 relative">
+            <div class="max-w-4xl mx-auto space-y-8 pt-20">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#121217] border border-[#272730] text-xs font-mono text-[#D4AF37]">
+                    <span class="w-2 h-2 rounded-full bg-[#D4AF37] animate-pulse"></span>
+                    AUTUMN / WINTER 2025 // 3D CINEMATIC EXPERIENCE
+                </div>
+                <h1 class="font-heading text-5xl md:text-7xl lg:text-8xl tracking-tight text-white font-bold leading-tight">
+                    THE ARCHITECTURE <br>OF <span class="text-[#D4AF37] glow-gold">SILHOUETTE</span>
+                </h1>
+                <p class="font-body text-lg md:text-xl text-[#9BA1A6] max-w-2xl mx-auto font-light leading-relaxed">
+                    Scroll to descend into the spatial runway. Explore garments crafted from Japanese technical silk and carbon-infused wool in real-time 3D space.
+                </p>
+                <div class="pt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a href="#looks" class="w-full sm:w-auto px-8 py-4 bg-[#D4AF37] text-black font-medium text-xs tracking-[0.2em] uppercase rounded hover:bg-white transition-all flex items-center justify-center gap-3">
+                        <span>BEGIN DESCENT</span>
+                        <i data-lucide="arrow-down" class="w-4 h-4"></i>
+                    </a>
+                    <button onclick="openInspectionModal(0)" class="w-full sm:w-auto px-8 py-4 bg-transparent border border-[#272730] text-white font-medium text-xs tracking-[0.2em] uppercase rounded hover:border-[#D4AF37] transition-all flex items-center justify-center gap-3">
+                        <i data-lucide="box" class="w-4 h-4 text-[#D4AF37]"></i>
+                        <span>INSPECT LOOK 01</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-[#5C6166] animate-bounce">
+                <span class="font-mono text-[10px] tracking-widest">SCROLL TO ROTATE</span>
+                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+            </div>
+        </section>
+
+        <!-- Act II: The Runway Descent & Hotspots Section -->
+        <section id="looks" class="py-32 px-6 max-w-7xl mx-auto">
+            <div class="text-center space-y-4 mb-24">
+                <span class="font-mono text-xs text-[#D4AF37] tracking-widest uppercase">[ SECTION 02: THE COLLECTION ]</span>
+                <h2 class="font-heading text-3xl md:text-5xl font-bold tracking-tight text-white">CHRONOS CAPSULE PIECES</h2>
+                <p class="text-[#9BA1A6] max-w-lg mx-auto text-sm">Interact with spatial hotspots or select any garment for 360-degree material analysis.</p>
+            </div>
+
+            <!-- Product Cards Grid with 3D Hotspot triggers -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16">
+                
+                <!-- Look 01 -->
+                <div class="glass-panel p-6 rounded-lg group hover:border-[#D4AF37] transition-all duration-500 relative overflow-hidden">
+                    <div class="absolute top-4 right-4 z-10">
+                        <span class="font-mono text-xs text-[#D4AF37] bg-[#050507]/80 px-3 py-1 rounded border border-[#272730]">LOOK 01</span>
+                    </div>
+                    <div class="h-80 bg-[#0A0A0C] rounded mb-6 relative overflow-hidden flex items-center justify-center border border-[#272730]">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#050507] via-transparent to-transparent"></div>
+                        <!-- Simulated Garment Silhouette SVG / Graphic -->
+                        <div class="w-32 h-64 border border-[#D4AF37]/30 rounded-t-full flex items-center justify-center relative group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute inset-2 bg-gradient-to-b from-[#1A1A22] to-[#121217] rounded-t-full flex flex-col items-center justify-center p-4 text-center">
+                                <i data-lucide="feather" class="w-8 h-8 text-[#D4AF37] mb-2"></i>
+                                <span class="font-mono text-[10px] text-[#9BA1A6]">JAPANESE SILK</span>
+                            </div>
+                        </div>
+                        <!-- Hotspot Trigger Button -->
+                        <button onclick="openInspectionModal(0)" class="absolute bottom-4 left-4 right-4 py-3 bg-[#D4AF37]/10 hover:bg-[#D4AF37] text-[#D4AF37] hover:text-black font-mono text-xs tracking-wider uppercase border border-[#D4AF37]/30 rounded transition-all flex items-center justify-center gap-2">
+                            <i data-lucide="eye" class="w-4 h-4"></i> Quick Inspection ($480)
+                        </button>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-heading text-xl text-white font-bold">Velvet Drape Trench</h3>
+                            <span class="font-mono text-lg text-[#D4AF37]">$480</span>
+                        </div>
+                        <p class="text-xs text-[#9BA1A6] font-light">Engineered wool blend with structured asymmetrical lapel and integrated weather shielding.</p>
+                    </div>
+                </div>
+
+                <!-- Look 02 -->
+                <div class="glass-panel p-6 rounded-lg group hover:border-[#D4AF37] transition-all duration-500 relative overflow-hidden">
+                    <div class="absolute top-4 right-4 z-10">
+                        <span class="font-mono text-xs text-[#D4AF37] bg-[#050507]/80 px-3 py-1 rounded border border-[#272730]">LOOK 02</span>
+                    </div>
+                    <div class="h-80 bg-[#0A0A0C] rounded mb-6 relative overflow-hidden flex items-center justify-center border border-[#272730]">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#050507] via-transparent to-transparent"></div>
+                        <div class="w-32 h-64 border border-[#D4AF37]/30 rounded-full flex items-center justify-center relative group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute inset-2 bg-gradient-to-b from-[#1A1A22] to-[#121217] rounded-full flex flex-col items-center justify-center p-4 text-center">
+                                <i data-lucide="shield" class="w-8 h-8 text-[#D4AF37] mb-2"></i>
+                                <span class="font-mono text-[10px] text-[#9BA1A6]">CARBON WEAVE</span>
+                            </div>
+                        </div>
+                        <button onclick="openInspectionModal(1)" class="absolute bottom-4 left-4 right-4 py-3 bg-[#D4AF37]/10 hover:bg-[#D4AF37] text-[#D4AF37] hover:text-black font-mono text-xs tracking-wider uppercase border border-[#D4AF37]/30 rounded transition-all flex items-center justify-center gap-2">
+                            <i data-lucide="eye" class="w-4 h-4"></i> Quick Inspection ($620)
+                        </button>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-heading text-xl text-white font-bold">Obsidian Chronos Jacket</h3>
+                            <span class="font-mono text-lg text-[#D4AF37]">$620</span>
+                        </div>
+                        <p class="text-xs text-[#9BA1A6] font-light">Carbon-infused technical shell featuring magnetic closure systems and articulated sleeves.</p>
+                    </div>
+                </div>
+
+                <!-- Look 03 -->
+                <div class="glass-panel p-6 rounded-lg group hover:border-[#D4AF37] transition-all duration-500 relative overflow-hidden">
+                    <div class="absolute top-4 right-4 z-10">
+                        <span class="font-mono text-xs text-[#D4AF37] bg-[#050507]/80 px-3 py-1 rounded border border-[#272730]">LOOK 03</span>
+                    </div>
+                    <div class="h-80 bg-[#0A0A0C] rounded mb-6 relative overflow-hidden flex items-center justify-center border border-[#272730]">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#050507] via-transparent to-transparent"></div>
+                        <div class="w-32 h-64 border border-[#D4AF37]/30 rounded-t-lg flex items-center justify-center relative group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute inset-2 bg-gradient-to-b from-[#1A1A22] to-[#121217] rounded-t-lg flex flex-col items-center justify-center p-4 text-center">
+                                <i data-lucide="cpu" class="w-8 h-8 text-[#D4AF37] mb-2"></i>
+                                <span class="font-mono text-[10px] text-[#9BA1A6]">MODULAR UTILITY</span>
+                            </div>
+                        </div>
+                        <button onclick="openInspectionModal(2)" class="absolute bottom-4 left-4 right-4 py-3 bg-[#D4AF37]/10 hover:bg-[#D4AF37] text-[#D4AF37] hover:text-black font-mono text-xs tracking-wider uppercase border border-[#D4AF37]/30 rounded transition-all flex items-center justify-center gap-2">
+                            <i data-lucide="eye" class="w-4 h-4"></i> Quick Inspection ($390)
+                        </button>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-heading text-xl text-white font-bold">Neural Pleated Trousers</h3>
+                            <span class="font-mono text-lg text-[#D4AF37]">$390</span>
+                        </div>
+                        <p class="text-xs text-[#9BA1A6] font-light">Tailored wide-leg trousers with adjustable tension hardware and breathable merino wool.</p>
+                    </div>
+                </div>
+
+                <!-- Look 04 -->
+                <div class="glass-panel p-6 rounded-lg group hover:border-[#D4AF37] transition-all duration-500 relative overflow-hidden">
+                    <div class="absolute top-4 right-4 z-10">
+                        <span class="font-mono text-xs text-[#D4AF37] bg-[#050507]/80 px-3 py-1 rounded border border-[#272730]">LOOK 04</span>
+                    </div>
+                    <div class="h-80 bg-[#0A0A0C] rounded mb-6 relative overflow-hidden flex items-center justify-center border border-[#272730]">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#050507] via-transparent to-transparent"></div>
+                        <div class="w-32 h-64 border border-[#D4AF37]/30 rounded-full flex items-center justify-center relative group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute inset-2 bg-gradient-to-b from-[#1A1A22] to-[#121217] rounded-full flex flex-col items-center justify-center p-4 text-center">
+                                <i data-lucide="sparkles" class="w-8 h-8 text-[#D4AF37] mb-2"></i>
+                                <span class="font-mono text-[10px] text-[#9BA1A6]">TITANIUM HARDWARE</span>
+                            </div>
+                        </div>
+                        <button onclick="openInspectionModal(3)" class="absolute bottom-4 left-4 right-4 py-3 bg-[#D4AF37]/10 hover:bg-[#D4AF37] text-[#D4AF37] hover:text-black font-mono text-xs tracking-wider uppercase border border-[#D4AF37]/30 rounded transition-all flex items-center justify-center gap-2">
+                            <i data-lucide="eye" class="w-4 h-4"></i> Quick Inspection ($550)
+                        </button>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-heading text-xl text-white font-bold">Aether Silk Over-Shirt</h3>
+                            <span class="font-mono text-lg text-[#D4AF37]">$550</span>
+                        </div>
+                        <p class="text-xs text-[#9BA1A6] font-light">Fluid silk-blend overshirt featuring custom anodized titanium buttons and raw-edge hems.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Brand Manifesto Section -->
+        <section id="manifesto" class="py-32 bg-[#121217]/50 border-t border-b border-[#272730] px-6">
+            <div class="max-w-4xl mx-auto text-center space-y-8">
+                <span class="font-mono text-xs text-[#D4AF37] tracking-widest uppercase">[ THE CHRONOS MANIFESTO ]</span>
+                <h2 class="font-heading text-3xl md:text-5xl font-bold tracking-tight text-white leading-tight">
+                    "WE DO NOT SIMPLY TAILOR FABRIC. WE PROGRAM ATMOSPHERE."
+                </h2>
+                <p class="text-[#9BA1A6] font-light leading-relaxed max-w-2xl mx-auto">
+                    Project Chronos merges advanced WebGL computational geometry with heritage artisan tailoring. Each garment is designed to adapt to environmental shifts while maintaining an uncompromising sculptural silhouette.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pt-12 text-left">
+                    <div class="glass-panel p-6 rounded-lg space-y-3">
+                        <i data-lucide="cpu" class="w-6 h-6 text-[#D4AF37]"></i>
+                        <h3 class="font-heading text-lg font-bold text-white">Spatial Geometry</h3>
+                        <p class="text-xs text-[#9BA1A6]">Constructed using 3D parametric draping algorithms for zero waste production.</p>
+                    </div>
+                    <div class="glass-panel p-6 rounded-lg space-y-3">
+                        <i data-lucide="shield-check" class="w-6 h-6 text-[#D4AF37]"></i>
+                        <h3 class="font-heading text-lg font-bold text-white">Technical Silk</h3>
+                        <p class="text-xs text-[#9BA1A6]">Proprietary fibers woven with carbon nanotubes for enhanced durability and fluid motion.</p>
+                    </div>
+                    <div class="glass-panel p-6 rounded-lg space-y-3">
+                        <i data-lucide="zap" class="w-6 h-6 text-[#D4AF37]"></i>
+                        <h3 class="font-heading text-lg font-bold text-white">Direct-to-Runway</h3>
+                        <p class="text-xs text-[#9BA1A6]">Delivered worldwide directly from our automated Tokyo and Milan micro-factories.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive FAQ Accordion Section -->
+        <section id="faq" class="py-32 px-6 max-w-4xl mx-auto">
+            <div class="text-center space-y-4 mb-16">
+                <span class="font-mono text-xs text-[#D4AF37] tracking-widest uppercase">[ INQUIRIES ]</span>
+                <h2 class="font-heading text-3xl md:text-4xl font-bold tracking-tight text-white">FREQUENTLY ASKED QUESTIONS</h2>
+            </div>
+
+            <div class="space-y-4">
+                <div class="glass-panel rounded-lg overflow-hidden border border-[#272730]">
+                    <button onclick="toggleFaq(this)" class="w-full p-6 text-left flex justify-between items-center hover:bg-[#1A1A22] transition-colors">
+                        <span class="font-heading text-lg text-white font-medium">How does the 3D cinematic runway work?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 text-[#D4AF37] transition-transform duration-300"></i>
+                    </button>
+                    <div class="hidden px-6 pb-6 text-sm text-[#9BA1A6] font-light leading-relaxed">
+                        The site utilizes a synchronized WebGL canvas driven by smooth scroll physics. As you scroll, the camera moves along a pre-rendered 3D spline curve, allowing you to inspect garments from every spatial angle without traditional page navigation.
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-lg overflow-hidden border border-[#272730]">
+                    <button onclick="toggleFaq(this)" class="w-full p-6 text-left flex justify-between items-center hover:bg-[#1A1A22] transition-colors">
+                        <span class="font-heading text-lg text-white font-medium">What is Technical Silk and Carbon Weave?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 text-[#D4AF37] transition-transform duration-300"></i>
+                    </button>
+                    <div class="hidden px-6 pb-6 text-sm text-[#9BA1A6] font-light leading-relaxed">
+                        Our proprietary fabrics combine natural Japanese mulberry silk with microscopic carbon filaments. This provides extreme tensile strength, hydrophobic surface tension, and a mesmerizing fluid sheen under studio lighting.
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-lg overflow-hidden border border-[#272730]">
+                    <button onclick="toggleFaq(this)" class="w-full p-6 text-left flex justify-between items-center hover:bg-[#1A1A22] transition-colors">
+                        <span class="font-heading text-lg text-white font-medium">How does Express Checkout work?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 text-[#D4AF37] transition-transform duration-300"></i>
+                    </button>
+                    <div class="hidden px-6 pb-6 text-sm text-[#9BA1A6] font-light leading-relaxed">
+                        Clicking 'Bag' opens our slide-over express checkout drawer. You can securely checkout instantly using Apple Pay, Google Pay, or encrypted credit card processing without leaving the immersive 3D environment.
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-lg overflow-hidden border border-[#272730]">
+                    <button onclick="toggleFaq(this)" class="w-full p-6 text-left flex justify-between items-center hover:bg-[#1A1A22] transition-colors">
+                        <span class="font-heading text-lg text-white font-medium">Can I switch to a static editorial grid?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 text-[#D4AF37] transition-transform duration-300"></i>
+                    </button>
+                    <div class="hidden px-6 pb-6 text-sm text-[#9BA1A6] font-light leading-relaxed">
+                        Yes. Click the 'Editorial Grid' toggle in the global navigation bar at any time to instantly bypass the WebGL engine and view a high-contrast static layout optimized for accessibility and reduced motion.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Newsletter & Concierge Contact -->
+        <section class="py-24 bg-[#121217] border-t border-[#272730] px-6">
+            <div class="max-w-2xl mx-auto text-center space-y-6">
+                <span class="font-mono text-xs text-[#D4AF37] tracking-widest uppercase">[ PRIVATE ACCESS ]</span>
+                <h2 class="font-heading text-3xl font-bold text-white">JOIN THE CHRONOS CIRCLE</h2>
+                <p class="text-sm text-[#9BA1A6]">Receive exclusive drop notifications, private showroom invitations, and spatial lookbooks.</p>
+                
+                <form onsubmit="handleNewsletter(event)" class="flex flex-col sm:flex-row gap-3 pt-4">
+                    <input type="email" required placeholder="Enter your email address..." class="flex-1 bg-[#050507] border border-[#272730] px-4 py-3 rounded text-sm text-white focus:outline-none focus:border-[#D4AF37]">
+                    <button type="submit" class="px-6 py-3 bg-[#D4AF37] text-black font-medium text-xs tracking-widest uppercase rounded hover:bg-white transition-all">
+                        REQUEST INVITATION
+                    </button>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#050507] border-t border-[#272730] py-16 px-6 relative z-10">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+            <div class="space-y-4">
+                <h3 class="font-heading text-xl tracking-widest text-white font-bold">CHRONOS</h3>
+                <p class="text-xs text-[#9BA1A6] font-light">Cinematic 3D garment exploration and bespoke automated tailoring.</p>
+            </div>
+            <div>
+                <h4 class="font-mono text-xs text-[#D4AF37] tracking-widest uppercase mb-4">Navigation</h4>
+                <ul class="space-y-2 text-xs text-[#9BA1A6]">
+                    <li><a href="#runway" class="hover:text-white transition-colors">The Runway</a></li>
+                    <li><a href="#looks" class="hover:text-white transition-colors">Capsule Collection</a></li>
+                    <li><a href="#manifesto" class="hover:text-white transition-colors">Brand Manifesto</a></li>
+                    <li><a href="#faq" class="hover:text-white transition-colors">Inquiries & FAQ</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-mono text-xs text-[#D4AF37] tracking-widest uppercase mb-4">Showrooms</h4>
+                <p class="text-xs text-[#9BA1A6] leading-relaxed">
+                    Tokyo Spatial Lab // Aoyama 2-chome<br>
+                    Milan Atelier // Via Monte Napoleone 8<br>
+                    New York Studio // SoHo Greene St
+                </p>
+            </div>
+            <div>
+                <h4 class="font-mono text-xs text-[#D4AF37] tracking-widest uppercase mb-4">Legal</h4>
+                <ul class="space-y-2 text-xs text-[#9BA1A6]">
+                    <li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Terms of Service</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Spatial License</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto pt-8 border-t border-[#272730] flex flex-col sm:flex-row justify-between items-center text-xs text-[#5C6166] font-mono">
+            <p>&copy; 2025 CHRONOS GARMENT CORP. ALL RIGHTS RESERVED.</p>
+            <p>POWERED BY SKYNET 3D ENGINE</p>
+        </div>
+    </footer>
+
+    <!-- Garment Inspection Modal / Viewport -->
+    <div id="inspection-modal" class="fixed inset-0 z-50 bg-[#050507]/90 backdrop-blur-xl hidden flex items-center justify-center p-4 md:p-8">
+        <div class="glass-panel w-full max-w-5xl rounded-xl overflow-hidden border border-[#272730] grid grid-cols-1 lg:grid-cols-2 relative shadow-2xl">
+            <button onclick="closeInspectionModal()" class="absolute top-4 right-4 z-20 p-2 bg-[#050507] border border-[#272730] hover:border-[#D4AF37] text-white rounded-full transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            
+            <!-- 360 Viewport Mock -->
+            <div class="bg-[#0A0A0C] p-8 flex flex-col items-center justify-center relative min-h-[350px] lg:min-h-[500px]">
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div class="w-64 h-64 rounded-full border border-[#D4AF37]/10 animate-ping"></div>
+                </div>
+                <div id="modal-garment-graphic" class="w-48 h-80 border-2 border-[#D4AF37]/40 rounded-t-full flex items-center justify-center relative shadow-[0_0_50px_rgba(212,175,55,0.15)]">
+                    <div class="absolute inset-3 bg-gradient-to-b from-[#1A1A22] to-[#121217] rounded-t-full flex flex-col items-center justify-center p-6 text-center">
+                        <i data-lucide="sparkles" class="w-10 h-10 text-[#D4AF37] mb-3"></i>
+                        <span id="modal-tag" class="font-mono text-xs text-[#D4AF37]">360 SPATIAL RENDER</span>
+                    </div>
+                </div>
+                <div class="absolute bottom-6 font-mono text-[10px] text-[#9BA1A6] tracking-widest flex items-center gap-2">
+                    <i data-lucide="rotate-3d" class="w-4 h-4 text-[#D4AF37]"></i> DRAG TO ROTATE 360° // PINCH TO ZOOM
+                </div>
+            </div>
+
+            <!-- Specification Panel -->
+            <div class="p-8 flex flex-col justify-between space-y-6">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span id="modal-category" class="font-mono text-xs text-[#D4AF37] uppercase tracking-widest">LOOK 01 // OVERWEAR</span>
+                        <span id="modal-price" class="font-mono text-2xl text-[#D4AF37] font-bold">$480</span>
+                    </div>
+                    <h2 id="modal-title" class="font-heading text-2xl md:text-3xl font-bold text-white">Velvet Drape Trench</h2>
+                    <p id="modal-desc" class="text-sm text-[#9BA1A6] font-light leading-relaxed">
+                        Crafted from 100% Japanese technical silk with an integrated carbon weave lining. Designed for seamless thermal regulation and architectural draping.
+                    </p>
+
+                    <div class="space-y-2 pt-2">
+                        <label class="font-mono text-xs text-[#9BA1A6] uppercase tracking-wider">Select Size</label>
+                        <div class="grid grid-cols-4 gap-2">
+                            <button onclick="selectSize(this)" class="size-btn py-2 border border-[#272730] hover:border-[#D4AF37] rounded font-mono text-xs text-white transition-all">S</button>
+                            <button onclick="selectSize(this)" class="size-btn py-2 border border-[#D4AF37] bg-[#D4AF37]/10 rounded font-mono text-xs text-white transition-all active-size">M</button>
+                            <button onclick="selectSize(this)" class="size-btn py-2 border border-[#272730] hover:border-[#D4AF37] rounded font-mono text-xs text-white transition-all">L</button>
+                            <button onclick="selectSize(this)" class="size-btn py-2 border border-[#272730] hover:border-[#D4AF37] rounded font-mono text-xs text-white transition-all">XL</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="addToCartFromModal()" class="w-full py-4 bg-[#D4AF37] text-black font-medium text-xs tracking-[0.2em] uppercase rounded hover:bg-white transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="shopping-bag" class="w-4 h-4"></i> ADD TO COLLECTION
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Express Checkout Drawer -->
+    <div id="cart-drawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-md transition-opacity" onclick="toggleCart()"></div>
+        <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
+            <div class="w-screen max-w-md bg-[#121217] border-l border-[#272730] flex flex-col justify-between">
+                
+                <!-- Drawer Header -->
+                <div class="p-6 border-b border-[#272730] flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="shopping-bag" class="w-5 h-5 text-[#D4AF37]"></i>
+                        <h3 class="font-heading text-lg font-bold text-white tracking-widest">YOUR SELECTION</h3>
+                    </div>
+                    <button onclick="toggleCart()" class="p-2 text-[#9BA1A6] hover:text-white">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+
+                <!-- Cart Items List -->
+                <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4">
+                    <!-- Dynamically populated or empty state -->
+                    <div id="empty-cart-state" class="h-full flex flex-col items-center justify-center text-center space-y-4 text-[#9BA1A6]">
+                        <i data-lucide="shopping-bag" class="w-12 h-12 text-[#272730]"></i>
+                        <p class="text-sm">Your bag is currently empty.</p>
+                    </div>
+                </div>
+
+                <!-- Drawer Footer & Checkout -->
+                <div class="p-6 border-t border-[#272730] space-y-4 bg-[#0A0A0C]">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-[#9BA1A6] font-mono">SUBTOTAL</span>
+                        <span id="cart-subtotal" class="text-white font-mono font-bold">$0.00</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs text-[#D4AF37]">
+                        <span>GLOBAL EXPRESS SHIPPING</span>
+                        <span>FREE</span>
+                    </div>
+                    
+                    <button onclick="proceedToCheckout()" id="checkout-btn" disabled class="w-full py-4 bg-[#272730] text-[#5C6166] font-medium text-xs tracking-[0.2em] uppercase rounded transition-all flex items-center justify-center gap-2 cursor-not-allowed">
+                        <span>PROCEED TO EXPRESS CHECKOUT</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Garment Data Store
+        const garments = [
+            { id: 0, title: "Velvet Drape Trench", price: 480, category: "LOOK 01 // OUTERWEAR", desc: "Engineered wool blend with structured asymmetrical lapel and integrated weather shielding." },
+            { id: 1, title: "Obsidian Chronos Jacket", price: 620, category: "LOOK 02 // TECHNICAL SHELL", desc: "Carbon-infused technical shell featuring magnetic closure systems and articulated sleeves." },
+            { id: 2, title: "Neural Pleated Trousers", price: 390, category: "LOOK 03 // TAILORING", desc: "Tailored wide-leg trousers with adjustable tension hardware and breathable merino wool." },
+            { id: 3, title: "Aether Silk Over-Shirt", price: 550, category: "LOOK 04 // SILK BLEND", desc: "Fluid silk-blend overshirt featuring custom anodized titanium buttons and raw-edge hems." }
+        ];
+
+        let cart = [];
+        let currentModalIndex = 0;
+        let isAudioEnabled = false;
+        let selectedSize = 'M';
+
+        // Preloader Logic
+        window.addEventListener('load', () => {
+            const loadingBar = document.getElementById('loading-bar');
+            const loadingStatus = document.getElementById('loading-status');
+            const audioPrompt = document.getElementById('audio-prompt');
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 15) + 10;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    loadingStatus.innerText = "SYSTEM READY // DEPLOYING RUNWAY";
+                    audioPrompt.classList.remove('hidden');
+                }
+                loadingBar.style.width = progress + '%';
+            }, 200);
+        });
+
+        function initExperience(enableAudio) {
+            isAudioEnabled = enableAudio;
+            const preloader = document.getElementById('preloader');
+            preloader.classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => preloader.remove(), 1000);
+
+            if (isAudioEnabled) {
+                document.getElementById('sound-icon').setAttribute('data-lucide', 'volume-2');
+                document.getElementById('sound-label').innerText = "SOUND: ON";
+                lucide.createIcons();
+                showToast("Spatial soundscape initialized.");
+            }
+        }
+
+        // Toggle Audio State
+        function toggleAudio() {
+            isAudioEnabled = !isAudioEnabled;
+            const icon = document.getElementById('sound-icon');
+            const label = document.getElementById('sound-label');
+            if (isAudioEnabled) {
+                icon.setAttribute('data-lucide', 'volume-2');
+                label.innerText = "SOUND: ON";
+                showToast("Audio ambience activated.");
+            } else {
+                icon.setAttribute('data-lucide', 'volume-x');
+                label.innerText = "SOUND: OFF";
+                showToast("Audio muted.");
+            }
+            lucide.createIcons();
+        }
+
+        // Accessibility Reduced Motion / Static Fallback toggle
+        function toggleAccessibilityMode() {
+            document.body.classList.toggle('accessibility-fallback');
+            showToast("Switched to High-Contrast Editorial View.");
+            window.scrollTo({ top: document.getElementById('looks').offsetTop, behavior: 'smooth' });
+        }
+
+        // Inspection Modal Control
+        function openInspectionModal(index) {
+            currentModalIndex = index;
+            const garment = garments[index];
+            document.getElementById('modal-title').innerText = garment.title;
+            document.getElementById('modal-price').innerText = `$${garment.price}`;
+            document.getElementById('modal-category').innerText = garment.category;
+            document.getElementById('modal-desc').innerText = garment.desc;
+            
+            const modal = document.getElementById('inspection-modal');
+            modal.classList.remove('hidden');
+        }
+
+        function closeInspectionModal() {
+            document.getElementById('inspection-modal').classList.add('hidden');
+        }
+
+        function selectSize(btn) {
+            document.querySelectorAll('.size-btn').forEach(b => {
+                b.classList.remove('border-[#D4AF37]', 'bg-[#D4AF37]/15');
+                b.classList.add('border-[#272730]');
+            });
+            btn.classList.remove('border-[#272730]');
+            btn.classList.add('border-[#D4AF37]', 'bg-[#D4AF37]/15');
+            selectedSize = btn.innerText;
+        }
+
+        // Cart Management
+        function addToCartFromModal() {
+            const garment = garments[currentModalIndex];
+            cart.push({ ...garment, size: selectedSize, cartId: Date.now() });
+            updateCartUI();
+            closeInspectionModal();
+            showToast(`Added ${garment.title} [Size: ${selectedSize}] to collection.`);
+            toggleCart(true);
+        }
+
+        function removeFromCart(cartId) {
+            cart = cart.filter(item => item.cartId !== cartId);
+            updateCartUI();
+            showToast("Item removed from bag.");
+        }
+
+        function updateCartUI() {
+            const badge = document.getElementById('cart-badge');
+            badge.innerText = cart.length;
+
+            const container = document.getElementById('cart-items-container');
+            const subtotalEl = document.getElementById('cart-subtotal');
+            const checkoutBtn = document.getElementById('checkout-btn');
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="h-full flex flex-col items-center justify-center text-center space-y-4 text-[#9BA1A6]">
+                        <i data-lucide="shopping-bag" class="w-12 h-12 text-[#272730]"></i>
+                        <p class="text-sm">Your bag is currently empty.</p>
+                    </div>
+                `;
+                subtotalEl.innerText = "$0.00";
+                checkoutBtn.disabled = true;
+                checkoutBtn.className = "w-full py-4 bg-[#272730] text-[#5C6166] font-medium text-xs tracking-[0.2em] uppercase rounded transition-all flex items-center justify-center gap-2 cursor-not-allowed";
+            } else {
+                let subtotal = 0;
+                container.innerHTML = cart.map(item => {
+                    subtotal += item.price;
+                    return `
+                        <div class="glass-panel p-4 rounded-lg flex items-center justify-between">
+                            <div>
+                                <h4 class="font-heading text-sm text-white font-bold">${item.title}</h4>
+                                <p class="text-xs text-[#9BA1A6] font-mono">Size: ${item.size} // $${item.price}</p>
+                            </div>
+                            <button onclick="removeFromCart(${item.cartId})" class="text-[#5C6166] hover:text-red-400 transition-colors">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+                subtotalEl.innerText = `$${subtotal}.00`;
+                checkoutBtn.disabled = false;
+                checkoutBtn.className = "w-full py-4 bg-[#D4AF37] text-black font-medium text-xs tracking-[0.2em] uppercase rounded hover:bg-white transition-all flex items-center justify-center gap-2 cursor-pointer";
+            }
+            lucide.createIcons();
+        }
+
+        function toggleCart(forceOpen = false) {
+            const drawer = document.getElementById('cart-drawer');
+            if (forceOpen) {
+                drawer.classList.remove('hidden');
+            } else {
+                drawer.classList.toggle('hidden');
+            }
+        }
+
+        function proceedToCheckout() {
+            toggleCart();
+            showToast("Order placed successfully! Order ID: CHR-" + Math.floor(100000 + Math.random() * 900000));
+            cart = [];
+            updateCartUI();
+        }
+
+        // FAQ Accordion
+        function toggleFaq(btn) {
+            const content = btn.nextElementSibling;
+            const icon = btn.querySelector('i');
+            
+            content.classList.toggle('hidden');
+            icon.style.transform = content.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+        }
+
+        // Newsletter Handler
+        function handleNewsletter(e) {
+            e.preventDefault();
+            showToast("Invitation request received. Check your inbox.");
+            e.target.reset();
+        }
+
+        // Toast Notification Generator
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = "glass-panel px-6 py-4 rounded-lg border border-[#D4AF37]/50 text-xs font-mono text-white flex items-center gap-3 shadow-2xl animate-fade-in";
+            toast.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-[#D4AF37]"></i><span>${message}</span>`;
+            container.appendChild(toast);
+            lucide.createIcons();
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
+
+        function resetCamera() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast("Camera reset to Act I.");
+        }
+
+        // Three.js Background Particle / Atmospheric Canvas
+        const container = document.getElementById('webgl-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        // Particle Field
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 1500;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for(let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 15;
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.015,
+            color: '#D4AF37',
+            transparent: true,
+            opacity: 0.6
+        });
+
+        const particleMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particleMesh);
+
+        camera.position.z = 3;
+
+        // Mouse interaction for subtle 3D parallax
+        let mouseX = 0;
+        let mouseY = 0;
+        window.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX / window.innerWidth) - 0.5;
+            mouseY = (event.clientY / window.innerHeight) - 0.5;
+        });
+
+        // Animation Loop
+        const clock = new THREE.Clock();
+        function animate() {
+            requestAnimationFrame(animate);
+            const elapsedTime = clock.getElapsedTime();
+
+            particleMesh.rotation.y = elapsedTime * 0.05 + (mouseX * 0.5);
+            particleMesh.rotation.x = elapsedTime * 0.03 + (mouseY * 0.5);
+
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>

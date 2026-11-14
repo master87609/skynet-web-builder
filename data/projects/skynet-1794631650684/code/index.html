@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apple Pro — Cinematic Experience</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#000000',
+                        appleBg: '#0A0A0C',
+                        appleAccent: '#2997FF',
+                        appleGray: '#86868B',
+                        appleLight: '#F5F5F7',
+                        appleSurface: 'rgba(255, 255, 255, 0.05)'
+                    },
+                    fontFamily: {
+                        sans: ['SF Pro Display', 'SF Pro Text', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                        mono: ['SF Mono', 'monospace']
+                    },
+                    borderRadius: {
+                        'card': '16px',
+                        'modal': '24px',
+                        'pill': '9999px'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/sf-pro-display');
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #0A0A0C;
+            color: #F5F5F7;
+            overflow-x: hidden;
+        }
+        .glass-nav {
+            background: rgba(10, 10, 12, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card:hover {
+            border-color: rgba(41, 151, 255, 0.4);
+            box-shadow: 0 0 30px rgba(41, 151, 255, 0.15);
+        }
+        .hero-title {
+            font-size: clamp(40px, 6vw, 80px);
+            line-height: 1.05;
+            letter-spacing: -0.015em;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0A0A0C;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333338;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #55555c;
+        }
+    </style>
+</head>
+<body class="bg-appleBg text-appleLight antialiased selection:bg-appleAccent selection:text-white">
+
+    <!-- 1. Sticky Navigation -->
+    <header id="global-header" class="fixed top-0 left-0 right-0 z-50 glass-nav transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-12 flex items-center justify-between">
+            <!-- Apple Monolith Logo -->
+            <a href="#" class="flex items-center space-x-2 text-appleLight hover:opacity-80 transition-opacity" aria-label="Apple Home">
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 170 170"><path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.04-2.5-6.9-7.14-11.58-13.91-7.11-10.37-12.65-21.68-16.63-33.94-3.98-12.26-5.97-23.77-5.97-34.53 0-14.35 3.73-26.04 11.19-35.08 7.46-9.04 16.91-13.61 28.35-13.71 5.3 0 10.98 1.34 17.04 4.02 6.06 2.68 10.02 4.02 11.88 4.02 1.58 0 5.69-1.4 12.33-4.19 6.64-2.8 12.33-4.02 17.07-3.68 14.86 1.08 26.24 7.57 34.14 19.47-12.61 7.69-18.79 18.78-18.54 33.28.25 11.45 4.54 20.9 12.87 28.35 4.3 3.86 9.47 6.61 15.52 8.24-2.45 7.49-5.46 15.02-9.03 22.58zM119.22 31.9c0-8.08 2.95-15.65 8.85-22.71 5.9-7.06 13.27-11.12 22.11-12.19.11 1.09.16 2.07.16 2.94 0 7.73-3.11 15.34-9.33 22.82-6.22 7.48-13.79 11.66-22.71 12.54-.05-.98-.08-2.07-.08-3.4z"/></svg>
+                <span class="text-xs font-semibold tracking-wider">iPhone 17 Pro</span>
+            </a>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden md:flex items-center space-x-8 text-xs text-appleGray">
+                <a href="#overview" class="hover:text-appleLight transition-colors">Overview</a>
+                <a href="#inspector" class="hover:text-appleLight transition-colors">3D Inspector</a>
+                <a href="#silicon" class="hover:text-appleLight transition-colors">A19 Pro Silicon</a>
+                <a href="#ecosystem" class="hover:text-appleLight transition-colors">Ecosystem</a>
+                <a href="#specs" class="hover:text-appleLight transition-colors">Tech Specs</a>
+            </nav>
+
+            <!-- Utility Cluster -->
+            <div class="flex items-center space-x-4">
+                <button id="accessibility-toggle" class="text-appleGray hover:text-appleLight transition-colors p-1" title="Accessibility & Motion Settings">
+                    <i data-lucide="eye" class="w-4 h-4"></i>
+                </button>
+                <button id="bag-trigger" class="relative text-appleGray hover:text-appleLight transition-colors p-1" title="Shopping Bag">
+                    <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                    <span id="bag-badge" class="absolute -top-1 -right-1 bg-appleAccent text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">1</span>
+                </button>
+                <!-- Mobile Hamburger Toggle -->
+                <button id="mobile-menu-btn" class="md:hidden text-appleLight p-1">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Drawer Menu -->
+        <div id="mobile-menu" class="hidden md:hidden glass-nav border-t border-white/10 px-6 py-6 space-y-4">
+            <a href="#overview" class="block text-lg font-medium text-appleLight">Overview</a>
+            <a href="#inspector" class="block text-lg font-medium text-appleLight">3D Inspector</a>
+            <a href="#silicon" class="block text-lg font-medium text-appleLight">A19 Pro Silicon</a>
+            <a href="#ecosystem" class="block text-lg font-medium text-appleLight">Ecosystem</a>
+            <a href="#specs" class="block text-lg font-medium text-appleLight">Tech Specs</a>
+        </div>
+    </header>
+
+    <!-- 2. Compelling Hero Section -->
+    <section id="overview" class="relative min-h-screen flex flex-col items-center justify-center pt-24 pb-16 px-4 overflow-hidden">
+        <!-- Ambient Background Glow -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-appleAccent/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+        <div class="text-center z-10 max-w-4xl mx-auto space-y-4">
+            <p class="text-appleAccent font-medium tracking-wide uppercase text-sm">Introducing iPhone 17 Pro</p>
+            <h1 class="hero-title font-semibold tracking-tight text-white">Titanium. So strong. So light. So Pro.</h1>
+            <p class="text-appleGray text-lg md:text-xl max-w-2xl mx-auto">Forged in aerospace-grade titanium with the groundbreaking A19 Pro chip and a customizable Action button.</p>
+            
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
+                <button onclick="openConfigurator()" class="w-full sm:w-auto bg-appleAccent hover:bg-blue-600 text-white font-medium px-6 py-3 rounded-pill transition-all transform hover:scale-105 shadow-lg shadow-appleAccent/25 flex items-center justify-center space-x-2">
+                    <span>Buy Now</span>
+                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
+                <a href="#inspector" class="w-full sm:w-auto glass-card hover:bg-white/10 text-white font-medium px-6 py-3 rounded-pill transition-all flex items-center justify-center space-x-2">
+                    <span>Explore 3D Model</span>
+                    <i data-lucide="box" class="w-4 h-4"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Hero 3D Render Mockup Container with Gyro effect -->
+        <div id="hero-canvas-container" class="relative mt-12 w-full max-w-5xl h-[400px] md:h-[550px] flex items-center justify-center transition-transform duration-200 ease-out">
+            <div class="absolute inset-0 bg-gradient-to-t from-appleBg via-transparent to-transparent z-10"></div>
+            <div class="relative z-0 w-72 md:w-96 h-[380px] md:h-[520px] rounded-[48px] bg-gradient-to-tr from-neutral-900 via-neutral-800 to-neutral-900 p-3 shadow-2xl border border-white/20 flex flex-col items-center justify-between overflow-hidden group">
+                <!-- Phone Screen Simulation -->
+                <div class="w-full h-full rounded-[38px] bg-black relative overflow-hidden flex flex-col items-center justify-center p-6 text-center">
+                    <div class="absolute top-3 w-28 h-4 bg-black rounded-full z-30 flex items-center justify-end px-2">
+                        <div class="w-2.5 h-2.5 bg-neutral-900 rounded-full border border-neutral-800"></div>
+                    </div>
+                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-900/40 via-black to-black"></div>
+                    <div class="z-10 space-y-2">
+                        <span class="text-[10px] tracking-widest text-appleAccent uppercase font-mono">Super Retina XDR</span>
+                        <h2 class="text-2xl font-bold tracking-tight text-white">Always-On OLED</h2>
+                        <p class="text-xs text-appleGray">ProMotion 120Hz with extreme dynamic range.</p>
+                    </div>
+                    <div class="absolute bottom-4 z-10 w-32 h-1 bg-white/30 rounded-full"></div>
+                </div>
+                <!-- Hotspot marker on phone body -->
+                <div class="absolute top-1/3 right-6 z-20 animate-pulse cursor-pointer group/spot" onclick="triggerHotspot('Titanium Chassis', 'Grade 5 titanium alloy with microblasted texture for unprecedented durability and featherlight feel.')">
+                    <div class="w-6 h-6 rounded-full bg-appleAccent/30 flex items-center justify-center">
+                        <div class="w-2 h-2 rounded-full bg-appleAccent"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Interactive Feature Section / 3D Inspector Sandbox -->
+    <section id="inspector" class="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div class="text-center max-w-3xl mx-auto space-y-4 mb-16">
+            <p class="text-appleAccent text-sm uppercase tracking-wider font-semibold">Interactive Sandbox</p>
+            <h2 class="text-3xl md:text-5xl font-bold tracking-tight">Precision Engineered. Inside & Out.</h2>
+            <p class="text-appleGray text-base md:text-lg">Inspect material finishes and explore the mechanical separation of internal components with real-time sliders.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <!-- Left: Interactive Controls -->
+            <div class="lg:col-span-5 space-y-8 glass-card p-6 md:p-8 rounded-card">
+                <div>
+                    <h3 class="text-xl font-semibold mb-2">Finish & Material Matrix</h3>
+                    <p class="text-sm text-appleGray mb-4">Switch between aerospace-grade titanium colorways.</p>
+                    <!-- Finish Selector -->
+                    <div id="finish-selector" class="flex items-center space-x-4">
+                        <button onclick="setFinish('Natural Titanium', 'from-neutral-400 via-neutral-300 to-neutral-500', 'Natural Titanium')" class="w-10 h-10 rounded-full bg-gradient-to-tr from-neutral-400 to-neutral-200 border-2 border-appleAccent ring-2 ring-transparent transition-all transform hover:scale-110 focus:outline-none" title="Natural Titanium"></button>
+                        <button onclick="setFinish('Blue Titanium', 'from-blue-900 via-blue-700 to-blue-950', 'Blue Titanium')" class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-800 to-blue-950 border-2 border-transparent ring-2 ring-transparent transition-all transform hover:scale-110 focus:outline-none" title="Blue Titanium"></button>
+                        <button onclick="setFinish('White Titanium', 'from-neutral-200 via-white to-neutral-300', 'White Titanium')" class="w-10 h-10 rounded-full bg-gradient-to-tr from-neutral-100 to-neutral-300 border-2 border-transparent ring-2 ring-transparent transition-all transform hover:scale-110 focus:outline-none" title="White Titanium"></button>
+                        <button onclick="setFinish('Black Titanium', 'from-neutral-900 via-neutral-800 to-black', 'Black Titanium')" class="w-10 h-10 rounded-full bg-gradient-to-tr from-neutral-900 to-black border-2 border-transparent ring-2 ring-transparent transition-all transform hover:scale-110 focus:outline-none" title="Black Titanium"></button>
+                    </div>
+                    <p id="current-finish-label" class="text-xs font-mono text-appleAccent mt-2">Selected: Natural Titanium</p>
+                </div>
+
+                <hr class="border-white/10">
+
+                <!-- Exploded View Slider -->
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-xl font-semibold">Exploded View Matrix</h3>
+                        <span id="exploded-metric" class="text-xs font-mono text-appleAccent">0% Separation</span>
+                    </div>
+                    <p class="text-sm text-appleGray mb-4">Manual mechanical separation of internal hardware modules.</p>
+                    <input id="exploded-slider" type="range" min="0" max="100" value="0" class="w-full accent-appleAccent cursor-pointer bg-neutral-800 h-2 rounded-lg" oninput="updateExplodedView(this.value)">
+                </div>
+
+                <hr class="border-white/10">
+
+                <!-- Macro Hotspot Info Box -->
+                <div id="hotspot-info" class="p-4 rounded-xl bg-black/40 border border-white/10">
+                    <h4 id="hotspot-title" class="font-semibold text-white flex items-center space-x-2">
+                        <i data-lucide="info" class="w-4 h-4 text-appleAccent"></i>
+                        <span>Aerospace Grade 5 Titanium</span>
+                    </h4>
+                    <p id="hotspot-desc" class="text-xs text-appleGray mt-1">iPhone 17 Pro features a robust titanium enclosure with a new brushed texture, contoured edges, and the thinnest borders ever on an Apple display.</p>
+                </div>
+            </div>
+
+            <!-- Right: Dynamic 3D Viewer / Exploded Simulation Box -->
+            <div class="lg:col-span-7 h-[450px] md:h-[550px] glass-card rounded-card relative overflow-hidden flex items-center justify-center p-8">
+                <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-transparent to-transparent pointer-events-none"></div>
+                
+                <!-- Simulated Layer Stack representing Exploded View -->
+                <div id="exploded-container" class="relative w-64 md:w-80 h-[380px] md:h-[460px] transition-all duration-300 flex flex-col items-center justify-center">
+                    <!-- Layer 1: Display Glass -->
+                    <div id="layer-glass" class="absolute inset-0 rounded-[36px] bg-gradient-to-tr from-neutral-900/90 to-neutral-800/90 border border-white/30 shadow-2xl transition-all duration-300 flex items-center justify-center z-40">
+                        <span class="text-xs font-mono text-white/70 bg-black/60 px-3 py-1 rounded-full backdrop-blur">Ceramic Shield Front</span>
+                    </div>
+                    <!-- Layer 2: Titanium Chassis -->
+                    <div id="layer-chassis" class="absolute inset-2 rounded-[32px] bg-gradient-to-tr from-neutral-800 to-neutral-700 border border-white/20 shadow-xl transition-all duration-300 flex items-center justify-center z-30">
+                        <span id="chassis-badge" class="text-xs font-mono text-appleLight bg-black/60 px-3 py-1 rounded-full backdrop-blur transition-colors">Natural Titanium Frame</span>
+                    </div>
+                    <!-- Layer 3: A19 Pro Silicon Core -->
+                    <div id="layer-silicon" class="absolute inset-6 rounded-[28px] bg-neutral-900 border border-appleAccent/50 shadow-lg transition-all duration-300 flex items-center justify-center z-20">
+                        <span class="text-xs font-mono text-appleAccent bg-black/80 px-3 py-1 rounded-full backdrop-blur">A19 Pro 3nm Silicon Die</span>
+                    </div>
+                    <!-- Layer 4: Pro Camera Matrix -->
+                    <div id="layer-battery" class="absolute inset-10 rounded-[24px] bg-neutral-950 border border-white/10 shadow-md transition-all duration-300 flex items-center justify-center z-10">
+                        <span class="text-xs font-mono text-appleGray bg-black/90 px-3 py-1 rounded-full backdrop-blur">Stacked Battery & Thermal Vapor Chamber</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Silicon Architecture & Services Section -->
+    <section id="silicon" class="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-white/10">
+        <div class="text-center max-w-3xl mx-auto space-y-4 mb-16">
+            <p class="text-appleAccent text-sm uppercase tracking-wider font-semibold">Apple Silicon Mastery</p>
+            <h2 class="text-3xl md:text-5xl font-bold tracking-tight">A19 Pro. The chip that redefines limits.</h2>
+            <p class="text-appleGray text-base md:text-lg">Industry-leading 3nm architecture with hardware-accelerated ray tracing and breakthrough neural engine performance.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Feature Card 1 -->
+            <div class="glass-card p-8 rounded-card space-y-4 flex flex-col justify-between">
+                <div class="w-12 h-12 rounded-2xl bg-appleAccent/10 flex items-center justify-center text-appleAccent">
+                    <i data-lucide="cpu" class="w-6 h-6"></i>
+                </div>
+                <div class="space-y-2">
+                    <h3 class="text-xl font-semibold">6-Core Pro GPU</h3>
+                    <p class="text-sm text-appleGray">Unprecedented graphics performance with hardware ray tracing that delivers hyper-realistic lighting in AAA gaming titles.</p>
+                </div>
+                <div class="pt-4 border-t border-white/10 flex justify-between items-center text-xs font-mono text-appleAccent">
+                    <span>3nm Process Node</span>
+                    <span>+40% Speed</span>
+                </div>
+            </div>
+
+            <!-- Feature Card 2 -->
+            <div class="glass-card p-8 rounded-card space-y-4 flex flex-col justify-between">
+                <div class="w-12 h-12 rounded-2xl bg-appleAccent/10 flex items-center justify-center text-appleAccent">
+                    <i data-lucide="zap" class="w-6 h-6"></i>
+                </div>
+                <div class="space-y-2">
+                    <h3 class="text-xl font-semibold">Neural Engine</h3>
+                    <p class="text-sm text-appleGray">16-core Neural Engine capable of over 35 trillion operations per second, supercharging Apple Intelligence workflows.</p>
+                </div>
+                <div class="pt-4 border-t border-white/10 flex justify-between items-center text-xs font-mono text-appleAccent">
+                    <span>AI Accelerated</span>
+                    <span>35 TOPS</span>
+                </div>
+            </div>
+
+            <!-- Feature Card 3 -->
+            <div class="glass-card p-8 rounded-card space-y-4 flex flex-col justify-between">
+                <div class="w-12 h-12 rounded-2xl bg-appleAccent/10 flex items-center justify-center text-appleAccent">
+                    <i data-lucide="shield-check" class="w-6 h-6"></i>
+                </div>
+                <div class="space-y-2">
+                    <h3 class="text-xl font-semibold">Secure Enclave</h3>
+                    <p class="text-sm text-appleGray">Hardware-isolated security architecture ensuring biometric data, encryption keys, and credentials remain strictly confidential.</p>
+                </div>
+                <div class="pt-4 border-t border-white/10 flex justify-between items-center text-xs font-mono text-appleAccent">
+                    <span>Zero Trust</span>
+                    <span>Class-Leading</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Ecosystem & Testimonials Section -->
+    <section id="ecosystem" class="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-white/10">
+        <div class="text-center max-w-3xl mx-auto space-y-4 mb-16">
+            <p class="text-appleAccent text-sm uppercase tracking-wider font-semibold">Critical Acclaim</p>
+            <h2 class="text-3xl md:text-5xl font-bold tracking-tight">Loved by creators, engineers, and visionaries.</h2>
+            <p class="text-appleGray text-base md:text-lg">See how industry leaders utilize iPhone 17 Pro to accelerate their creative and professional workflows.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Testimonial 1 -->
+            <div class="glass-card p-8 rounded-card space-y-6 flex flex-col justify-between">
+                <p class="text-appleLight italic text-sm md:text-base">"The transition from heavy RED rigs to shooting cinematic ProRes footage directly on iPhone 17 Pro has entirely transformed our documentary pipeline."</p>
+                <div class="flex items-center space-x-4 pt-4 border-t border-white/10">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center font-bold text-white">CN</div>
+                    <div>
+                        <h4 class="font-semibold text-sm">Clara Nolan</h4>
+                        <p class="text-xs text-appleGray">Oscar-Winning Cinematographer</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonial 2 -->
+            <div class="glass-card p-8 rounded-card space-y-6 flex flex-col justify-between">
+                <p class="text-appleLight italic text-sm md:text-base">"A19 Pro performance coupled with enterprise-grade encryption allows our engineering teams to deploy mission-critical mobile apps with absolute confidence."</p>
+                <div class="flex items-center space-x-4 pt-4 border-t border-white/10">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-500 to-pink-600 flex items-center justify-center font-bold text-white">JS</div>
+                    <div>
+                        <h4 class="font-semibold text-sm">Jonathan Sterling</h4>
+                        <p class="text-xs text-appleGray">CTO, Global FinTech Solutions</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonial 3 -->
+            <div class="glass-card p-8 rounded-card space-y-6 flex flex-col justify-between">
+                <p class="text-appleLight italic text-sm md:text-base">"The titanium build is astonishingly light in hand. Combined with the Action button and USB-C speeds, it's the ultimate productivity powerhouse."</p>
+                <div class="flex items-center space-x-4 pt-4 border-t border-white/10">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center font-bold text-white">AK</div>
+                    <div>
+                        <h4 class="font-semibold text-sm">Aria Kensington</h4>
+                        <p class="text-xs text-appleGray">Principal Industrial Designer</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. FAQ Accordion Section -->
+    <section id="specs" class="py-24 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto border-t border-white/10">
+        <div class="text-center space-y-4 mb-16">
+            <p class="text-appleAccent text-sm uppercase tracking-wider font-semibold">Frequently Asked Questions</p>
+            <h2 class="text-3xl md:text-5xl font-bold tracking-tight">Everything you need to know.</h2>
+        </div>
+
+        <div class="space-y-4">
+            <!-- FAQ Item 1 -->
+            <div class="glass-card rounded-2xl overflow-hidden transition-all">
+                <button class="w-full p-6 text-left flex justify-between items-center focus:outline-none" onclick="toggleFaq(this)">
+                    <span class="font-semibold text-lg">What makes Grade 5 Titanium superior to stainless steel?</span>
+                    <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-content max-h-0 overflow-hidden transition-all duration-300 px-6 text-appleGray text-sm">
+                    <p class="pb-6">Grade 5 titanium has one of the highest strength-to-weight ratios of any metal, making these our lightest Pro models ever. Titanium also has superior corrosion resistance and thermal dissipation properties compared to previous stainless steel alloys.</p>
+                </div>
+            </div>
+
+            <!-- FAQ Item 2 -->
+            <div class="glass-card rounded-2xl overflow-hidden transition-all">
+                <button class="w-full p-6 text-left flex justify-between items-center focus:outline-none" onclick="toggleFaq(this)">
+                    <span class="font-semibold text-lg">How does the A19 Pro chip handle ray tracing in games?</span>
+                    <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-content max-h-0 overflow-hidden transition-all duration-300 px-6 text-appleGray text-sm">
+                    <p class="pb-6">The A19 Pro features hardware-accelerated ray tracing that is up to 4x faster than software-based ray tracing. This enables console-level gaming titles with incredibly realistic lighting, reflections, and shadows directly on your mobile device.</p>
+                </div>
+            </div>
+
+            <!-- FAQ Item 3 -->
+            <div class="glass-card rounded-2xl overflow-hidden transition-all">
+                <button class="w-full p-6 text-left flex justify-between items-center focus:outline-none" onclick="toggleFaq(this)">
+                    <span class="font-semibold text-lg">What are the trade-in options when purchasing a new iPhone Pro?</span>
+                    <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-content max-h-0 overflow-hidden transition-all duration-300 px-6 text-appleGray text-sm">
+                    <p class="pb-6">You can trade in your current smartphone online or at an Apple Store for instant credit toward your new iPhone 17 Pro purchase. Our configurator modal walks you through trade-in estimates instantly.</p>
+                </div>
+            </div>
+
+            <!-- FAQ Item 4 -->
+            <div class="glass-card rounded-2xl overflow-hidden transition-all">
+                <button class="w-full p-6 text-left flex justify-between items-center focus:outline-none" onclick="toggleFaq(this)">
+                    <span class="font-semibold text-lg">Does Apple Pay support instant express checkout?</span>
+                    <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+                </button>
+                <div class="faq-content max-h-0 overflow-hidden transition-all duration-300 px-6 text-appleGray text-sm">
+                    <p class="pb-6">Yes! When checking out through our secure transactional gateway, Apple Pay securely authenticates your payment with Touch ID or Face ID for a seamless 1-click purchase.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. Comprehensive Footer -->
+    <footer class="bg-black border-t border-white/10 pt-16 pb-12 text-xs text-appleGray">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-8">
+                <div class="space-y-4">
+                    <h4 class="font-semibold text-appleLight">Shop and Learn</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-white transition-colors">Store</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Mac</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">iPad</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">iPhone</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Watch</a></li>
+                    </ul>
+                </div>
+                <div class="space-y-4">
+                    <h4 class="font-semibold text-appleLight">Apple Wallet</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-white transition-colors">Wallet</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Apple Pay</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Apple Card</a></li>
+                    </ul>
+                </div>
+                <div class="space-y-4">
+                    <h4 class="font-semibold text-appleLight">Account</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-white transition-colors">Manage Your Apple ID</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Apple Store Account</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">iCloud.com</a></li>
+                    </ul>
+                </div>
+                <div class="space-y-4">
+                    <h4 class="font-semibold text-appleLight">Entertainment</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-white transition-colors">Apple TV+</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Apple Music</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Apple Arcade</a></li>
+                    </ul>
+                </div>
+                <div class="space-y-4 col-span-2 md:col-span-1">
+                    <h4 class="font-semibold text-appleLight">Apple Values</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-white transition-colors">Accessibility</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Environment</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Privacy</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Supply Chain</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                <p>Copyright © 2025 Apple Inc. All rights reserved.</p>
+                <div class="flex space-x-6">
+                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-white transition-colors">Terms of Use</a>
+                    <a href="#" class="hover:text-white transition-colors">Sales Policy</a>
+                    <a href="#" class="hover:text-white transition-colors">Legal Site</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 8. Working Modal Form (Bag / Configurator Gateway) with Validation & Toast -->
+    <div id="configurator-modal" class="fixed inset-0 z-50 flex items-center justify-end bg-black/60 backdrop-blur-md hidden transition-opacity duration-300">
+        <div id="modal-panel" class="w-full max-w-lg h-full bg-[#0A0A0C] border-l border-white/10 p-6 md:p-8 flex flex-col justify-between overflow-y-auto transform translate-x-full transition-transform duration-300">
+            <div>
+                <!-- Modal Header -->
+                <div class="flex justify-between items-center pb-6 border-b border-white/10">
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Configure your iPhone 17 Pro</h3>
+                        <p class="text-xs text-appleGray">Customization & Secure Checkout Gateway</p>
+                    </div>
+                    <button onclick="closeConfigurator()" class="p-2 text-appleGray hover:text-white rounded-full bg-white/5">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <!-- Config Options Form -->
+                <form id="purchase-form" onsubmit="handleCheckout(event)" class="space-y-6 pt-6">
+                    <!-- Finish Selection -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-semibold uppercase tracking-wider text-appleGray">1. Select Finish</label>
+                        <select id="modal-finish" class="w-full bg-neutral-900 border border-white/20 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-appleAccent">
+                            <option value="Natural Titanium">Natural Titanium</option>
+                            <option value="Blue Titanium">Blue Titanium</option>
+                            <option value="White Titanium">White Titanium</option>
+                            <option value="Black Titanium">Black Titanium</option>
+                        </select>
+                    </div>
+
+                    <!-- Storage Capacity -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-semibold uppercase tracking-wider text-appleGray">2. Select Storage Capacity</label>
+                        <div class="grid grid-cols-3 gap-3">
+                            <label class="glass-card p-4 rounded-xl text-center cursor-pointer hover:border-appleAccent transition-all flex flex-col items-center justify-center">
+                                <input type="radio" name="storage" value="256GB" checked class="sr-only peer">
+                                <span class="font-bold text-white text-sm">256GB</span>
+                                <span class="text-[10px] text-appleGray mt-1">$999</span>
+                            </label>
+                            <label class="glass-card p-4 rounded-xl text-center cursor-pointer hover:border-appleAccent transition-all flex flex-col items-center justify-center">
+                                <input type="radio" name="storage" value="512GB" class="sr-only peer">
+                                <span class="font-bold text-white text-sm">512GB</span>
+                                <span class="text-[10px] text-appleGray mt-1">$1,199</span>
+                            </label>
+                            <label class="glass-card p-4 rounded-xl text-center cursor-pointer hover:border-appleAccent transition-all flex flex-col items-center justify-center">
+                                <input type="radio" name="storage" value="1TB" class="sr-only peer">
+                                <span class="font-bold text-white text-sm">1TB</span>
+                                <span class="text-[10px] text-appleGray mt-1">$1,399</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Customer Information for Delivery -->
+                    <div class="space-y-4">
+                        <label class="text-xs font-semibold uppercase tracking-wider text-appleGray">3. Shipping & Payment Details</label>
+                        <div class="space-y-3">
+                            <input type="text" id="cust-name" required placeholder="Full Name" class="w-full bg-neutral-900 border border-white/20 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-appleAccent">
+                            <input type="email" id="cust-email" required placeholder="name@example.com" class="w-full bg-neutral-900 border border-white/20 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-appleAccent">
+                            <input type="text" id="cust-address" required placeholder="Shipping Address" class="w-full bg-neutral-900 border border-white/20 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-appleAccent">
+                        </div>
+                    </div>
+
+                    <!-- Summary & Submit CTA -->
+                    <div class="pt-4 border-t border-white/10 space-y-4">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-appleGray">Estimated Total:</span>
+                            <span id="price-display" class="font-bold text-white text-lg">$999.00</span>
+                        </div>
+                        <button type="submit" class="w-full bg-appleAccent hover:bg-blue-600 text-white font-medium py-3.5 rounded-pill transition-all shadow-lg shadow-appleAccent/30 flex items-center justify-center space-x-2">
+                            <i data-lucide="lock" class="w-4 h-4"></i>
+                            <span>Apple Pay Express Checkout</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="text-center pt-6 text-[11px] text-appleGray">
+                Free shipping. Free returns. Secured with 256-bit encryption.
+            </div>
+        </div>
+    </div>
+
+    <!-- Animated Toast Confirmation Popup -->
+    <div id="toast-notification" class="fixed bottom-6 right-6 z-50 glass-card bg-neutral-900/90 border border-appleAccent/50 p-4 rounded-2xl shadow-2xl flex items-center space-x-4 transform translate-y-32 opacity-0 transition-all duration-500">
+        <div class="w-10 h-10 rounded-full bg-appleAccent/20 flex items-center justify-center text-appleAccent">
+            <i data-lucide="check" class="w-5 h-5"></i>
+        </div>
+        <div>
+            <h4 class="font-semibold text-white text-sm">Order Confirmed Successfully!</h4>
+            <p id="toast-msg" class="text-xs text-appleGray">Receipt & tracking sent to your email.</p>
+        </div>
+    </div>
+
+    <!-- Accessibility / Motion Settings Modal -->
+    <div id="accessibility-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md hidden">
+        <div class="glass-card max-w-md w-full p-6 rounded-modal space-y-6">
+            <div class="flex justify-between items-center pb-4 border-b border-white/10">
+                <h3 class="text-lg font-bold text-white">System Preferences & Motion</h3>
+                <button onclick="toggleAccessibilityModal()" class="p-1 text-appleGray hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="space-y-4 text-sm">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <span class="font-medium text-white block">Reduced Motion Mode</span>
+                        <span class="text-xs text-appleGray">Suppress WebGL animations & gyroscope effects</span>
+                    </div>
+                    <input type="checkbox" id="motion-toggle" onchange="toggleMotion(this)" class="w-5 h-5 accent-appleAccent cursor-pointer">
+                </div>
+                <div class="flex justify-between items-center">
+                    <div>
+                        <span class="font-medium text-white block">High Contrast HUD</span>
+                        <span class="text-xs text-appleGray">Enhance border and typography contrast</span>
+                    </div>
+                    <input type="checkbox" id="contrast-toggle" onchange="toggleContrast(this)" class="w-5 h-5 accent-appleAccent cursor-pointer">
+                </div>
+            </div>
+            <button onclick="toggleAccessibilityModal()" class="w-full bg-white/10 hover:bg-white/20 text-white font-medium py-2 rounded-pill transition-all text-sm">Apply & Close</button>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Bag / Configurator Modal Triggers
+        const modal = document.getElementById('configurator-modal');
+        const modalPanel = document.getElementById('modal-panel');
+        const bagTrigger = document.getElementById('bag-trigger');
+
+        function openConfigurator() {
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modalPanel.classList.remove('translate-x-full');
+            }, 10);
+        }
+
+        function closeConfigurator() {
+            modalPanel.classList.add('translate-x-full');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        bagTrigger.addEventListener('click', openConfigurator);
+
+        // Accessibility Modal
+        const accessibilityModal = document.getElementById('accessibility-modal');
+        document.getElementById('accessibility-toggle').addEventListener('click', () => {
+            accessibilityModal.classList.toggle('hidden');
+        });
+        function toggleAccessibilityModal() {
+            accessibilityModal.classList.add('hidden');
+        }
+
+        // Finish Selector Logic
+        function setFinish(name, gradientClass, label) {
+            document.getElementById('current-finish-label').innerText = `Selected: ${name}`;
+            const chassisBadge = document.getElementById('chassis-badge');
+            chassisBadge.innerText = label;
+            chassisBadge.className = `text-xs font-mono text-appleLight bg-black/60 px-3 py-1 rounded-full backdrop-blur transition-colors`;
+        }
+
+        // Exploded View Slider Logic
+        function updateExplodedView(val) {
+            document.getElementById('exploded-metric').innerText = `${val}% Separation`;
+            const offset = val * 0.8; // px scale
+            
+            document.getElementById('layer-glass').style.transform = `translateY(-${offset * 1.5}px) translateZ(0)`;
+            document.getElementById('layer-chassis').style.transform = `translateY(-${offset * 0.7}px) translateZ(0)`;
+            document.getElementById('layer-silicon').style.transform = `translateY(${offset * 0.7}px) translateZ(0)`;
+            document.getElementById('layer-battery').style.transform = `translateY(${offset * 1.5}px) translateZ(0)`;
+        }
+
+        // Macro Hotspot Click
+        function triggerHotspot(title, desc) {
+            document.getElementById('hotspot-title').innerHTML = `<i data-lucide="info" class="w-4 h-4 text-appleAccent"></i><span>${title}</span>`;
+            document.getElementById('hotspot-desc').innerText = desc;
+            lucide.createIcons();
+        }
+
+        // FAQ Accordion
+        function toggleFaq(button) {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('i');
+            
+            // Close others
+            document.querySelectorAll('.faq-content').forEach(item => {
+                if (item !== content) {
+                    item.style.maxHeight = null;
+                    item.previousElementSibling.querySelector('i').style.transform = 'rotate(0deg)';
+                }
+            });
+
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        // Checkout Form & Toast Handling
+        function handleCheckout(event) {
+            event.preventDefault();
+            const name = document.getElementById('cust-name').value;
+            const email = document.getElementById('cust-email').value;
+
+            closeConfigurator();
+
+            // Show Toast Notification
+            const toast = document.getElementById('toast-notification');
+            document.getElementById('toast-msg').innerText = `Confirmation sent to ${email}. Thank you, ${name}!`;
+            toast.classList.remove('translate-y-32', 'opacity-0');
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-32', 'opacity-0');
+            }, 5000);
+        }
+
+        // Motion and Contrast toggles
+        function toggleMotion(el) {
+            if(el.checked) {
+                document.getElementById('hero-canvas-container').style.transform = 'none';
+            }
+        }
+        function toggleContrast(el) {
+            if(el.checked) {
+                document.body.style.filter = 'contrast(1.1)';
+            } else {
+                document.body.style.filter = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

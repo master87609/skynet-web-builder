@@ -13,8 +13,12 @@ import {
   ArrowRight,
   ExternalLink,
   Key,
+  Shield,
+  Server,
+  Download,
 } from "lucide-react"
-import { listProjects, createProject, getSettingsStatus, ProjectSummary } from "@/lib/api"
+import { listProjects, createProject, getSettingsStatus, me, ProjectSummary, SubscriptionPlan } from "@/lib/api"
+import PlanUpgradeModal from "@/components/PlanUpgradeModal"
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -25,11 +29,23 @@ export default function DashboardPage() {
   const [status, setStatus] = useState<"idle" | "ok" | "error">("idle")
   const [message, setMessage] = useState("")
   const [aiConfigured, setAiConfigured] = useState<boolean | null>(null)
+  const [userPlan, setUserPlan] = useState<SubscriptionPlan>("free")
+  const [showPlanModal, setShowPlanModal] = useState(false)
 
   useEffect(() => {
     loadProjects()
     checkAiStatus()
+    checkUserPlan()
   }, [])
+
+  async function checkUserPlan() {
+    try {
+      const res = await me()
+      if (res.ok && res.data?.user) {
+        setUserPlan(res.data.user.plan || "free")
+      }
+    } catch {}
+  }
 
   async function checkAiStatus() {
     try {
@@ -103,6 +119,74 @@ export default function DashboardPage() {
           <Plus className="w-3.5 h-3.5" />
           Describe new idea
         </Link>
+      </div>
+
+      {/* Plan Status Banner */}
+      <div className="rounded-xl border border-skynet-border bg-skynet-surface/80 p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-start md:items-center gap-3">
+          <div
+            className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
+              userPlan === "host"
+                ? "bg-skynet-success/20 text-skynet-success"
+                : userPlan === "advance"
+                ? "bg-skynet-amber/20 text-skynet-amber"
+                : "bg-skynet-void border border-skynet-border text-skynet-dust"
+            }`}
+          >
+            {userPlan === "host" ? (
+              <Server className="w-4 h-4" />
+            ) : userPlan === "advance" ? (
+              <Download className="w-4 h-4" />
+            ) : (
+              <Shield className="w-4 h-4" />
+            )}
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-sm text-skynet-ivory">
+                {userPlan === "host"
+                  ? "Custom Host Plan ($29/mo)"
+                  : userPlan === "advance"
+                  ? "Advance Plan ($19/mo)"
+                  : "Basic Plan (Free $0)"}
+              </span>
+              <span
+                className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded border ${
+                  userPlan === "host"
+                    ? "bg-skynet-success/15 border-skynet-success/40 text-skynet-success"
+                    : userPlan === "advance"
+                    ? "bg-skynet-amber/15 border-skynet-amber/40 text-skynet-amber"
+                    : "bg-skynet-void border-skynet-border text-skynet-dust"
+                }`}
+              >
+                Active
+              </span>
+            </div>
+            <p className="text-xs text-skynet-dust mt-0.5">
+              {userPlan === "host"
+                ? "Deploy to your own host & custom domain with automated SSL active."
+                : userPlan === "advance"
+                ? "Full website use & 1-click production .zip code downloads active."
+                : "Free preview active. Upgrade to Advance ($19) to use site or Custom Host ($29) for your own domain."}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <Link
+            href="/pricing"
+            className="text-xs text-skynet-dust hover:text-skynet-ivory px-3 py-1.5 transition-colors"
+          >
+            View Plans
+          </Link>
+          <button
+            onClick={() => setShowPlanModal(true)}
+            className="btn-primary text-xs py-1.5 px-3.5 flex items-center gap-1.5 shadow-sm"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>{userPlan === "free" ? "Upgrade Plan" : "Change Plan"}</span>
+          </button>
+        </div>
       </div>
 
       {/* AI Key Status Notice */}
@@ -264,6 +348,13 @@ export default function DashboardPage() {
       <div className="text-center text-skynet-dust text-xs tracking-wider uppercase pt-6">
         Skynet AI · Multi-Agent Autonomous Web Platform
       </div>
+
+      <PlanUpgradeModal
+        isOpen={showPlanModal}
+        onClose={() => setShowPlanModal(false)}
+        currentPlan={userPlan}
+        onPlanUpdated={(newPlan) => setUserPlan(newPlan)}
+      />
     </div>
   )
 }

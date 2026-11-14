@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APEX-01 | Cinematic Shoe Experience</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: '#00F0FF',
+                            hover: '#33F3FF',
+                            muted: '#007880'
+                        },
+                        accent: {
+                            DEFAULT: '#FF0055',
+                            hover: '#FF3377',
+                            muted: '#80002A'
+                        },
+                        background: {
+                            DEFAULT: '#0A0A0C',
+                            alt: '#121318'
+                        },
+                        surface: {
+                            DEFAULT: 'rgba(20, 22, 30, 0.75)',
+                            border: 'rgba(255, 255, 255, 0.12)',
+                            highlight: 'rgba(0, 240, 255, 0.25)'
+                        },
+                        text: {
+                            primary: '#F4F4F6',
+                            secondary: '#9BA1B0',
+                            inverse: '#0A0A0C'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Courier New', 'monospace'],
+                        display: ['Orbitron', 'Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0A0A0C;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00F0FF;
+        }
+
+        .glow-cyan {
+            box-shadow: 0 0 30px -5px rgba(0, 240, 255, 0.4);
+        }
+        .glow-magenta {
+            box-shadow: 0 0 30px -5px rgba(255, 0, 85, 0.4);
+        }
+        .glass-panel {
+            background: rgba(20, 22, 30, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+    </style>
+</head>
+<body class="bg-background text-text-primary font-sans antialiased selection:bg-primary selection:text-text-inverse overflow-x-hidden">
+
+    <!-- Sticky Navigation & Header -->
+    <header id="header" class="fixed top-0 left-0 w-full z-50 transition-all duration-300 border-b border-transparent">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Brand Logo -->
+            <a href="#hero" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded bg-gradient-to-br from-primary to-accent flex items-center justify-center glow-cyan group-hover:scale-105 transition-transform">
+                    <i data-lucide="zap" class="w-5 h-5 text-text-inverse"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-display font-black tracking-widest text-lg text-text-primary">APEX-01</span>
+                    <span class="text-[10px] font-mono text-primary tracking-widest">SKYNET LABS</span>
+                </div>
+            </a>
+
+            <!-- Chapter Dots / Sticky Indicators -->
+            <nav class="hidden lg:flex items-center gap-8 glass-panel px-6 py-2 rounded-full">
+                <a href="#hero" class="chapter-dot flex items-center gap-2 text-xs font-mono text-primary transition-all" data-chapter="1">
+                    <span class="w-2 h-2 rounded-full bg-primary shadow-[0_0_10px_#00F0FF]"></span>
+                    <span>01. HERO</span>
+                </a>
+                <a href="#anatomy" class="chapter-dot flex items-center gap-2 text-xs font-mono text-text-secondary hover:text-primary transition-all" data-chapter="2">
+                    <span class="w-2 h-2 rounded-full bg-surface-border"></span>
+                    <span>02. ANATOMY</span>
+                </a>
+                <a href="#performance" class="chapter-dot flex items-center gap-2 text-xs font-mono text-text-secondary hover:text-primary transition-all" data-chapter="3">
+                    <span class="w-2 h-2 rounded-full bg-surface-border"></span>
+                    <span>03. METRICS</span>
+                </a>
+                <a href="#customizer" class="chapter-dot flex items-center gap-2 text-xs font-mono text-text-secondary hover:text-primary transition-all" data-chapter="4">
+                    <span class="w-2 h-2 rounded-full bg-surface-border"></span>
+                    <span>04. STUDIO</span>
+                </a>
+                <a href="#checkout" class="chapter-dot flex items-center gap-2 text-xs font-mono text-text-secondary hover:text-primary transition-all" data-chapter="5">
+                    <span class="w-2 h-2 rounded-full bg-surface-border"></span>
+                    <span>05. ORDER</span>
+                </a>
+            </nav>
+
+            <!-- Utility Cluster -->
+            <div class="flex items-center gap-3">
+                <!-- Audio Toggle -->
+                <button id="audio-toggle" class="p-2.5 rounded-full glass-panel hover:border-primary text-text-secondary hover:text-primary transition-all relative group" aria-label="Toggle Soundscape" title="Toggle Ambient Audio">
+                    <i data-lucide="volume-2" class="w-4 h-4" id="audio-icon"></i>
+                    <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 text-[10px] font-mono opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap bg-background px-2 py-0.5 rounded border border-surface-border">Sound: Off</span>
+                </button>
+
+                <!-- Reduce Motion Toggle -->
+                <button id="motion-toggle" class="p-2.5 rounded-full glass-panel hover:border-primary text-text-secondary hover:text-primary transition-all relative group" aria-label="Toggle Reduce Motion" title="Toggle A11y Motion">
+                    <i data-lucide="activity" class="w-4 h-4" id="motion-icon"></i>
+                    <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 text-[10px] font-mono opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap bg-background px-2 py-0.5 rounded border border-surface-border">Motion: Fluid</span>
+                </button>
+
+                <!-- Cart Trigger Button -->
+                <button id="cart-trigger" class="flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary hover:bg-primary-hover text-text-inverse font-bold text-sm transition-all shadow-[0_0_20px_rgba(0,240,255,0.3)] hover:scale-105">
+                    <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">Pre-Order</span>
+                    <span id="cart-badge" class="w-5 h-5 rounded-full bg-accent text-text-primary text-xs flex items-center justify-center font-mono font-bold">1</span>
+                </button>
+
+                <!-- Mobile Hamburger -->
+                <button id="mobile-menu-btn" class="lg:hidden p-2.5 rounded-full glass-panel text-text-primary hover:text-primary transition-colors">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Drawer -->
+        <div id="mobile-menu" class="fixed inset-0 bg-background/95 backdrop-blur-xl z-50 flex flex-col items-center justify-center gap-8 translate-x-full transition-transform duration-300 lg:hidden">
+            <button id="mobile-menu-close" class="absolute top-6 right-6 p-3 rounded-full glass-panel text-text-primary hover:text-primary">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <div class="flex flex-col items-center gap-6 text-xl font-display tracking-wider">
+                <a href="#hero" class="mobile-link text-primary">01. HERO CHAPTER</a>
+                <a href="#anatomy" class="mobile-link text-text-secondary hover:text-primary">02. MATERIAL ANATOMY</a>
+                <a href="#performance" class="mobile-link text-text-secondary hover:text-primary">03. PERFORMANCE METRICS</a>
+                <a href="#customizer" class="mobile-link text-text-secondary hover:text-primary">04. COLORWAY STUDIO</a>
+                <a href="#checkout" class="mobile-link text-text-secondary hover:text-primary">05. PRE-ORDER HUB</a>
+            </div>
+            <div class="flex items-center gap-4 mt-6">
+                <button class="px-8 py-3 rounded-full bg-primary text-text-inverse font-bold tracking-wider" onclick="toggleCartDrawer(); closeMobileMenu();">
+                    OPEN CART DRAWER
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Scrollytelling Experience Container -->
+    <main class="relative">
+
+        <!-- Fixed 3D Cinematic Canvas Viewport Simulator -->
+        <div class="fixed inset-0 z-0 pointer-events-none flex items-center justify-center overflow-hidden">
+            <!-- Simulated 3D Shoe Render with Dynamic Lighting & Particles -->
+            <div id="shoe-viewport-container" class="relative w-full h-full flex items-center justify-center transition-all duration-700">
+                <!-- Ambient Glow / Backdrop Spotlights -->
+                <div id="viewport-glow" class="absolute w-[500px] h-[500px] rounded-full bg-primary/10 blur-[120px] transition-all duration-1000"></div>
+                
+                <!-- SVG / CSS 3D Shoe Cinematic Render Replica -->
+                <div id="shoe-model-wrapper" class="relative w-[340px] h-[220px] sm:w-[500px] sm:h-[320px] lg:w-[680px] lg:h-[420px] transition-transform duration-300 ease-out">
+                    <!-- Shoe Body (Layered SVGs simulating 3D mesh & lighting) -->
+                    <svg viewBox="0 0 800 500" class="w-full h-full drop-shadow-[0_25px_35px_rgba(0,0,0,0.8)] transition-all duration-700" id="shoe-svg-render">
+                        <defs>
+                            <linearGradient id="cyberGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#00F0FF" />
+                                <stop offset="100%" stop-color="#FF0055" />
+                            </linearGradient>
+                            <linearGradient id="stealthGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#2A2C35" />
+                                <stop offset="100%" stop-color="#0F1014" />
+                            </linearGradient>
+                            <linearGradient id="whiteGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#FFFFFF" />
+                                <stop offset="100%" stop-color="#CBD5E1" />
+                            </linearGradient>
+                            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                                <feGaussianBlur stdDeviation="15" result="blur" />
+                                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                            </filter>
+                        </defs>
+                        <!-- Exploded Layer 3: Carbon Plate (Bottom) -->
+                        <g id="layer-carbon" class="transition-transform duration-700 origin-center" transform="translate(0, 40)">
+                            <path d="M150 380 L650 380 C700 380 720 350 680 340 L120 310 C90 305 100 380 150 380 Z" fill="url(#cyberGradient)" opacity="0.8" stroke="#00F0FF" stroke-width="2"/>
+                            <path d="M200 360 L600 360" stroke="#FFFFFF" stroke-dasharray="10 5" stroke-width="3" opacity="0.6"/>
+                        </g>
+                        <!-- Exploded Layer 2: Air Cushion Midsole -->
+                        <g id="layer-midsole" class="transition-transform duration-700 origin-center" transform="translate(0, 20)">
+                            <path d="M120 310 L680 340 C740 350 780 300 750 260 L650 220 L150 230 C100 235 80 290 120 310 Z" fill="#1E2230" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+                            <!-- Glowing Air Pockets -->
+                            <ellipse cx="300" cy="285" rx="45" ry="14" fill="#00F0FF" filter="url(#glow)" opacity="0.9" class="air-pocket" />
+                            <ellipse cx="500" cy="300" rx="60" ry="16" fill="#00F0FF" filter="url(#glow)" opacity="0.9" class="air-pocket" />
+                        </g>
+                        <!-- Exploded Layer 1: Knit Upper Shell -->
+                        <g id="layer-upper" class="transition-transform duration-700 origin-center" transform="translate(0, 0)">
+                            <path d="M150 230 L650 220 C700 210 720 150 670 120 C580 70 320 60 220 120 C140 160 110 210 150 230 Z" fill="url(#cyberGradient)" id="shoe-main-body" class="transition-colors duration-500" />
+                            <!-- Laces & Dynamic Accents -->
+                            <path d="M320 110 L380 160 M380 100 L430 155 M440 90 L480 150" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" opacity="0.9"/>
+                            <circle cx="280" cy="150" r="12" fill="#FF0055" filter="url(#glow)" />
+                        </g>
+                    </svg>
+                </div>
+
+                <!-- Interactive Hotspot 01 Pin -->
+                <div id="hotspot-1" class="absolute top-[42%] left-[45%] z-20 cursor-pointer group hidden" onclick="openHotspotModal('Knit Upper', 'Engineered from 100% recycled ocean monofilament yarn using seamless 3D knitting technology. Delivers adaptive multi-zone stretch, ultra-breathability, and zero waste construction.', '98g', 'ISO-9001 Recycled')">
+                    <div class="relative flex items-center justify-center">
+                        <span class="absolute w-8 h-8 rounded-full bg-primary/40 animate-ping"></span>
+                        <div class="w-6 h-6 rounded-full bg-primary text-background flex items-center justify-center font-mono font-bold text-xs shadow-[0_0_15px_#00F0FF] group-hover:scale-125 transition-transform">01</div>
+                    </div>
+                </div>
+
+                <!-- Interactive Hotspot 02 Pin -->
+                <div id="hotspot-2" class="absolute top-[58%] left-[55%] z-20 cursor-pointer group hidden" onclick="openHotspotModal('Carbon Fiber Plate', 'Aerospace-grade unidirectional carbon fiber propulsion plate sandwiched between twin nitrogen-infused foam layers. Translates 89% of vertical impact into forward kinetic energy.', '45g', 'Grade-5 Aerospace')">
+                    <div class="relative flex items-center justify-center">
+                        <span class="absolute w-8 h-8 rounded-full bg-accent/40 animate-ping"></span>
+                        <div class="w-6 h-6 rounded-full bg-accent text-text-primary flex items-center justify-center font-mono font-bold text-xs shadow-[0_0_15px_#FF0055] group-hover:scale-125 transition-transform">02</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHAPTER 01: HERO / INTRODUCTION -->
+        <section id="hero" class="relative min-h-screen flex flex-col justify-between pt-32 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto z-10 pointer-events-none">
+            <div class="space-y-6 max-w-2xl pointer-events-auto">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass-panel border border-primary/30 text-primary text-xs font-mono tracking-wider">
+                    <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                    NEXT-GEN KINETIC FOOTWEAR
+                </div>
+                <h1 class="font-display font-black text-4xl sm:text-6xl lg:text-7xl tracking-tight leading-none text-text-primary">
+                    ENGINEERED <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-accent to-primary">FOR MOTION.</span>
+                </h1>
+                <p class="text-text-secondary text-lg sm:text-xl font-light max-w-lg">
+                    Experience the pinnacle of algorithmic biomechanics, carbon fiber propulsion, and cyber-aesthetic design.
+                </p>
+                <div class="flex flex-wrap items-center gap-4 pt-4">
+                    <a href="#anatomy" class="px-8 py-4 rounded-full bg-primary hover:bg-primary-hover text-text-inverse font-bold text-base tracking-wider transition-all shadow-[0_0_30px_rgba(0,240,255,0.4)] flex items-center gap-3 group">
+                        <span>EXPLORE ANATOMY</span>
+                        <i data-lucide="arrow-down" class="w-5 h-5 group-hover:translate-y-1 transition-transform"></i>
+                    </a>
+                    <button onclick="toggleCartDrawer()" class="px-8 py-4 rounded-full glass-panel hover:border-primary text-text-primary font-bold text-base tracking-wider transition-all flex items-center gap-2">
+                        <span>PRE-ORDER $280</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Scroll Indicator -->
+            <div class="flex items-center gap-4 text-xs font-mono text-text-secondary pointer-events-auto">
+                <div class="w-8 h-12 rounded-full border-2 border-surface-border flex items-start justify-center p-1.5">
+                    <div class="w-1.5 h-3 rounded-full bg-primary animate-bounce"></div>
+                </div>
+                <span>SCROLL TO DISCOVER CHAPTERS</span>
+            </div>
+        </section>
+
+        <!-- CHAPTER 02: MATERIAL ANATOMY -->
+        <section id="anatomy" class="relative min-h-screen flex flex-col justify-center py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6 glass-panel p-8 sm:p-10 rounded-2xl border-l-4 border-l-primary">
+                    <span class="text-xs font-mono text-primary tracking-widest uppercase">Chapter 02 // Structural Breakdown</span>
+                    <h2 class="font-display font-black text-3xl sm:text-4xl text-text-primary">DECONSTRUCTED PERFECTION.</h2>
+                    <p class="text-text-secondary leading-relaxed">
+                        Every millimeter of APEX-01 is computationally optimized. By separating the upper knit, nitrogen cushion core, and carbon plate, we achieve an unprecedented strength-to-weight ratio.
+                    </p>
+                    <div class="grid grid-cols-2 gap-4 pt-4">
+                        <div class="p-4 rounded-xl bg-background/50 border border-surface-border">
+                            <span class="block font-mono text-2xl font-bold text-primary">210g</span>
+                            <span class="text-xs text-text-secondary">Total Shoe Weight</span>
+                        </div>
+                        <div class="p-4 rounded-xl bg-background/50 border border-surface-border">
+                            <span class="block font-mono text-2xl font-bold text-accent">89%</span>
+                            <span class="text-xs text-text-secondary">Energy Return Rate</span>
+                        </div>
+                    </div>
+                    <div class="pt-2 text-xs font-mono text-primary flex items-center gap-2">
+                        <i data-lucide="info" class="w-4 h-4"></i>
+                        <span>Click glowing hotspot markers on the 3D model for deep dive specs.</span>
+                    </div>
+                </div>
+                <div></div> <!-- Spacer for fixed 3D center shoe -->
+            </div>
+        </section>
+
+        <!-- CHAPTER 03: PERFORMANCE & METRICS -->
+        <section id="performance" class="relative min-h-screen flex flex-col justify-center py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto z-10">
+            <div class="max-w-3xl mx-auto text-center space-y-6 mb-16">
+                <span class="text-xs font-mono text-primary tracking-widest uppercase">Chapter 03 // Biomechanical Data</span>
+                <h2 class="font-display font-black text-4xl sm:text-5xl text-text-primary">BUILT FOR HYPER-VELOCITY.</h2>
+                <p class="text-text-secondary text-lg">
+                    Rigorously tested in wind tunnels and Olympic training facilities. APEX-01 outperforms standard racing flats across all endurance metrics.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-panel p-8 rounded-2xl space-y-4 hover:border-primary transition-all group">
+                    <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                        <i data-lucide="wind" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-xl text-text-primary">Aerodynamic Drag</h3>
+                    <p class="text-text-secondary text-sm">Vortex-shedding micro-grooves reduce air resistance around the ankle collar by 14.2%.</p>
+                </div>
+
+                <div class="glass-panel p-8 rounded-2xl space-y-4 hover:border-primary transition-all group">
+                    <div class="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center text-accent group-hover:scale-110 transition-transform">
+                        <i data-lucide="zap" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-xl text-text-primary">Nitrogen Cushioning</h3>
+                    <p class="text-text-secondary text-sm">Supercritical fluid foaming provides endless bounce with zero thermal degradation in extreme climates.</p>
+                </div>
+
+                <div class="glass-panel p-8 rounded-2xl space-y-4 hover:border-primary transition-all group">
+                    <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                        <i data-lucide="shield-check" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-xl text-text-primary">Tpu Durability</h3>
+                    <p class="text-text-secondary text-sm">High-abrasion rubber outsole pods placed strategically at high-strike zones guarantee 1,000+ km lifespan.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 04: COLORWAY CUSTOMIZER -->
+        <section id="customizer" class="relative min-h-screen flex flex-col justify-center py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div></div> <!-- Spacer for fixed 3D shoe -->
+                <div class="glass-panel p-8 sm:p-10 rounded-2xl space-y-8">
+                    <div>
+                        <span class="text-xs font-mono text-primary tracking-widest uppercase">Chapter 04 // Studio Customizer</span>
+                        <h2 class="font-display font-black text-3xl sm:text-4xl text-text-primary mt-2">SELECT YOUR SHADER.</h2>
+                        <p class="text-text-secondary text-sm mt-2">Instantly re-texture the 3D mesh shaders with our curated cyberpunk and minimalist palettes.</p>
+                    </div>
+
+                    <!-- Swatches -->
+                    <div class="space-y-4">
+                        <label class="block text-xs font-mono text-text-secondary uppercase">Active Material Swatch</label>
+                        <div class="flex items-center gap-4">
+                            <button onclick="setColorway('cyber')" class="swatch-btn group flex items-center gap-3 p-3 rounded-xl bg-background border-2 border-primary transition-all" data-swatch="cyber">
+                                <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00F0FF] to-[#FF0055]"></span>
+                                <div class="text-left">
+                                    <span class="block text-sm font-bold text-text-primary">Cyberpunk Neon</span>
+                                    <span class="text-[10px] font-mono text-primary">Cyan / Magenta</span>
+                                </div>
+                            </button>
+
+                            <button onclick="setColorway('stealth')" class="swatch-btn group flex items-center gap-3 p-3 rounded-xl bg-background border-2 border-surface-border hover:border-primary transition-all" data-swatch="stealth">
+                                <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#2A2C35] to-[#0F1014]"></span>
+                                <div class="text-left">
+                                    <span class="block text-sm font-bold text-text-primary">Stealth Black</span>
+                                    <span class="text-[10px] font-mono text-text-secondary">Matte Charcoal</span>
+                                </div>
+                            </button>
+
+                            <button onclick="setColorway('white')" class="swatch-btn group flex items-center gap-3 p-3 rounded-xl bg-background border-2 border-surface-border hover:border-primary transition-all" data-swatch="white">
+                                <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#FFFFFF] to-[#94A3B8]"></span>
+                                <div class="text-left">
+                                    <span class="block text-sm font-bold text-text-primary">Ceramic White</span>
+                                    <span class="text-[10px] font-mono text-text-secondary">Pure Silver</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-surface-border flex items-center justify-between">
+                        <div>
+                            <span class="text-xs text-text-secondary font-mono">SELECTED VARIANT</span>
+                            <span id="selected-variant-name" class="block font-display font-bold text-lg text-primary">Cyberpunk Neon (v1.0)</span>
+                        </div>
+                        <button onclick="toggleCartDrawer()" class="px-6 py-3 rounded-full bg-primary hover:bg-primary-hover text-text-inverse font-bold text-sm tracking-wider transition-all">
+                            LOCK IN & BUY
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAPTER 05: CONVERSION / CHECKOUT HUB -->
+        <section id="checkout" class="relative min-h-screen flex flex-col justify-center py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto z-10">
+            <div class="max-w-4xl mx-auto glass-panel p-8 sm:p-12 rounded-3xl border border-primary/30 glow-cyan">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div class="space-y-6">
+                        <span class="text-xs font-mono text-primary tracking-widest uppercase">Chapter 05 // The Finale</span>
+                        <h2 class="font-display font-black text-3xl sm:text-4xl text-text-primary">SECURE YOUR PAIR.</h2>
+                        <p class="text-text-secondary text-sm leading-relaxed">
+                            Batch #004 is currently limited to 500 numbered pairs worldwide. Each pair includes an NFC authenticity token embedded in the left tongue.
+                        </p>
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3 text-sm text-text-primary">
+                                <i data-lucide="check-circle-2" class="w-5 h-5 text-primary"></i>
+                                <span>Free Express Worldwide Shipping</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-text-primary">
+                                <i data-lucide="check-circle-2" class="w-5 h-5 text-primary"></i>
+                                <span>30-Day Biomechanical Trial Guarantee</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-text-primary">
+                                <i data-lucide="check-circle-2" class="w-5 h-5 text-primary"></i>
+                                <span>Includes Collector Hard-Case & NFC Key</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6 bg-background/60 p-6 sm:p-8 rounded-2xl border border-surface-border">
+                        <div class="flex items-center justify-between">
+                            <span class="font-display font-bold text-xl text-text-primary">APEX-01 BATCH #004</span>
+                            <span class="font-mono text-2xl font-bold text-primary">$280</span>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-xs font-mono text-text-secondary uppercase">Select US Sizing</label>
+                            <div class="grid grid-cols-4 gap-2">
+                                <button class="size-btn py-2.5 rounded-lg bg-surface border border-surface-border hover:border-primary text-text-primary font-mono text-sm transition-all" onclick="selectSize(this)">US 8</button>
+                                <button class="size-btn py-2.5 rounded-lg bg-primary border border-primary text-text-inverse font-mono text-sm transition-all font-bold" onclick="selectSize(this)">US 9</button>
+                                <button class="size-btn py-2.5 rounded-lg bg-surface border border-surface-border hover:border-primary text-text-primary font-mono text-sm transition-all" onclick="selectSize(this)">US 10</button>
+                                <button class="size-btn py-2.5 rounded-lg bg-surface border border-surface-border hover:border-primary text-text-primary font-mono text-sm transition-all" onclick="selectSize(this)">US 11</button>
+                            </div>
+                        </div>
+                        <button onclick="toggleCartDrawer()" class="w-full py-4 rounded-xl bg-gradient-to-r from-primary to-accent hover:opacity-90 text-text-inverse font-display font-bold text-base tracking-wider transition-all shadow-[0_0_25px_rgba(0,240,255,0.4)]">
+                            PRE-ORDER NOW ($280)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SOCIAL PROOF / TESTIMONIALS SECTION -->
+        <section class="py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto z-10 relative">
+            <div class="text-center max-w-2xl mx-auto space-y-4 mb-16">
+                <span class="text-xs font-mono text-primary tracking-widest uppercase">Global Validation</span>
+                <h2 class="font-display font-black text-3xl sm:text-4xl text-text-primary">TESTED BY ELITE ATHLETES.</h2>
+                <p class="text-text-secondary">Hear what professional marathoners and cyberpunk creators have to say about APEX-01.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="glass-panel p-8 rounded-2xl space-y-6 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-1 text-primary">
+                            <i data-lucide="star" class="w-4 h-4 fill-primary"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-primary"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-primary"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-primary"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-primary"></i>
+                        </div>
+                        <p class="text-text-secondary text-sm italic">"The carbon plate energy return feels almost illegal. Slashed 4 minutes off my half-marathon PR on the first run."</p>
+                    </div>
+                    <div class="flex items-center gap-4 pt-4 border-t border-surface-border">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center font-bold text-text-inverse font-mono">K</div>
+                        <div>
+                            <h4 class="font-bold text-sm text-text-primary">Kaelen Voss</h4>
+                            <span class="text-xs text-text-secondary">Ultra-Marathoner & Skynet Ambassador</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-8 rounded-2xl space-y-6 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-1 text-primary">
+                            <i data-lucide="star" class="w-4 h-4 fill-primary"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-primary"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-primary"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-primary"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-primary"></i>
+                        </div>
+                        <p class="text-text-secondary text-sm italic">"Aesthetic masterpiece. The scrollytelling preview and customizer made buying these feel like a sci-fi movie experience."</p>
+                    </div>
+                    <div class="flex items-center gap-4 pt-4 border-t border-surface-border">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-accent to-primary flex items-center justify-center font-bold text-text-inverse font-mono">M</div>
+                        <div>
+                            <h4 class="font-bold text-sm text-text-primary">Maya Lin</h4>
+                            <span class="text-xs text-text-secondary">Digital Designer & Sneaker Collector</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-8 rounded-2xl space-y-6 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-1 text-primary">
+                            <i data-lucide="star" class="w-4 h-4 fill-primary"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-primary"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-primary"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-primary"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-primary"></i>
+                        </div>
+                        <p class="text-text-secondary text-sm italic">"Unmatched comfort. The nitrogen cushion core absorbs impact better than any shoe in my rotation."</p>
+                    </div>
+                    <div class="flex items-center gap-4 pt-4 border-t border-surface-border">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-surface flex items-center justify-center font-bold text-text-inverse font-mono">J</div>
+                        <div>
+                            <h4 class="font-bold text-sm text-text-primary">Jordan Vance</h4>
+                            <span class="text-xs text-text-secondary">Pro Trainer & Fitness Coach</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ ACCORDION SECTION -->
+        <section class="py-32 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto z-10 relative">
+            <div class="text-center max-w-2xl mx-auto space-y-4 mb-16">
+                <span class="text-xs font-mono text-primary tracking-widest uppercase">Knowledge Base</span>
+                <h2 class="font-display font-black text-3xl sm:text-4xl text-text-primary">FREQUENTLY ASKED QUESTIONS.</h2>
+                <p class="text-text-secondary">Everything you need to know about APEX-01 technology, sizing, and dispatch.</p>
+            </div>
+
+            <div class="space-y-4">
+                <!-- FAQ Item 1 -->
+                <div class="glass-panel rounded-2xl overflow-hidden border border-surface-border transition-all">
+                    <button class="w-full p-6 text-left flex items-center justify-between font-display font-bold text-lg text-text-primary hover:text-primary transition-colors" onclick="toggleFaq(this)">
+                        <span>How does the 3D scrollytelling experience work?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-content max-h-0 overflow-hidden transition-all duration-300 px-6 text-text-secondary text-sm">
+                        <div class="pb-6 leading-relaxed">
+                            APEX-01 uses advanced CSS transforms and SVG layering synced with your scroll position via IntersectionObservers. It simulates a full 3D exploded breakdown without requiring heavy WebGL initialization on low-end devices.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="glass-panel rounded-2xl overflow-hidden border border-surface-border transition-all">
+                    <button class="w-full p-6 text-left flex items-center justify-between font-display font-bold text-lg text-text-primary hover:text-primary transition-colors" onclick="toggleFaq(this)">
+                        <span>What is the sizing fit compared to standard runners?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-content max-h-0 overflow-hidden transition-all duration-300 px-6 text-text-secondary text-sm">
+                        <div class="pb-6 leading-relaxed">
+                            APEX-01 features a snug, race-tuned fit due to the adaptive monofilament knit upper. We recommend going up a half size if you prefer a relaxed daily trainer fit.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="glass-panel rounded-2xl overflow-hidden border border-surface-border transition-all">
+                    <button class="w-full p-6 text-left flex items-center justify-between font-display font-bold text-lg text-text-primary hover:text-primary transition-colors" onclick="toggleFaq(this)">
+                        <span>When will Batch #004 orders be dispatched?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-content max-h-0 overflow-hidden transition-all duration-300 px-6 text-text-secondary text-sm">
+                        <div class="pb-6 leading-relaxed">
+                            All pre-orders from Batch #004 are assembled by hand in our clean-room laboratory and dispatched within 48 hours with priority air shipping and real-time GPS tracking.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="glass-panel rounded-2xl overflow-hidden border border-surface-border transition-all">
+                    <button class="w-full p-6 text-left flex items-center justify-between font-display font-bold text-lg text-text-primary hover:text-primary transition-colors" onclick="toggleFaq(this)">
+                        <span>What is included with the NFC authenticity token?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-content max-h-0 overflow-hidden transition-all duration-300 px-6 text-text-secondary text-sm">
+                        <div class="pb-6 leading-relaxed">
+                            Tapping your smartphone against the left shoe tongue unlocks your digital certificate of authenticity on the blockchain, lifetime VIP community access, and future drop priority.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- SLIDE-OUT E-COMMERCE CHECKOUT DRAWER -->
+    <div id="cart-drawer-overlay" class="fixed inset-0 bg-background/80 backdrop-blur-md z-50 opacity-0 pointer-events-none transition-opacity duration-300" onclick="toggleCartDrawer()"></div>
+    <div id="cart-drawer" class="fixed top-0 right-0 h-full w-full sm:w-[480px] bg-background-alt border-l border-surface-border z-50 translate-x-full transition-transform duration-300 flex flex-col justify-between p-6 sm:p-8 shadow-2xl">
+        
+        <!-- Drawer Header -->
+        <div class="flex items-center justify-between pb-6 border-b border-surface-border">
+            <div class="flex items-center gap-3">
+                <i data-lucide="shopping-bag" class="w-6 h-6 text-primary"></i>
+                <h3 class="font-display font-bold text-xl text-text-primary">PRE-ORDER CART</h3>
+            </div>
+            <button onclick="toggleCartDrawer()" class="p-2 rounded-full glass-panel text-text-primary hover:text-primary">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- Drawer Content -->
+        <div class="flex-1 overflow-y-auto py-6 space-y-6">
+            <div class="glass-panel p-4 rounded-2xl flex items-center gap-4">
+                <div class="w-20 h-20 rounded-xl bg-background border border-surface-border flex items-center justify-center p-2">
+                    <svg viewBox="0 0 800 500" class="w-full h-full">
+                        <path d="M150 230 L650 220 C700 210 720 150 670 120 C580 70 320 60 220 120 C140 160 110 210 150 230 Z" fill="#00F0FF" />
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h4 class="font-display font-bold text-text-primary text-base">APEX-01 KINETIC</h4>
+                    <span id="drawer-variant-label" class="text-xs font-mono text-primary">Variant: Cyberpunk Neon</span>
+                    <span id="drawer-size-label" class="block text-xs font-mono text-text-secondary mt-1">Size: US 9.0</span>
+                </div>
+                <div class="text-right">
+                    <span class="font-mono font-bold text-text-primary text-lg">$280</span>
+                </div>
+            </div>
+
+            <!-- Quick Checkout Form -->
+            <form id="checkout-form" onsubmit="handleCheckoutSubmit(event)" class="space-y-4 pt-4">
+                <h4 class="font-display font-bold text-sm text-text-primary uppercase tracking-wider">Shipping & Contact Details</h4>
+                <div class="space-y-3">
+                    <input type="text" required placeholder="Full Name" class="w-full px-4 py-3 rounded-xl bg-background border border-surface-border text-text-primary text-sm focus:outline-none focus:border-primary">
+                    <input type="email" required placeholder="Email Address" class="w-full px-4 py-3 rounded-xl bg-background border border-surface-border text-text-primary text-sm focus:outline-none focus:border-primary">
+                    <input type="text" required placeholder="Shipping Address" class="w-full px-4 py-3 rounded-xl bg-background border border-surface-border text-text-primary text-sm focus:outline-none focus:border-primary">
+                    <div class="grid grid-cols-2 gap-3">
+                        <input type="text" required placeholder="City" class="w-full px-4 py-3 rounded-xl bg-background border border-surface-border text-text-primary text-sm focus:outline-none focus:border-primary">
+                        <input type="text" required placeholder="Postal Code" class="w-full px-4 py-3 rounded-xl bg-background border border-surface-border text-text-primary text-sm focus:outline-none focus:border-primary">
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Drawer Footer / Express Checkout -->
+        <div class="pt-6 border-t border-surface-border space-y-4">
+            <div class="flex items-center justify-between text-sm">
+                <span class="text-text-secondary">Subtotal</span>
+                <span class="font-mono font-bold text-text-primary">$280.00</span>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+                <span class="text-text-secondary">Express Shipping</span>
+                <span class="font-mono font-bold text-primary">FREE</span>
+            </div>
+            <div class="flex items-center justify-between text-lg pt-2 border-t border-surface-border">
+                <span class="font-display font-bold text-text-primary">Total</span>
+                <span class="font-mono font-bold text-primary text-xl">$280.00</span>
+            </div>
+            <button type="submit" form="checkout-form" class="w-full py-4 rounded-xl bg-primary hover:bg-primary-hover text-text-inverse font-display font-bold text-base tracking-wider transition-all shadow-[0_0_25px_rgba(0,240,255,0.4)] flex items-center justify-center gap-2">
+                <i data-lucide="lock" class="w-4 h-4"></i>
+                <span>COMPLETE PRE-ORDER</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- INTERACTIVE HOTSPOT MODAL -->
+    <div id="hotspot-modal-overlay" class="fixed inset-0 bg-background/80 backdrop-blur-md z-50 opacity-0 pointer-events-none transition-opacity duration-300" onclick="closeHotspotModal()"></div>
+    <div id="hotspot-modal" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-lg bg-background-alt border border-surface-border rounded-3xl p-8 z-50 opacity-0 pointer-events-none transition-all duration-300 scale-95 shadow-2xl space-y-6">
+        <div class="flex items-center justify-between">
+            <span id="modal-category" class="text-xs font-mono text-primary tracking-widest uppercase">Anatomy Inspection</span>
+            <button onclick="closeHotspotModal()" class="p-2 rounded-full glass-panel text-text-primary hover:text-primary">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+        <h3 id="modal-title" class="font-display font-black text-2xl text-text-primary">Carbon Fiber Plate</h3>
+        <p id="modal-desc" class="text-text-secondary text-sm leading-relaxed">
+            Detailed material breakdown description goes here.
+        </p>
+        <div class="grid grid-cols-2 gap-4 pt-4 border-t border-surface-border">
+            <div class="p-3 rounded-xl bg-background border border-surface-border">
+                <span class="block text-[10px] font-mono text-text-secondary uppercase">Weight Spec</span>
+                <span id="modal-weight" class="font-mono font-bold text-primary text-lg">45g</span>
+            </div>
+            <div class="p-3 rounded-xl bg-background border border-surface-border">
+                <span class="block text-[10px] font-mono text-text-secondary uppercase">Certification</span>
+                <span id="modal-cert" class="font-mono font-bold text-accent text-sm">Grade-5 Aerospace</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-8 right-8 glass-panel border border-primary px-6 py-4 rounded-2xl z-50 translate-y-24 opacity-0 transition-all duration-500 flex items-center gap-3 shadow-[0_0_30px_rgba(0,240,255,0.4)]">
+        <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-text-inverse font-bold">
+            <i data-lucide="check" class="w-5 h-5"></i>
+        </div>
+        <div>
+            <h4 class="font-display font-bold text-text-primary text-sm" id="toast-title">Pre-Order Confirmed!</h4>
+            <p class="text-xs text-text-secondary" id="toast-desc">Dispatching Batch #004 in 48 hours.</p>
+        </div>
+    </div>
+
+    <!-- COMPREHENSIVE FOOTER -->
+    <footer class="relative z-10 bg-background-alt border-t border-surface-border pt-16 pb-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-12 pb-12 border-b border-surface-border">
+            <div class="space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                        <i data-lucide="zap" class="w-4 h-4 text-text-inverse"></i>
+                    </div>
+                    <span class="font-display font-black tracking-widest text-base text-text-primary">APEX-01</span>
+                </div>
+                <p class="text-text-secondary text-sm">
+                    Pioneering the future of cinematic scrollytelling web experiences and biometric footwear engineering.
+                </p>
+                <div class="flex items-center gap-3 text-text-secondary">
+                    <a href="#" class="p-2 rounded-full glass-panel hover:text-primary transition-colors"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+                    <a href="#" class="p-2 rounded-full glass-panel hover:text-primary transition-colors"><i data-lucide="instagram" class="w-4 h-4"></i></a>
+                    <a href="#" class="p-2 rounded-full glass-panel hover:text-primary transition-colors"><i data-lucide="github" class="w-4 h-4"></i></a>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <h4 class="font-display font-bold text-text-primary text-sm uppercase tracking-wider">Chapters</h4>
+                <ul class="space-y-2 text-sm text-text-secondary">
+                    <li><a href="#hero" class="hover:text-primary transition-colors">01. Hero Awakening</a></li>
+                    <li><a href="#anatomy" class="hover:text-primary transition-colors">02. Material Anatomy</a></li>
+                    <li><a href="#performance" class="hover:text-primary transition-colors">03. Performance Metrics</a></li>
+                    <li><a href="#customizer" class="hover:text-primary transition-colors">04. Colorway Studio</a></li>
+                    <li><a href="#checkout" class="hover:text-primary transition-colors">05. Conversion Hub</a></li>
+                </ul>
+            </div>
+
+            <div class="space-y-4">
+                <h4 class="font-display font-bold text-text-primary text-sm uppercase tracking-wider">Legal & Compliance</h4>
+                <ul class="space-y-2 text-sm text-text-secondary">
+                    <li><a href="#" class="hover:text-primary transition-colors">Privacy Policy</a></li>
+                    <li><a href="#" class="hover:text-primary transition-colors">Terms of Service</a></li>
+                    <li><a href="#" class="hover:text-primary transition-colors">Biometric Guarantee</a></li>
+                    <li><a href="#" class="hover:text-primary transition-colors">NFC Authenticity</a></li>
+                </ul>
+            </div>
+
+            <div class="space-y-4">
+                <h4 class="font-display font-bold text-text-primary text-sm uppercase tracking-wider">Laboratory Hours</h4>
+                <p class="text-text-secondary text-sm">Skynet R&D Center<br>Neo-Tokyo / San Francisco</p>
+                <div class="p-3 rounded-xl bg-background border border-surface-border text-xs font-mono text-primary flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                    <span>System Status: Fully Operational (60 FPS)</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-text-secondary font-mono">
+            <p>&copy; 2028 Skynet Labs Inc. All rights reserved.</p>
+            <p class="mt-4 sm:mt-0">Project Sole-Motion v1.0 MVP</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Header Scrolled State
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            if (window.scrollY > 40) {
+                header.classList.add('bg-surface', 'backdrop-blur-md', 'border-surface-border');
+            } else {
+                header.classList.remove('bg-surface', 'backdrop-blur-md', 'border-surface-border');
+            }
+
+            // Scroll Chapter Tracking & Hotspot Visibility
+            const scrollPos = window.scrollY;
+            const windowHeight = window.innerHeight;
+
+            const anatomyElem = document.getElementById('anatomy').offsetTop;
+            const customizerElem = document.getElementById('customizer').offsetTop;
+
+            const hotspot1 = document.getElementById('hotspot-1');
+            const hotspot2 = document.getElementById('hotspot-2');
+            const layerUpper = document.getElementById('layer-upper');
+            const layerCarbon = document.getElementById('layer-carbon');
+
+            if (scrollPos >= anatomyElem - 300 && scrollPos < customizerElem - 300) {
+                hotspot1.classList.remove('hidden');
+                hotspot2.classList.remove('hidden');
+                // Explode layers slightly on scroll
+                layerUpper.style.transform = 'translateY(-30px)';
+                layerCarbon.style.transform = 'translateY(30px)';
+            } else {
+                hotspot1.classList.add('hidden');
+                hotspot2.classList.add('hidden');
+                layerUpper.style.transform = 'translateY(0px)';
+                layerCarbon.style.transform = 'translateY(0px)';
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenu = document.getElementById('mobile-menu');
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            mobileMenu.classList.remove('translate-x-full');
+        });
+        document.getElementById('mobile-menu-close').addEventListener('click', () => {
+            mobileMenu.classList.add('translate-x-full');
+        });
+        function closeMobileMenu() {
+            mobileMenu.classList.add('translate-x-full');
+        }
+        document.querySelectorAll('.mobile-link').forEach(link => {
+            link.addEventListener('click', closeMobileMenu);
+        });
+
+        // Cart Drawer Toggle
+        function toggleCartDrawer() {
+            const drawer = document.getElementById('cart-drawer');
+            const overlay = document.getElementById('cart-drawer-overlay');
+            if (drawer.classList.contains('translate-x-full')) {
+                drawer.classList.remove('translate-x-full');
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                drawer.classList.add('translate-x-full');
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        // Hotspot Modal
+        function openHotspotModal(title, desc, weight, cert) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-desc').innerText = desc;
+            document.getElementById('modal-weight').innerText = weight;
+            document.getElementById('modal-cert').innerText = cert;
+
+            const modal = document.getElementById('hotspot-modal');
+            const overlay = document.getElementById('hotspot-modal-overlay');
+
+            modal.classList.remove('opacity-0', 'pointer-events-none', 'scale-95');
+            overlay.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeHotspotModal() {
+            const modal = document.getElementById('hotspot-modal');
+            const overlay = document.getElementById('hotspot-modal-overlay');
+
+            modal.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
+            overlay.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        // Colorway Customizer
+        function setColorway(theme) {
+            const mainBody = document.getElementById('shoe-main-body');
+            const viewportGlow = document.getElementById('viewport-glow');
+            const variantName = document.getElementById('selected-variant-name');
+            const drawerVariant = document.getElementById('drawer-variant-label');
+
+            document.querySelectorAll('.swatch-btn').forEach(btn => {
+                btn.classList.remove('border-primary');
+                btn.classList.add('border-surface-border');
+            });
+
+            const activeBtn = document.querySelector(`[data-swatch="${theme}"]`);
+            activeBtn.classList.remove('border-surface-border');
+            activeBtn.classList.add('border-primary');
+
+            if (theme === 'cyber') {
+                mainBody.setAttribute('fill', 'url(#cyberGradient)');
+                viewportGlow.style.backgroundColor = 'rgba(0, 240, 255, 0.15)';
+                variantName.innerText = 'Cyberpunk Neon (v1.0)';
+                drawerVariant.innerText = 'Variant: Cyberpunk Neon';
+            } else if (theme === 'stealth') {
+                mainBody.setAttribute('fill', 'url(#stealthGradient)');
+                viewportGlow.style.backgroundColor = 'rgba(255, 0, 85, 0.15)';
+                variantName.innerText = 'Stealth Black (v2.0)';
+                drawerVariant.innerText = 'Variant: Stealth Black';
+            } else if (theme === 'white') {
+                mainBody.setAttribute('fill', 'url(#whiteGradient)');
+                viewportGlow.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
+                variantName.innerText = 'Ceramic White (v3.0)';
+                drawerVariant.innerText = 'Variant: Ceramic White';
+            }
+        }
+
+        // Size Selector
+        function selectSize(btn) {
+            document.querySelectorAll('.size-btn').forEach(b => {
+                b.classList.remove('bg-primary', 'border-primary', 'text-text-inverse', 'font-bold');
+                b.classList.add('bg-surface', 'border-surface-border', 'text-text-primary');
+            });
+            btn.classList.remove('bg-surface', 'border-surface-border', 'text-text-primary');
+            btn.classList.add('bg-primary', 'border-primary', 'text-text-inverse', 'font-bold');
+
+            document.getElementById('drawer-size-label').innerText = `Size: ${btn.innerText}`;
+        }
+
+        // FAQ Accordion
+        function toggleFaq(btn) {
+            const content = btn.nextElementSibling;
+            const icon = btn.querySelector('lucide-icon, svg');
+            
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+                btn.classList.remove('text-primary');
+            } else {
+                document.querySelectorAll('.faq-content').forEach(c => c.style.maxHeight = null);
+                content.style.maxHeight = content.scrollHeight + "px";
+                btn.classList.add('text-primary');
+            }
+        }
+
+        // Audio & Motion Toggles
+        let audioActive = false;
+        document.getElementById('audio-toggle').addEventListener('click', () => {
+            audioActive = !audioActive;
+            const icon = document.getElementById('audio-icon');
+            if (audioActive) {
+                icon.setAttribute('data-lucide', 'volume-x');
+                showToast("Soundscape Active", "Ambient urban soundtrack enabled.");
+            } else {
+                icon.setAttribute('data-lucide', 'volume-2');
+                showToast("Soundscape Muted", "Audio output disabled.");
+            }
+            lucide.createIcons();
+        });
+
+        let motionReduced = false;
+        document.getElementById('motion-toggle').addEventListener('click', () => {
+            motionReduced = !motionReduced;
+            const icon = document.getElementById('motion-icon');
+            if (motionReduced) {
+                icon.setAttribute('data-lucide', 'pause-circle');
+                showToast("Reduce Motion Enabled", "Animations minimized for accessibility.");
+            } else {
+                icon.setAttribute('data-lucide', 'activity');
+                showToast("Fluid Motion Enabled", "Cinematic scrollytelling active.");
+            }
+            lucide.createIcons();
+        });
+
+        // Checkout Form Submit & Toast
+        function handleCheckoutSubmit(event) {
+            event.preventDefault();
+            toggleCartDrawer();
+            showToast("Order Dispatched Successfully!", "Batch #004 reserved. Tracking sent to email.");
+        }
+
+        function showToast(title, desc) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-title').innerText = title;
+            document.getElementById('toast-desc').innerText = desc;
+
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 4000);
+        }
+    </script>
+</body>
+</html>

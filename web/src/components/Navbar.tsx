@@ -3,19 +3,22 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter, usePathname } from "next/navigation"
-import { LayoutDashboard, LogOut, Sparkles, Zap, Menu, X, Key } from "lucide-react"
-import { me, logout, getSettingsStatus, updateApiKey } from "@/lib/api"
+import { LayoutDashboard, LogOut, Sparkles, Zap, Menu, X, Key, Shield } from "lucide-react"
+import { me, logout, getSettingsStatus, updateApiKey, SubscriptionPlan } from "@/lib/api"
+import PlanUpgradeModal from "./PlanUpgradeModal"
 
 const NAV_LINKS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/", label: "Build a site", icon: Zap },
+  { href: "/pricing", label: "Pricing", icon: Sparkles },
 ]
 
 export default function Navbar() {
-  const [user, setUser] = useState<{ name: string; email: string } | null>(null)
+  const [user, setUser] = useState<{ name: string; email: string; plan?: SubscriptionPlan } | null>(null)
   const [loading, setLoading] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [showKeyModal, setShowKeyModal] = useState(false)
+  const [showPlanModal, setShowPlanModal] = useState(false)
   const [apiKeyInput, setApiKeyInput] = useState("")
   const [keyConfigured, setKeyConfigured] = useState(false)
   const [keyMasked, setKeyMasked] = useState<string | null>(null)
@@ -120,10 +123,33 @@ export default function Navbar() {
               <div className="h-8 w-20 rounded-md bg-skynet-surface animate-pulse" />
             ) : user ? (
               <>
-                <div className="hidden md:flex items-center gap-2.5 text-sm">
-                  <span className="text-skynet-ivory">{user.name}</span>
-                  <span className="text-skynet-dust">•</span>
-                  <span className="text-skynet-amber text-xs">{user.email}</span>
+                {/* Plan Badge button */}
+                <button
+                  onClick={() => setShowPlanModal(true)}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border transition-all ${
+                    user.plan === "host"
+                      ? "bg-skynet-success/15 border-skynet-success/40 text-skynet-success hover:bg-skynet-success/25"
+                      : user.plan === "advance"
+                      ? "bg-skynet-amber/15 border-skynet-amber/40 text-skynet-amber hover:bg-skynet-amber/25"
+                      : "bg-skynet-surface border-skynet-border text-skynet-dust hover:text-skynet-ivory hover:border-skynet-amber"
+                  }`}
+                  title="Manage Subscription Plan"
+                >
+                  <Shield className="w-3 h-3" />
+                  <span>
+                    {user.plan === "host"
+                      ? "Own Host ($29)"
+                      : user.plan === "advance"
+                      ? "Advance ($19)"
+                      : "Basic (Free)"}
+                  </span>
+                  {user.plan === "free" && (
+                    <span className="text-[10px] text-skynet-amber underline ml-0.5">Upgrade</span>
+                  )}
+                </button>
+
+                <div className="hidden lg:flex items-center gap-2 text-xs">
+                  <span className="text-skynet-ivory font-medium">{user.name}</span>
                 </div>
                 <button
                   onClick={handleLogout}
@@ -227,6 +253,18 @@ export default function Navbar() {
           </div>
         </div>
       )}
+
+      {/* Plan Upgrade Modal */}
+      <PlanUpgradeModal
+        isOpen={showPlanModal}
+        onClose={() => setShowPlanModal(false)}
+        currentPlan={user?.plan || "free"}
+        onPlanUpdated={(newPlan) => {
+          if (user) {
+            setUser({ ...user, plan: newPlan })
+          }
+        }}
+      />
     </>
   )
 }

@@ -1,42 +1,77 @@
 import { GoogleGenAI } from "@google/genai"
 import { DepartmentId } from "./orchestrator.js"
 import dotenv from "dotenv"
-import { resolve } from "node:path"
+import { resolve, dirname } from "node:path"
+import { fileURLToPath } from "node:url"
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 dotenv.config()
 dotenv.config({ path: resolve(process.cwd(), ".env") })
 dotenv.config({ path: resolve(process.cwd(), "../.env") })
+dotenv.config({ path: resolve(__dirname, "../.env") })
+dotenv.config({ path: resolve(__dirname, "../../.env") })
 
 export type DepartmentName = DepartmentId
 
-let activeApiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || ""
+let configuredKeys: string[] = []
+
+function loadKeysFromEnv(): string[] {
+  const raw = process.env.GEMINI_API_KEYS || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || ""
+  return raw
+    .split(/[,;\n\r]+/)
+    .map((k) => k.trim())
+    .filter((k) => k.length > 5)
+}
+
+configuredKeys = loadKeysFromEnv()
 
 export function setApiKey(key: string) {
-  activeApiKey = key.trim()
-  process.env.GEMINI_API_KEY = activeApiKey
+  const newKeys = key
+    .split(/[,;\n\r]+/)
+    .map((k) => k.trim())
+    .filter((k) => k.length > 5)
+  if (newKeys.length > 0) {
+    configuredKeys = newKeys
+    process.env.GEMINI_API_KEY = configuredKeys[0]
+    process.env.GEMINI_API_KEYS = configuredKeys.join(",")
+  }
 }
 
 export function getApiKey(): string {
-  return activeApiKey
+  if (configuredKeys.length === 0) {
+    configuredKeys = loadKeysFromEnv()
+  }
+  return configuredKeys[0] || ""
+}
+
+export function getAllApiKeys(): string[] {
+  if (configuredKeys.length === 0) {
+    configuredKeys = loadKeysFromEnv()
+  }
+  return configuredKeys
 }
 
 export function hasApiKey(): boolean {
-  return Boolean(activeApiKey && activeApiKey.length > 5)
+  return getAllApiKeys().length > 0
 }
 
 export function isApiKeyConfigured(): boolean {
   return hasApiKey()
 }
 
-function getGeminiClient(): GoogleGenAI | null {
-  const key = getApiKey()
-  if (!key || key.length < 5) return null
-  try {
-    return new GoogleGenAI({ apiKey: key })
-  } catch (err) {
-    console.warn("Failed to instantiate GoogleGenAI client:", err)
-    return null
+function getGeminiClients(): GoogleGenAI[] {
+  const keys = getAllApiKeys()
+  const clients: GoogleGenAI[] = []
+  for (const k of keys) {
+    try {
+      clients.push(new GoogleGenAI({ apiKey: k }))
+    } catch (err) {
+      console.warn("Failed to instantiate GoogleGenAI client for key:", err)
+    }
   }
+  return clients
 }
 
 export interface DepartmentSpec {
@@ -252,48 +287,73 @@ export async function runDepartmentAgent(
     throw new Error(`No spec defined for department: ${department}`)
   }
 
-  const client = getGeminiClient()
-  if (client) {
-    try {
-      if (emitLog) emitLog(`[${spec.role}] Consulting Gemini AI model for ${department}...`)
-      const userPrompt = buildUserPrompt(department, context)
+  const clients = getGeminiClients()
+  const CANDIDATE_MODELS = [
+    "gemini-3.5-flash-lite",
+    "gemini-3.5-flash",
+    "gemini-2.5-flash",
+  ]
 
-      const response = await client.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: `${spec.systemPrompt}\n\nTask Input:\n${userPrompt}`,
-      })
+  if (clients.length > 0) {
+    const userPrompt = buildUserPrompt(department, context)
 
-      const rawOutput = response.text || ""
-      if (rawOutput.trim().length > 40) {
-        const artifacts: { path: string; content: string }[] = []
+    for (let cIdx = 0; cIdx < clients.length; cIdx++) {
+      const client = clients[cIdx]
+      const keyLabel = clients.length > 1 ? ` [Key #${cIdx + 1}]` : ""
 
-        if (spec.singleOutput || spec.artifacts.length === 1) {
-          let cleanContent = rawOutput.trim()
-          if (department === "frontend") {
-            if (cleanContent.startsWith("```html")) cleanContent = cleanContent.slice(7)
-            if (cleanContent.startsWith("```")) cleanContent = cleanContent.slice(3)
-            if (cleanContent.endsWith("```")) cleanContent = cleanContent.slice(0, -3)
-            cleanContent = cleanContent.trim()
-          }
-          artifacts.push({ path: spec.artifacts[0], content: cleanContent })
-        } else {
-          const parts = rawOutput.split(/---SPLIT---/i)
-          for (let i = 0; i < spec.artifacts.length; i++) {
-            let partContent = (parts[i] || "").trim()
-            if (spec.artifacts[i].endsWith(".json") && partContent.startsWith("```json")) {
-              partContent = partContent.slice(7).replace(/```$/, "").trim()
+      for (const model of CANDIDATE_MODELS) {
+        try {
+          if (emitLog) emitLog(`[${spec.role}] Consulting Gemini AI (${model})${keyLabel} for ${department}...`)
+
+          const response = await client.models.generateContent({
+            model,
+            contents: `${spec.systemPrompt}\n\nTask Input:\n${userPrompt}`,
+          })
+
+          const rawOutput = response.text || ""
+          if (rawOutput.trim().length > 40) {
+            const artifacts: { path: string; content: string }[] = []
+
+            if (spec.singleOutput || spec.artifacts.length === 1) {
+              let cleanContent = rawOutput.trim()
+              if (department === "frontend") {
+                const match = cleanContent.match(/```(?:html)?\s*([\s\S]*?)```/)
+                if (match) {
+                  cleanContent = match[1].trim()
+                } else {
+                  if (cleanContent.startsWith("```html")) cleanContent = cleanContent.slice(7)
+                  if (cleanContent.startsWith("```")) cleanContent = cleanContent.slice(3)
+                  if (cleanContent.endsWith("```")) cleanContent = cleanContent.slice(0, -3)
+                  cleanContent = cleanContent.trim()
+                }
+              }
+              artifacts.push({ path: spec.artifacts[0], content: cleanContent })
+            } else {
+              const parts = rawOutput.split(/---SPLIT---/i)
+              for (let i = 0; i < spec.artifacts.length; i++) {
+                let partContent = (parts[i] || "").trim()
+                if (spec.artifacts[i].endsWith(".json") && partContent.startsWith("```json")) {
+                  partContent = partContent.slice(7).replace(/```$/, "").trim()
+                }
+                artifacts.push({ path: spec.artifacts[i], content: partContent })
+              }
             }
-            artifacts.push({ path: spec.artifacts[i], content: partContent })
+
+            if (emitLog) emitLog(`[${spec.role}] Gemini AI (${model})${keyLabel} successfully built deliverables!`)
+            return { department, artifacts, rawOutput }
+          }
+        } catch (err: any) {
+          const errMsg = err?.message || String(err)
+          console.warn(`[Agent ${department}] Gemini ${model}${keyLabel} failed: ${errMsg}`)
+          if (errMsg.includes("429") || errMsg.includes("quota") || errMsg.includes("ResourceExhausted")) {
+            if (emitLog) emitLog(`[${spec.role}] Key${keyLabel} rate-limited. Trying next key/model...`)
+            break
           }
         }
-
-        if (emitLog) emitLog(`[${spec.role}] Gemini AI synthesized ${artifacts.length} deliverable(s).`)
-        return { department, artifacts, rawOutput }
       }
-    } catch (err) {
-      console.warn(`[Agent ${department}] Gemini API unavailable (${(err as Error).message}). Executing bespoke semantic engine.`);
-      if (emitLog) emitLog(`[${spec.role}] Gemini key unavailable or rate-limited; switching to bespoke semantic compiler...`)
     }
+
+    if (emitLog) emitLog(`[${spec.role}] All Gemini models/keys busy; falling back to bespoke semantic compiler...`)
   }
 
   // Bespoke Semantic Generation (NO hardcoded mock bakery/saas)

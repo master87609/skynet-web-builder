@@ -1,0 +1,30 @@
+{
+  "brand": "Ironclad Sentinel",
+  "domain": "Cybersecurity & Threat Defense",
+  "palette": {
+    "primary": "#06B6D4",
+    "secondary": "#164E63",
+    "accentGlow": "rgba(6, 182, 212, 0.4)",
+    "voidGround": "#0A0A0A",
+    "surfacePanel": "#141414",
+    "surfaceHover": "#1F1F1F",
+    "hairlineBorder": "#2E2E2E",
+    "textPrimary": "#F8FAFC",
+    "textMuted": "#94A3B8"
+  },
+  "typography": {
+    "display": "Plus Jakarta Sans, system-ui, sans-serif",
+    "weights": [
+      400,
+      500,
+      600,
+      700,
+      800
+    ]
+  },
+  "radii": {
+    "control": "8px",
+    "card": "16px",
+    "pill": "9999px"
+  }
+}

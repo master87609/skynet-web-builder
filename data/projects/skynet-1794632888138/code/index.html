@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skynet Bakehouse | Artisanal Sourdough & Preorders</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: '#2D241E',
+                            light: '#4A3D33',
+                            dark: '#1A1511',
+                        },
+                        accent: {
+                            DEFAULT: '#C47C41',
+                            light: '#D89A65',
+                            dark: '#9E5F29',
+                        },
+                        bakeryBg: {
+                            DEFAULT: '#FAF7F2',
+                            subtle: '#F2ECE1',
+                            dark: '#241E19',
+                        },
+                        bakerySurface: {
+                            DEFAULT: '#FFFFFF',
+                            subtle: '#F7F4EF',
+                        },
+                        bakeryText: {
+                            primary: '#2D241E',
+                            secondary: '#6B5D52',
+                            muted: '#9C8C7E',
+                            inverse: '#FAF7F2',
+                        },
+                        feedback: {
+                            success: '#3B5336',
+                            warning: '#C47C41',
+                            error: '#8B3A2B',
+                            info: '#4A5D6E'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Lora', 'Georgia', 'serif'],
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 12px rgba(45, 36, 30, 0.08)',
+                        'elevated': '0 12px 32px rgba(45, 36, 30, 0.12)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FAF7F2;
+            color: #2D241E;
+        }
+        h1, h2, h3, h4, .font-serif {
+            font-family: 'Lora', Georgia, serif;
+        }
+        /* Custom scrollbar for horizontal filter bar */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-bakeryBg text-bakeryText-primary antialiased selection:bg-accent selection:text-white">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
+    <!-- STICKY NAVIGATION BAR -->
+    <header class="sticky top-0 z-40 bg-bakeryBg/90 backdrop-blur-md border-b border-bakeryBg-subtle transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-serif font-bold text-xl shadow-soft group-hover:scale-105 transition-transform">
+                    SB
+                </div>
+                <div>
+                    <span class="font-serif text-xl sm:text-2xl font-bold tracking-tight text-primary">Skynet Bakehouse</span>
+                    <span class="block text-[10px] uppercase tracking-widest text-bakeryText-muted">Artisanal Sourdough</span>
+                </div>
+            </a>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden md:flex items-center gap-8 font-medium text-sm text-bakeryText-secondary">
+                <a href="#menu" class="hover:text-accent transition-colors">Weekly Drops</a>
+                <a href="#story" class="hover:text-accent transition-colors">Our Fermentation</a>
+                <a href="#faq" class="hover:text-accent transition-colors">Pickup & FAQ</a>
+                <a href="#contact" class="hover:text-accent transition-colors">Contact</a>
+            </nav>
+
+            <!-- Utility Actions -->
+            <div class="flex items-center gap-4">
+                <!-- Live Drop Pill Badge -->
+                <div class="hidden lg:flex items-center gap-2 bg-accent/10 border border-accent/20 px-3 py-1.5 rounded-full text-xs font-semibold text-accent animate-pulse">
+                    <span class="w-2 h-2 rounded-full bg-accent"></span>
+                    Friday Drop Live: 42 Loaves Left
+                </div>
+
+                <!-- Account Modal Trigger -->
+                <button onclick="openAccountModal()" class="hidden sm:flex p-2.5 rounded-full bg-bakerySurface hover:bg-bakeryBg-subtle border border-bakeryBg-subtle text-bakeryText-primary transition-colors" title="Account / Login">
+                    <i data-lucide="user" class="w-5 h-5"></i>
+                </button>
+
+                <!-- Cart Drawer Trigger -->
+                <button onclick="toggleCartDrawer(true)" class="relative p-2.5 rounded-full bg-primary text-bakeryText-inverse hover:bg-primary-light transition-colors shadow-soft" title="Open Preorder Cart">
+                    <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                    <span id="cart-counter" class="absolute -top-1 -right-1 bg-accent text-white font-mono text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold border-2 border-bakeryBg shadow-sm">0</span>
+                </button>
+
+                <!-- Mobile Hamburger Toggle -->
+                <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-primary focus:outline-none">
+                    <i data-lucide="menu" id="mobile-menu-icon" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-bakerySurface border-b border-bakeryBg-subtle px-6 py-6 space-y-4 shadow-elevated">
+            <a href="#menu" onclick="toggleMobileMenu()" class="block text-lg font-serif font-medium text-primary hover:text-accent">Weekly Drops</a>
+            <a href="#story" onclick="toggleMobileMenu()" class="block text-lg font-serif font-medium text-primary hover:text-accent">Our Fermentation</a>
+            <a href="#faq" onclick="toggleMobileMenu()" class="block text-lg font-serif font-medium text-primary hover:text-accent">Pickup & FAQ</a>
+            <a href="#contact" onclick="toggleMobileMenu()" class="block text-lg font-serif font-medium text-primary hover:text-accent">Contact Us</a>
+            <div class="pt-4 border-t border-bakeryBg-subtle flex justify-between items-center">
+                <span class="text-sm text-bakeryText-muted">Logged in as Guest</span>
+                <button onclick="openAccountModal(); toggleMobileMenu();" class="text-sm font-semibold text-accent underline">Sign In / Register</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-28">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Hero Content -->
+                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 bg-bakeryBg-subtle px-3.5 py-1.5 rounded-full text-xs font-mono text-accent uppercase tracking-wider border border-accent/20">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> 100% Organic Stone-Milled Grains
+                    </div>
+                    <h1 class="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-primary leading-[1.1]">
+                        Wild Ferment. <br><span class="italic text-accent">Blistered Crust.</span>
+                    </h1>
+                    <p class="text-lg sm:text-xl text-bakeryText-secondary max-w-2xl mx-auto lg:mx-0 font-normal leading-relaxed">
+                        Handcrafted artisanal sourdough baked in micro-batches using ancient heritage grains, 36-hour cold fermentation, and organic unbleached flour. Secure your weekly loaf before the drop sells out.
+                    </p>
+                    
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
+                        <a href="#menu" class="w-full sm:w-auto px-8 py-4 bg-accent hover:bg-accent-dark text-white font-semibold rounded-lg shadow-soft transition-all transform hover:-translate-y-0.5 text-center flex items-center justify-center gap-2">
+                            <span>Shop Weekly Drop</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </a>
+                        <a href="#story" class="w-full sm:w-auto px-8 py-4 bg-bakerySurface hover:bg-bakeryBg-subtle border border-bakeryBg-subtle text-primary font-semibold rounded-lg transition-all text-center">
+                            Our Fermentation Story
+                        </a>
+                    </div>
+
+                    <!-- Trust Metrics -->
+                    <div class="grid grid-cols-3 gap-6 pt-8 border-t border-bakeryBg-subtle max-w-lg mx-auto lg:mx-0">
+                        <div>
+                            <p class="font-serif text-2xl font-bold text-primary">36h</p>
+                            <p class="text-xs text-bakeryText-muted">Cold Ferment</p>
+                        </div>
+                        <div>
+                            <p class="font-serif text-2xl font-bold text-primary">82%</p>
+                            <p class="text-xs text-bakeryText-muted">High Hydration</p>
+                        </div>
+                        <div>
+                            <p class="font-serif text-2xl font-bold text-primary">100%</p>
+                            <p class="text-xs text-bakeryText-muted">Organic Sourdough</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Image Card -->
+                <div class="lg:col-span-5 relative">
+                    <div class="absolute -inset-2 bg-gradient-to-tr from-accent/30 to-bakeryBg-subtle rounded-2xl blur-xl opacity-70"></div>
+                    <div class="relative bg-bakerySurface p-4 sm:p-6 rounded-2xl shadow-elevated border border-bakeryBg-subtle">
+                        <div class="relative h-80 sm:h-96 rounded-xl overflow-hidden mb-6">
+                            <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=800" alt="Fresh artisan sourdough loaf with scored crust" class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700">
+                            <div class="absolute top-4 left-4 bg-primary/80 backdrop-blur-md text-white text-xs px-3 py-1.5 rounded-full font-mono font-medium">
+                                Friday Drop • Batch #104
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-serif font-bold text-lg text-primary">Signature Country Boule</h3>
+                                <p class="text-xs text-bakeryText-muted">Central Milling Organic Flour • Sea Salt</p>
+                            </div>
+                            <span class="font-mono font-bold text-lg text-accent">$14.00</span>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-bakeryBg-subtle flex items-center justify-between text-xs text-bakeryText-secondary">
+                            <span class="flex items-center gap-1 text-feedback-warning font-semibold">
+                                <i data-lucide="Flame" class="w-3.5 h-3.5"></i> Only 6 left for Friday bake
+                            </span>
+                            <button onclick="addToCart('Signature Country Boule', 14.00, 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=800')" class="px-4 py-2 bg-primary text-bakeryText-inverse rounded-md hover:bg-primary-light transition-colors font-semibold text-xs">
+                                Quick Preorder
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- WEEKLY MENU & PREORDER HUB (With Sticky Filter Bar) -->
+    <section id="menu" class="py-20 bg-bakerySurface border-y border-bakeryBg-subtle">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <span class="text-xs font-mono uppercase tracking-widest text-accent font-bold">Weekly Preorder Catalog</span>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-primary mt-2">Baking Schedule & Available Loaves</h2>
+                <p class="text-bakeryText-secondary mt-2">Select your dietary preferences and secure your artisanal bakes for upcoming Friday & Saturday pickups.</p>
+            </div>
+
+            <!-- Sticky Filter Bar -->
+            <div class="sticky top-20 z-30 bg-bakerySurface/95 backdrop-blur-md py-4 mb-10 border-b border-bakeryBg-subtle">
+                <div class="flex items-center justify-between gap-4 overflow-x-auto no-scrollbar pb-2">
+                    <div class="flex items-center gap-2 min-w-max">
+                        <span class="text-xs font-bold uppercase tracking-wider text-bakeryText-muted mr-2">Filter:</span>
+                        <button onclick="filterProducts('all')" class="filter-btn px-4 py-2 rounded-full text-xs font-semibold bg-accent text-white transition-all shadow-sm" data-filter="all">All Bakes</button>
+                        <button onclick="filterProducts('bread')" class="filter-btn px-4 py-2 rounded-full text-xs font-semibold bg-bakeryBg-subtle text-bakeryText-secondary hover:bg-bakeryBg hover:text-primary transition-all" data-filter="bread">Breads</button>
+                        <button onclick="filterProducts('pastry')" class="filter-btn px-4 py-2 rounded-full text-xs font-semibold bg-bakeryBg-subtle text-bakeryText-secondary hover:bg-bakeryBg hover:text-primary transition-all" data-filter="pastry">Viennoiserie & Pastry</button>
+                        <button onclick="filterProducts('pantry')" class="filter-btn px-4 py-2 rounded-full text-xs font-semibold bg-bakeryBg-subtle text-bakeryText-secondary hover:bg-bakeryBg hover:text-primary transition-all" data-filter="pantry">Pantry & Ferments</button>
+                    </div>
+                    <div class="hidden sm:flex items-center gap-2 text-xs text-bakeryText-muted">
+                        <i data-lucide="shield-check" class="w-4 h-4 text-feedback-success"></i> 100% Organic Facility
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Grid -->
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Product Card 1 -->
+                <div class="product-card bg-bakeryBg rounded-xl border border-bakeryBg-subtle overflow-hidden shadow-soft hover:shadow-elevated transition-all flex flex-col" data-category="bread">
+                    <div class="relative h-64 overflow-hidden group cursor-pointer" onclick="openProductModal('Country Sourdough Boule', 14.00, 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=800', '36hr Ferment • 82% Hydration • Open Crumb', 'Milled locally at Central Milling Co. using organic hard red winter wheat and malted barley.', '4')">
+                        <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=800" alt="Country Sourdough" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute top-3 right-3 bg-bakerySurface/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[11px] font-mono font-semibold text-feedback-warning flex items-center gap-1 shadow-sm">
+                            <span class="w-1.5 h-1.5 rounded-full bg-feedback-warning animate-ping"></span> Only 4 left!
+                        </div>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-mono uppercase tracking-wider text-accent font-bold">Artisan Loaf</span>
+                                <span class="font-mono font-bold text-primary text-lg">$14.00</span>
+                            </div>
+                            <h3 class="font-serif font-bold text-xl text-primary mb-2 hover:text-accent transition-colors cursor-pointer" onclick="openProductModal('Country Sourdough Boule', 14.00, 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=800', '36hr Ferment • 82% Hydration • Open Crumb', 'Milled locally at Central Milling Co. using organic hard red winter wheat and malted barley.', '4')">Country Sourdough Boule</h3>
+                            <p class="text-sm text-bakeryText-secondary line-clamp-2">Blistered dark crust, open jelly crumb structure with a gentle lactic tang and rich whole-grain aroma.</p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-bakeryBg-subtle flex items-center justify-between">
+                            <span class="text-xs text-bakeryText-muted font-mono">36h Cold Retard</span>
+                            <button onclick="addToCart('Country Sourdough Boule', 14.00, 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=800')" class="px-4 py-2 bg-primary hover:bg-primary-light text-white text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add to Preorder
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Card 2 -->
+                <div class="product-card bg-bakeryBg rounded-xl border border-bakeryBg-subtle overflow-hidden shadow-soft hover:shadow-elevated transition-all flex flex-col" data-category="bread">
+                    <div class="relative h-64 overflow-hidden group cursor-pointer" onclick="openProductModal('Seeded Ancient Grain Rye', 16.00, 'https://images.unsplash.com/photo-1589367920969-ab8e050bbb04?auto=format&fit=crop&q=80&w=800', '48hr Ferment • Organic Spelt & Rye • Dense Crumb', 'Crafted with organic sprouted rye, toasted sunflower seeds, flax, and sesame.', '2')">
+                        <img src="https://images.unsplash.com/photo-1589367920969-ab8e050bbb04?auto=format&fit=crop&q=80&w=800" alt="Seeded Rye" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute top-3 right-3 bg-bakerySurface/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[11px] font-mono font-semibold text-feedback-error flex items-center gap-1 shadow-sm">
+                            <span class="w-1.5 h-1.5 rounded-full bg-feedback-error animate-ping"></span> Only 2 left!
+                        </div>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-mono uppercase tracking-wider text-accent font-bold">Seeded Loaf</span>
+                                <span class="font-mono font-bold text-primary text-lg">$16.00</span>
+                            </div>
+                            <h3 class="font-serif font-bold text-xl text-primary mb-2 hover:text-accent transition-colors cursor-pointer" onclick="openProductModal('Seeded Ancient Grain Rye', 16.00, 'https://images.unsplash.com/photo-1589367920969-ab8e050bbb04?auto=format&fit=crop&q=80&w=800', '48hr Ferment • Organic Spelt & Rye • Dense Crumb', 'Crafted with organic sprouted rye, toasted sunflower seeds, flax, and sesame.', '2')">Seeded Ancient Grain Rye</h3>
+                            <p class="text-sm text-bakeryText-secondary line-clamp-2">Packed with toasted organic sunflower, pumpkin, and flax seeds. Deep earthy flavor profile with superior moisture retention.</p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-bakeryBg-subtle flex items-center justify-between">
+                            <span class="text-xs text-bakeryText-muted font-mono">48h Sprouted Rye</span>
+                            <button onclick="addToCart('Seeded Ancient Grain Rye', 16.00, 'https://images.unsplash.com/photo-1589367920969-ab8e050bbb04?auto=format&fit=crop&q=80&w=800')" class="px-4 py-2 bg-primary hover:bg-primary-light text-white text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add to Preorder
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Card 3 -->
+                <div class="product-card bg-bakeryBg rounded-xl border border-bakeryBg-subtle overflow-hidden shadow-soft hover:shadow-elevated transition-all flex flex-col" data-category="pastry">
+                    <div class="relative h-64 overflow-hidden group cursor-pointer" onclick="openProductModal('Cultured Butter Croissant', 6.50, 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&q=80&w=800', '72hr Lamination • Normandy European Butter • Flaky Layers', 'Made with French-style cultured butter with 84% fat content for ultimate honeycomb lamination.', '8')">
+                        <img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&q=80&w=800" alt="Croissant" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute top-3 right-3 bg-bakerySurface/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[11px] font-mono font-semibold text-accent flex items-center gap-1 shadow-sm">
+                            <span class="w-1.5 h-1.5 rounded-full bg-accent"></span> 8 left for Friday
+                        </div>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-mono uppercase tracking-wider text-accent font-bold">Viennoiserie</span>
+                                <span class="font-mono font-bold text-primary text-lg">$6.50</span>
+                            </div>
+                            <h3 class="font-serif font-bold text-xl text-primary mb-2 hover:text-accent transition-colors cursor-pointer" onclick="openProductModal('Cultured Butter Croissant', 6.50, 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&q=80&w=800', '72hr Lamination • Normandy European Butter • Flaky Layers', 'Made with French-style cultured butter with 84% fat content for ultimate honeycomb lamination.', '8')">Cultured Butter Croissant</h3>
+                            <p class="text-sm text-bakeryText-secondary line-clamp-2">Exquisitely shatteringly crisp exterior with a honeycomb interior structure enriched by European cultured butter.</p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-bakeryBg-subtle flex items-center justify-between">
+                            <span class="text-xs text-bakeryText-muted font-mono">72h Lamination</span>
+                            <button onclick="addToCart('Cultured Butter Croissant', 6.50, 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&q=80&w=800')" class="px-4 py-2 bg-primary hover:bg-primary-light text-white text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add to Preorder
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Card 4 -->
+                <div class="product-card bg-bakeryBg rounded-xl border border-bakeryBg-subtle overflow-hidden shadow-soft hover:shadow-elevated transition-all flex flex-col" data-category="pantry">
+                    <div class="relative h-64 overflow-hidden group cursor-pointer" onclick="openProductModal('Aged Sourdough Starter Kit', 18.00, 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&q=80&w=800', '120-Year Heritage Culture • Organic Rye Feed • Dehydrated & Live', 'Harvested from our primary mother culture established in 1904. Includes mason jar and instructions.', '12')">
+                        <img src="https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&q=80&w=800" alt="Starter Kit" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute top-3 right-3 bg-bakerySurface/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[11px] font-mono font-semibold text-feedback-success flex items-center gap-1 shadow-sm">
+                            <span class="w-1.5 h-1.5 rounded-full bg-feedback-success"></span> In Stock
+                        </div>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-mono uppercase tracking-wider text-accent font-bold">Pantry & Ferments</span>
+                                <span class="font-mono font-bold text-primary text-lg">$18.00</span>
+                            </div>
+                            <h3 class="font-serif font-bold text-xl text-primary mb-2 hover:text-accent transition-colors cursor-pointer" onclick="openProductModal('Aged Sourdough Starter Kit', 18.00, 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&q=80&w=800', '120-Year Heritage Culture • Organic Rye Feed • Dehydrated & Live', 'Harvested from our primary mother culture established in 1904. Includes mason jar and instructions.', '12')">Aged Sourdough Starter Kit</h3>
+                            <p class="text-sm text-bakeryText-secondary line-clamp-2">Take home a piece of our bakery history. Active 120-year-old wild yeast culture with step-by-step reactivation guide.</p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-bakeryBg-subtle flex items-center justify-between">
+                            <span class="text-xs text-bakeryText-muted font-mono">120-Year Culture</span>
+                            <button onclick="addToCart('Aged Sourdough Starter Kit', 18.00, 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&q=80&w=800')" class="px-4 py-2 bg-primary hover:bg-primary-light text-white text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add to Preorder
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Card 5 -->
+                <div class="product-card bg-bakeryBg rounded-xl border border-bakeryBg-subtle overflow-hidden shadow-soft hover:shadow-elevated transition-all flex flex-col" data-category="bread">
+                    <div class="relative h-64 overflow-hidden group cursor-pointer" onclick="openProductModal('Olive & Rosemary Fougasse', 13.50, 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?auto=format&fit=crop&q=80&w=800', '24hr Ferment • Kalamata Olives • Fresh Rosemary', 'Infused with cold-pressed Greek olive oil, Kalamata olives, and hand-picked garden rosemary.', '3')">
+                        <img src="https://images.unsplash.com/photo-1549931319-a545dcf3bc73?auto=format&fit=crop&q=80&w=800" alt="Fougasse" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute top-3 right-3 bg-bakerySurface/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[11px] font-mono font-semibold text-feedback-warning flex items-center gap-1 shadow-sm">
+                            <span class="w-1.5 h-1.5 rounded-full bg-feedback-warning"></span> Only 3 left!
+                        </div>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-mono uppercase tracking-wider text-accent font-bold">Artisan Flatbread</span>
+                                <span class="font-mono font-bold text-primary text-lg">$13.50</span>
+                            </div>
+                            <h3 class="font-serif font-bold text-xl text-primary mb-2 hover:text-accent transition-colors cursor-pointer" onclick="openProductModal('Olive & Rosemary Fougasse', 13.50, 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?auto=format&fit=crop&q=80&w=800', '24hr Ferment • Kalamata Olives • Fresh Rosemary', 'Infused with cold-pressed Greek olive oil, Kalamata olives, and hand-picked garden rosemary.', '3')">Olive & Rosemary Fougasse</h3>
+                            <p class="text-sm text-bakeryText-secondary line-clamp-2">Leaf-shaped artisanal flatbread with pockets of briny Kalamata olives, aromatic rosemary, and flaky sea salt.</p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-bakeryBg-subtle flex items-center justify-between">
+                            <span class="text-xs text-bakeryText-muted font-mono">24h Olive Infusion</span>
+                            <button onclick="addToCart('Olive & Rosemary Fougasse', 13.50, 'https://images.unsplash.com/photo-1549931319-a545dcf3bc73?auto=format&fit=crop&q=80&w=800')" class="px-4 py-2 bg-primary hover:bg-primary-light text-white text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add to Preorder
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Card 6 -->
+                <div class="product-card bg-bakeryBg rounded-xl border border-bakeryBg-subtle overflow-hidden shadow-soft hover:shadow-elevated transition-all flex flex-col" data-category="pastry">
+                    <div class="relative h-64 overflow-hidden group cursor-pointer" onclick="openProductModal('Cardamom Morning Bun', 5.75, 'https://images.unsplash.com/photo-1621236378690-e593d5026bdf?auto=format&fit=crop&q=80&w=800', 'Laminated Brioche • Fresh Ground Cardamom • Demerara Sugar', 'Spun with organic cane sugar, Indonesian cinnamon, and freshly ground green cardamom pods.', '5')">
+                        <img src="https://images.unsplash.com/photo-1621236378690-e593d5026bdf?auto=format&fit=crop&q=80&w=800" alt="Morning Bun" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute top-3 right-3 bg-bakerySurface/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[11px] font-mono font-semibold text-accent flex items-center gap-1 shadow-sm">
+                            <span class="w-1.5 h-1.5 rounded-full bg-accent"></span> 5 left for Friday
+                        </div>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-mono uppercase tracking-wider text-accent font-bold">Sweet Pastry</span>
+                                <span class="font-mono font-bold text-primary text-lg">$5.75</span>
+                            </div>
+                            <h3 class="font-serif font-bold text-xl text-primary mb-2 hover:text-accent transition-colors cursor-pointer" onclick="openProductModal('Cardamom Morning Bun', 5.75, 'https://images.unsplash.com/photo-1621236378690-e593d5026bdf?auto=format&fit=crop&q=80&w=800', 'Laminated Brioche • Fresh Ground Cardamom • Demerara Sugar', 'Spun with organic cane sugar, Indonesian cinnamon, and freshly ground green cardamom pods.', '5')">Cardamom Morning Bun</h3>
+                            <p class="text-sm text-bakeryText-secondary line-clamp-2">Laminated brioche dough rolled with aromatic green cardamom, orange zest, and crunchy Demerara sugar crystals.</p>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-bakeryBg-subtle flex items-center justify-between">
+                            <span class="text-xs text-bakeryText-muted font-mono">Fresh Ground Spice</span>
+                            <button onclick="addToCart('Cardamom Morning Bun', 5.75, 'https://images.unsplash.com/photo-1621236378690-e593d5026bdf?auto=format&fit=crop&q=80&w=800')" class="px-4 py-2 bg-primary hover:bg-primary-light text-white text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add to Preorder
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- OUR STORY & FERMENTATION PHILOSOPHY -->
+    <section id="story" class="py-24 bg-bakeryBg relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                
+                <div class="space-y-6">
+                    <span class="text-xs font-mono uppercase tracking-widest text-accent font-bold">Our Heritage & Craft</span>
+                    <h2 class="font-serif text-3xl sm:text-5xl font-bold text-primary leading-tight">
+                        Time-Honored Fermentation Meets Modern Precision.
+                    </h2>
+                    <p class="text-bakeryText-secondary leading-relaxed">
+                        At Skynet Bakehouse, we believe true sourdough cannot be rushed. Our dough undergoes a meticulous 36-to-48 hour cold fermentation process that breaks down complex starches and gluten proteins, resulting in exceptional flavor complexity and effortless digestibility.
+                    </p>
+                    <div class="space-y-4 pt-2">
+                        <div class="flex items-start gap-4">
+                            <div class="w-8 h-8 rounded-full bg-accent/10 text-accent flex items-center justify-center font-bold shrink-0 mt-1">1</div>
+                            <div>
+                                <h4 class="font-serif font-bold text-primary text-lg">Stone-Milled Organic Grains</h4>
+                                <p class="text-sm text-bakeryText-secondary">We source our unbleached wheat, spelt, and rye exclusively from regional regenerative organic farms committed to soil health.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="w-8 h-8 rounded-full bg-accent/10 text-accent flex items-center justify-center font-bold shrink-0 mt-1">2</div>
+                            <div>
+                                <h4 class="font-serif font-bold text-primary text-lg">Wild Yeast Culture</h4>
+                                <p class="text-sm text-bakeryText-secondary">Our mother starter has been nurtured daily for over a decade, imparting a signature complex sour note with delicate floral undertones.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4">
+                            <div class="w-8 h-8 rounded-full bg-accent/10 text-accent flex items-center justify-center font-bold shrink-0 mt-1">3</div>
+                            <div>
+                                <h4 class="font-serif font-bold text-primary text-lg">Deck-Oven Steam Baking</h4>
+                                <p class="text-sm text-bakeryText-secondary">Every loaf is baked directly on hearth stone with precise steam injection to achieve a caramelized, blistering crunchy crust.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-4">
+                        <img src="https://images.unsplash.com/photo-1517433670267-08bbd4be890f?auto=format&fit=crop&q=80&w=600" alt="Baker kneading sourdough" class="w-full h-64 object-cover rounded-xl shadow-soft">
+                        <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=600" alt="Fresh baked bread" class="w-full h-48 object-cover rounded-xl shadow-soft">
+                    </div>
+                    <div class="space-y-4 pt-8">
+                        <img src="https://images.unsplash.com/photo-1549931319-a545dcf3bc73?auto=format&fit=crop&q=80&w=600" alt="Fougasse bread" class="w-full h-48 object-cover rounded-xl shadow-soft">
+                        <img src="https://images.unsplash.com/photo-1589367920969-ab8e050bbb04?auto=format&fit=crop&q=80&w=600" alt="Seeded bread slice" class="w-full h-64 object-cover rounded-xl shadow-soft">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SOCIAL PROOF / TESTIMONIALS -->
+    <section class="py-20 bg-bakerySurface border-y border-bakeryBg-subtle">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="text-xs font-mono uppercase tracking-widest text-accent font-bold">Community & Praise</span>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-primary mt-2">Loved by Local Foodies</h2>
+                <p class="text-bakeryText-secondary mt-2">See why our weekly drops sell out in under 15 minutes.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- Testimonial 1 -->
+                <div class="bg-bakeryBg p-8 rounded-xl border border-bakeryBg-subtle shadow-soft flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-1 text-accent mb-4">
+                            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        </div>
+                        <p class="font-serif text-primary text-lg italic mb-6">"The crust on the Country Boule is absolute perfection. Having gluten sensitivity in the past, Skynet's 36-hour ferment makes this the only bread I can digest without any heaviness."</p>
+                    </div>
+                    <div class="flex items-center gap-3 pt-4 border-t border-bakeryBg-subtle">
+                        <div class="w-10 h-10 rounded-full bg-accent/20 text-accent font-bold font-serif flex items-center justify-center">
+                            EL
+                        </div>
+                        <div>
+                            <p class="font-semibold text-sm text-primary">Eleanor Vance</p>
+                            <p class="text-xs text-bakeryText-muted">Weekly Preorder Member</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="bg-bakeryBg p-8 rounded-xl border border-bakeryBg-subtle shadow-soft flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-1 text-accent mb-4">
+                            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        </div>
+                        <p class="font-serif text-primary text-lg italic mb-6">"Setting an alarm for Thursday's 6 PM drop is a weekly ritual in our household. The Cardamom Morning Buns and Seeded Rye are otherworldly. Incredible local bakery!"</p>
+                    </div>
+                    <div class="flex items-center gap-3 pt-4 border-t border-bakeryBg-subtle">
+                        <div class="w-10 h-10 rounded-full bg-accent/20 text-accent font-bold font-serif flex items-center justify-center">
+                            MR
+                        </div>
+                        <div>
+                            <p class="font-semibold text-sm text-primary">Marcus Ross</p>
+                            <p class="text-xs text-bakeryText-muted">Verified Food Blogger</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="bg-bakeryBg p-8 rounded-xl border border-bakeryBg-subtle shadow-soft flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-1 text-accent mb-4">
+                            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        </div>
+                        <p class="font-serif text-primary text-lg italic mb-6">"The pickup coordination is seamless. I pull up to the storefront, staff hands me my warm loaf with a smile, and I'm on my way in 30 seconds. Impeccable service."</p>
+                    </div>
+                    <div class="flex items-center gap-3 pt-4 border-t border-bakeryBg-subtle">
+                        <div class="w-10 h-10 rounded-full bg-accent/20 text-accent font-bold font-serif flex items-center justify-center">
+                            SK
+                        </div>
+                        <div>
+                            <p class="font-semibold text-sm text-primary">Dr. Sophia Khan</p>
+                            <p class="text-xs text-bakeryText-muted">Local Neighborhood Regular</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ ACCORDION -->
+    <section id="faq" class="py-20 bg-bakeryBg">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-xs font-mono uppercase tracking-widest text-accent font-bold">Support & Logistics</span>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-primary mt-2">Frequently Asked Questions</h2>
+                <p class="text-bakeryText-secondary mt-2">Everything you need to know about our weekly drops, pickups, and sourdough care.</p>
+            </div>
+
+            <div class="space-y-4">
+                
+                <!-- FAQ Item 1 -->
+                <div class="bg-bakerySurface rounded-xl border border-bakeryBg-subtle overflow-hidden shadow-soft">
+                    <button onclick="toggleFaq(this)" class="w-full px-6 py-5 text-left flex items-center justify-between font-serif font-bold text-lg text-primary hover:text-accent transition-colors">
+                        <span>How do weekly preorders and drops work?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 pb-6 text-sm text-bakeryText-secondary leading-relaxed border-t border-bakeryBg-subtle pt-4">
+                        Our weekly menu drops every Thursday at 6:00 PM PST. Quantities are strictly limited based on our daily baking capacity to ensure pristine artisanal quality. You select your items, choose a Friday or Saturday pickup window, and complete checkout. Once sold out, items cannot be restocked until the following week.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="bg-bakerySurface rounded-xl border border-bakeryBg-subtle overflow-hidden shadow-soft">
+                    <button onclick="toggleFaq(this)" class="w-full px-6 py-5 text-left flex items-center justify-between font-serif font-bold text-lg text-primary hover:text-accent transition-colors">
+                        <span>What are the pickup hours and location guidelines?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 pb-6 text-sm text-bakeryText-secondary leading-relaxed border-t border-bakeryBg-subtle pt-4">
+                        Pickups take place at our micro-bakery located at 742 Evergreen Terrace during your selected 1-hour time slot (e.g., Friday 3:00 PM - 4:00 PM). Please show your digital order confirmation QR code upon arrival for rapid handoff.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="bg-bakerySurface rounded-xl border border-bakeryBg-subtle overflow-hidden shadow-soft">
+                    <button onclick="toggleFaq(this)" class="w-full px-6 py-5 text-left flex items-center justify-between font-serif font-bold text-lg text-primary hover:text-accent transition-colors">
+                        <span>How should I store and reheat my sourdough bread?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 pb-6 text-sm text-bakeryText-secondary leading-relaxed border-t border-bakeryBg-subtle pt-4">
+                        Store your loaf cut-side down on a wooden cutting board or in a linen bread bag at room temperature for up to 4 days. Avoid plastic bags, which soften the crust. To revive day-3 bread, lightly mist the crust with water and bake in a preheated 400°F oven for 6–8 minutes.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="bg-bakerySurface rounded-xl border border-bakeryBg-subtle overflow-hidden shadow-soft">
+                    <button onclick="toggleFaq(this)" class="w-full px-6 py-5 text-left flex items-center justify-between font-serif font-bold text-lg text-primary hover:text-accent transition-colors">
+                        <span>Are your breads gluten-free or allergy-friendly?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 pb-6 text-sm text-bakeryText-secondary leading-relaxed border-t border-bakeryBg-subtle pt-4">
+                        While our long 36-hour fermentation breaks down a significant portion of gluten proteins (making our bread much easier to digest for many people with mild sensitivities), our bakery handles organic wheat, spelt, rye, and dairy. Therefore, our products are not suitable for individuals with celiac disease.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT / INQUIRY SECTION -->
+    <section id="contact" class="py-20 bg-bakerySurface border-t border-bakeryBg-subtle">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                
+                <div class="space-y-6">
+                    <span class="text-xs font-mono uppercase tracking-widest text-accent font-bold">Get In Touch</span>
+                    <h2 class="font-serif text-3xl sm:text-4xl font-bold text-primary">Have Questions or Custom Wholesale Inquiries?</h2>
+                    <p class="text-bakeryText-secondary leading-relaxed">
+                        Whether you are looking for weekly wholesale cafe supply, custom event bread towers, or have questions about our ingredients, our baking team is here to help.
+                    </p>
+                    <div class="space-y-4 pt-2 text-sm text-bakeryText-secondary">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-bakeryBg flex items-center justify-center text-accent">
+                                <i data-lucide="map-pin" class="w-5 h-5"></i>
+                            </div>
+                            <span>742 Evergreen Terrace, Artisan District</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-bakeryBg flex items-center justify-center text-accent">
+                                <i data-lucide="mail" class="w-5 h-5"></i>
+                            </div>
+                            <span>bakes@skynetbakehouse.com</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-bakeryBg flex items-center justify-center text-accent">
+                                <i data-lucide="clock" class="w-5 h-5"></i>
+                            </div>
+                            <span>Pickup Hours: Fri & Sat 2:00 PM – 6:00 PM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-bakeryBg p-8 rounded-2xl border border-bakeryBg-subtle shadow-soft">
+                    <form onsubmit="handleContactSubmit(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-mono uppercase tracking-wider text-bakeryText-secondary mb-1">Your Full Name</label>
+                            <input type="text" required class="w-full px-4 py-3 rounded-lg bg-bakerySurface border border-bakeryBg-subtle text-primary focus:outline-none focus:border-accent text-sm" placeholder="e.g. Sarah Connor">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-mono uppercase tracking-wider text-bakeryText-secondary mb-1">Email Address</label>
+                            <input type="email" required class="w-full px-4 py-3 rounded-lg bg-bakerySurface border border-bakeryBg-subtle text-primary focus:outline-none focus:border-accent text-sm" placeholder="sarah@example.com">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-mono uppercase tracking-wider text-bakeryText-secondary mb-1">Inquiry Type</label>
+                            <select class="w-full px-4 py-3 rounded-lg bg-bakerySurface border border-bakeryBg-subtle text-primary focus:outline-none focus:border-accent text-sm">
+                                <option>Weekly Preorder Question</option>
+                                <option>Wholesale / Café Partnership</option>
+                                <option>Custom Event Catering</option>
+                                <option>General Feedback</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-mono uppercase tracking-wider text-bakeryText-secondary mb-1">Message</label>
+                            <textarea rows="4" required class="w-full px-4 py-3 rounded-lg bg-bakerySurface border border-bakeryBg-subtle text-primary focus:outline-none focus:border-accent text-sm" placeholder="How can we assist you?"></textarea>
+                        </div>
+                        <button type="submit" class="w-full py-3.5 bg-accent hover:bg-accent-dark text-white font-semibold rounded-lg shadow-soft transition-colors text-sm">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-primary text-bakeryText-inverse pt-16 pb-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-white/10">
+                
+                <!-- Col 1: Brand & Ethos -->
+                <div class="lg:col-span-2 space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center font-serif font-bold text-xl">
+                            SB
+                        </div>
+                        <span class="font-serif text-2xl font-bold tracking-tight">Skynet Bakehouse</span>
+                    </div>
+                    <p class="text-sm text-bakeryText-muted leading-relaxed max-w-sm">
+                        Crafting conscious, slow-fermented artisanal sourdough using stone-milled organic grains and wild yeasts. Dedicated to hyper-local quality and sustainable baking practices.
+                    </p>
+                    <p class="text-xs text-bakeryText-muted">© 2025 Skynet Bakehouse Inc. All rights reserved.</p>
+                </div>
+
+                <!-- Col 2: Quick Links -->
+                <div class="space-y-3">
+                    <h4 class="font-serif font-bold text-base text-white">Quick Links</h4>
+                    <ul class="space-y-2 text-sm text-bakeryText-muted">
+                        <li><a href="#menu" class="hover:text-accent transition-colors">Weekly Drop Menu</a></li>
+                        <li><a href="#story" class="hover:text-accent transition-colors">Fermentation Process</a></li>
+                        <li><a href="#faq" class="hover:text-accent transition-colors">Pickup Locations & Hours</a></li>
+                        <li><a href="#contact" class="hover:text-accent transition-colors">Wholesale & Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: Customer Support -->
+                <div class="space-y-3">
+                    <h4 class="font-serif font-bold text-base text-white">Support & FAQ</h4>
+                    <ul class="space-y-2 text-sm text-bakeryText-muted">
+                        <li><a href="#faq" class="hover:text-accent transition-colors">Storage & Reheating</a></li>
+                        <li><a href="#faq" class="hover:text-accent transition-colors">Allergen Information</a></li>
+                        <li><a href="#faq" class="hover:text-accent transition-colors">Cancellation Policy</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 4: Newsletter -->
+                <div class="space-y-3">
+                    <h4 class="font-serif font-bold text-base text-white">Drop Alerts</h4>
+                    <p class="text-xs text-bakeryText-muted">Get notified instantly when weekly limited-batch loaves go live every Thursday.</p>
+                    <form onsubmit="handleNewsletterSubmit(event)" class="space-y-2">
+                        <input type="email" id="newsletter-email" required placeholder="Enter your email" class="w-full px-3.5 py-2.5 rounded-lg bg-white/10 border border-white/20 text-white placeholder-bakeryText-muted text-xs focus:outline-none focus:border-accent">
+                        <button type="submit" class="w-full py-2.5 bg-accent hover:bg-accent-dark text-white font-semibold rounded-lg text-xs transition-colors shadow-sm">
+                            Subscribe for Drops
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+
+            <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-bakeryText-muted gap-4">
+                <div class="flex items-center gap-6">
+                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                    <a href="#" class="hover:text-white transition-colors">Accessibility Statement</a>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-feedback-success"></span>
+                    <span>All systems operational • 99.9% Drop Uptime</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- PRODUCT DETAIL MODAL / QUICK VIEW -->
+    <div id="product-modal" class="fixed inset-0 z-50 bg-primary/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div id="modal-container" class="bg-bakerySurface rounded-2xl max-w-2xl w-full overflow-hidden shadow-elevated transform scale-95 opacity-0 transition-all duration-300">
+            <div class="relative h-72 sm:h-80">
+                <img id="modal-img" src="" alt="Product" class="w-full h-full object-cover">
+                <button onclick="closeProductModal()" class="absolute top-4 right-4 bg-primary/70 hover:bg-primary text-white p-2 rounded-full transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+                <div id="modal-stock-badge" class="absolute bottom-4 left-4 bg-primary/90 text-white text-xs px-3 py-1.5 rounded-full font-mono font-medium"></div>
+            </div>
+            <div class="p-6 sm:p-8 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 id="modal-title" class="font-serif text-2xl font-bold text-primary"></h3>
+                    <span id="modal-price" class="font-mono text-xl font-bold text-accent"></span>
+                </div>
+                <div id="modal-metrics" class="inline-block bg-bakeryBg px-3 py-1 rounded-md text-xs font-mono font-semibold text-accent border border-bakeryBg-subtle"></div>
+                <p id="modal-desc" class="text-sm text-bakeryText-secondary leading-relaxed"></p>
+                <div class="pt-4 border-t border-bakeryBg-subtle flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-bakeryText-secondary">Quantity:</span>
+                        <div class="flex items-center border border-bakeryBg-subtle rounded-lg bg-bakeryBg">
+                            <button onclick="adjustModalQty(-1)" class="px-3 py-1.5 text-primary hover:bg-bakeryBg-subtle font-bold">-</button>
+                            <span id="modal-qty" class="px-4 py-1.5 text-sm font-mono font-bold text-primary">1</span>
+                            <button onclick="adjustModalQty(1)" class="px-3 py-1.5 text-primary hover:bg-bakeryBg-subtle font-bold">+</button>
+                        </div>
+                    </div>
+                    <button onclick="addModalToCart()" class="px-6 py-3 bg-accent hover:bg-accent-dark text-white font-semibold rounded-lg shadow-soft transition-colors text-sm flex items-center gap-2">
+                        <span>Secure Preorder</span>
+                        <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CART & PREORDER DRAWER -->
+    <div id="cart-drawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+        <div class="absolute inset-0 bg-primary/50 backdrop-blur-sm transition-opacity" onclick="toggleCartDrawer(false)"></div>
+        <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
+            <div id="cart-panel" class="w-screen max-w-md bg-bakerySurface shadow-elevated transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+                
+                <!-- Cart Header -->
+                <div class="p-6 border-b border-bakeryBg-subtle flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="shopping-bag" class="w-5 h-5 text-accent"></i>
+                        <h3 class="font-serif font-bold text-xl text-primary">Your Preorder Cart</h3>
+                    </div>
+                    <button onclick="toggleCartDrawer(false)" class="p-2 text-bakeryText-muted hover:text-primary rounded-full">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <!-- Cart Items List -->
+                <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4 divide-y divide-bakeryBg-subtle">
+                    <!-- Dynamic Cart Items injected here -->
+                </div>
+
+                <!-- Cart Footer & Checkout -->
+                <div class="p-6 border-t border-bakeryBg-subtle bg-bakeryBg space-y-4">
+                    
+                    <!-- Tip Selection Tiers -->
+                    <div>
+                        <label class="block text-xs font-mono uppercase tracking-wider text-bakeryText-secondary mb-2">Support Baker Gratuity</label>
+                        <div class="grid grid-cols-4 gap-2">
+                            <button onclick="setTip(0.10)" class="tip-btn py-1.5 rounded-lg text-xs font-semibold bg-bakerySurface border border-bakeryBg-subtle hover:border-accent text-primary transition-all">10%</button>
+                            <button onclick="setTip(0.15)" class="tip-btn py-1.5 rounded-lg text-xs font-semibold bg-accent text-white transition-all shadow-sm" id="default-tip">15%</button>
+                            <button onclick="setTip(0.20)" class="tip-btn py-1.5 rounded-lg text-xs font-semibold bg-bakerySurface border border-bakeryBg-subtle hover:border-accent text-primary transition-all">20%</button>
+                            <button onclick="setTip(0.0)" class="tip-btn py-1.5 rounded-lg text-xs font-semibold bg-bakerySurface border border-bakeryBg-subtle hover:border-accent text-primary transition-all">None</button>
+                        </div>
+                    </div>
+
+                    <!-- Summary Calculation -->
+                    <div class="space-y-1.5 text-sm pt-2">
+                        <div class="flex justify-between text-bakeryText-secondary">
+                            <span>Subtotal</span>
+                            <span id="cart-subtotal" class="font-mono font-medium">$0.00</span>
+                        </div>
+                        <div class="flex justify-between text-bakeryText-secondary">
+                            <span>Baker Tip (<span id="tip-percentage">15</span>%)</span>
+                            <span id="cart-tip" class="font-mono font-medium">$0.00</span>
+                        </div>
+                        <div class="flex justify-between text-primary font-bold text-base pt-2 border-t border-bakeryBg-subtle">
+                            <span>Total Preorder</span>
+                            <span id="cart-total" class="font-mono text-accent text-lg">$0.00</span>
+                        </div>
+                    </div>
+
+                    <button onclick="proceedToCheckout()" id="checkout-btn" class="w-full py-4 bg-accent hover:bg-accent-dark text-white font-semibold rounded-lg shadow-soft transition-colors text-sm flex items-center justify-center gap-2">
+                        <span>Proceed to Fulfillment</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- FULFILLMENT & CHECKOUT MODAL -->
+    <div id="checkout-modal" class="fixed inset-0 z-50 bg-primary/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-bakerySurface rounded-2xl max-w-xl w-full overflow-hidden shadow-elevated p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-bakeryBg-subtle pb-4">
+                <h3 class="font-serif text-2xl font-bold text-primary">Fulfillment & Checkout</h3>
+                <button onclick="closeCheckoutModal()" class="p-2 text-bakeryText-muted hover:text-primary rounded-full">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Fulfillment Toggle -->
+            <div class="grid grid-cols-2 gap-2 bg-bakeryBg p-1.5 rounded-xl border border-bakeryBg-subtle">
+                <button onclick="switchFulfillment('pickup')" id="tab-pickup" class="py-2.5 rounded-lg text-xs font-semibold bg-accent text-white shadow-sm transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="store" class="w-4 h-4"></i> Local Pickup
+                </button>
+                <button onclick="switchFulfillment('delivery')" id="tab-delivery" class="py-2.5 rounded-lg text-xs font-semibold text-bakeryText-secondary hover:text-primary transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="truck" class="w-4 h-4"></i> Local Delivery
+                </button>
+            </div>
+
+            <!-- Pickup View -->
+            <div id="view-pickup" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-mono uppercase tracking-wider text-bakeryText-secondary mb-1">Select Bake Day</label>
+                    <select class="w-full px-4 py-3 rounded-lg bg-bakeryBg border border-bakeryBg-subtle text-primary text-sm font-semibold">
+                        <option>Friday, Oct 24 • Bake Batch #104</option>
+                        <option>Saturday, Oct 25 • Bake Batch #105</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-mono uppercase tracking-wider text-bakeryText-secondary mb-2">Select Pickup Time Window</label>
+                    <div class="space-y-2">
+                        <label class="flex items-center justify-between p-3 rounded-lg bg-bakeryBg border border-accent cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <input type="radio" name="pickup_slot" checked class="text-accent focus:ring-accent">
+                                <span class="text-sm font-semibold text-primary">3:00 PM - 4:00 PM</span>
+                            </div>
+                            <span class="text-xs font-mono text-feedback-warning font-semibold">8 slots left</span>
+                        </label>
+                        <label class="flex items-center justify-between p-3 rounded-lg bg-bakeryBg border border-bakeryBg-subtle cursor-pointer hover:border-accent">
+                            <div class="flex items-center gap-3">
+                                <input type="radio" name="pickup_slot" class="text-accent focus:ring-accent">
+                                <span class="text-sm font-semibold text-primary">4:00 PM - 5:00 PM</span>
+                            </div>
+                            <span class="text-xs font-mono text-feedback-success font-semibold">14 slots left</span>
+                        </label>
+                        <label class="flex items-center justify-between p-3 rounded-lg bg-bakeryBg border border-bakeryBg-subtle cursor-pointer hover:border-accent">
+                            <div class="flex items-center gap-3">
+                                <input type="radio" name="pickup_slot" class="text-accent focus:ring-accent">
+                                <span class="text-sm font-semibold text-primary">5:00 PM - 6:00 PM</span>
+                            </div>
+                            <span class="text-xs font-mono text-bakeryText-muted">3 slots left</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delivery View (Hidden by default) -->
+            <div id="view-delivery" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-xs font-mono uppercase tracking-wider text-bakeryText-secondary mb-1">Delivery ZIP Code</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="delivery-zip" placeholder="e.g. 90210" class="flex-1 px-4 py-3 rounded-lg bg-bakeryBg border border-bakeryBg-subtle text-primary text-sm font-mono">
+                        <button onclick="validateZip()" class="px-5 py-3 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary-light">Verify Zone</button>
+                    </div>
+                    <p id="zip-feedback" class="text-xs text-feedback-success mt-1.5 font-medium hidden">✓ Local delivery available in your zone ($5.00 fee)</p>
+                </div>
+                <div>
+                    <label class="block text-xs font-mono uppercase tracking-wider text-bakeryText-secondary mb-1">Street Address</label>
+                    <input type="text" placeholder="123 Sourdough Lane" class="w-full px-4 py-3 rounded-lg bg-bakeryBg border border-bakeryBg-subtle text-primary text-sm">
+                </div>
+            </div>
+
+            <!-- Payment Information -->
+            <div class="space-y-4 pt-4 border-t border-bakeryBg-subtle">
+                <h4 class="font-serif font-bold text-lg text-primary">Secure Payment</h4>
+                <div class="grid grid-cols-2 gap-2">
+                    <button type="button" class="py-2.5 bg-black text-white rounded-lg font-semibold text-xs flex items-center justify-center gap-2">
+                        <i data-lucide="apple" class="w-4 h-4"></i> Apple Pay
+                    </button>
+                    <button type="button" class="py-2.5 bg-bakeryBg border border-bakeryBg-subtle text-primary rounded-lg font-semibold text-xs flex items-center justify-center gap-2 hover:bg-bakeryBg-subtle">
+                        <i data-lucide="credit-card" class="w-4 h-4"></i> Credit Card
+                    </button>
+                </div>
+                <div>
+                    <label class="block text-xs font-mono uppercase tracking-wider text-bakeryText-secondary mb-1">Card Number</label>
+                    <input type="text" placeholder="•••• •••• •••• 4242" class="w-full px-4 py-3 rounded-lg bg-bakeryBg border border-bakeryBg-subtle text-primary font-mono text-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-mono uppercase tracking-wider text-bakeryText-secondary mb-1">Expiry Date</label>
+                        <input type="text" placeholder="MM/YY" class="w-full px-4 py-3 rounded-lg bg-bakeryBg border border-bakeryBg-subtle text-primary font-mono text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-mono uppercase tracking-wider text-bakeryText-secondary mb-1">CVC</label>
+                        <input type="text" placeholder="123" class="w-full px-4 py-3 rounded-lg bg-bakeryBg border border-bakeryBg-subtle text-primary font-mono text-sm">
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="submitOrder()" class="w-full py-4 bg-accent hover:bg-accent-dark text-white font-semibold rounded-lg shadow-soft transition-colors text-sm flex items-center justify-center gap-2">
+                <span>Place Preorder (<span id="modal-final-total">$0.00</span>)</span>
+                <i data-lucide="lock" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- ACCOUNT MODAL -->
+    <div id="account-modal" class="fixed inset-0 z-50 bg-primary/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-bakerySurface rounded-2xl max-w-md w-full overflow-hidden shadow-elevated p-6 sm:p-8 space-y-6">
+            <div class="flex items-center justify-between border-b border-bakeryBg-subtle pb-4">
+                <h3 class="font-serif text-2xl font-bold text-primary">Customer Portal</h3>
+                <button onclick="closeAccountModal()" class="p-2 text-bakeryText-muted hover:text-primary rounded-full">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-mono uppercase tracking-wider text-bakeryText-secondary mb-1">Email Address</label>
+                    <input type="email" id="account-email" placeholder="foodie@sourdough.com" class="w-full px-4 py-3 rounded-lg bg-bakeryBg border border-bakeryBg-subtle text-primary text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-mono uppercase tracking-wider text-bakeryText-secondary mb-1">Password</label>
+                    <input type="password" placeholder="••••••••" class="w-full px-4 py-3 rounded-lg bg-bakeryBg border border-bakeryBg-subtle text-primary text-sm">
+                </div>
+                <button onclick="handleLogin()" class="w-full py-3.5 bg-accent hover:bg-accent-dark text-white font-semibold rounded-lg shadow-soft transition-colors text-sm">
+                    Sign In to Preorders
+                </button>
+                <div class="text-center">
+                    <a href="#" class="text-xs text-accent underline">Forgot password or need an account? Register here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC & INTERACTIVITY -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Cart State
+        let cart = [];
+        let tipPercentage = 0.15;
+
+        // Toast Notification System
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let bgClass = 'bg-feedback-success text-white';
+            let icon = 'check-circle';
+            if (type === 'error') {
+                bgClass = 'bg-feedback-error text-white';
+                icon = 'alert-circle';
+            } else if (type === 'warning') {
+                bgClass = 'bg-feedback-warning text-white';
+                icon = 'bell';
+            }
+
+            toast.className = `${bgClass} px-5 py-3.5 rounded-xl shadow-elevated flex items-center gap-3 text-sm font-medium transform translate-y-4 opacity-0 transition-all duration-300 pointer-events-auto`;
+            toast.innerHTML = `<i data-lucide="${icon}" class="w-5 h-5 shrink-0"></i><span>${message}</span>`;
+            
+            container.appendChild(toast);
+            lucide.createIcons();
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-4', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        // Mobile Hamburger Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Filter Products
+        function filterProducts(category) {
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => {
+                if (btn.getAttribute('data-filter') === category) {
+                    btn.className = 'filter-btn px-4 py-2 rounded-full text-xs font-semibold bg-accent text-white transition-all shadow-sm';
+                } else {
+                    btn.className = 'filter-btn px-4 py-2 rounded-full text-xs font-semibold bg-bakeryBg-subtle text-bakeryText-secondary hover:bg-bakeryBg hover:text-primary transition-all';
+                }
+            });
+
+            const cards = document.querySelectorAll('.product-card');
+            cards.forEach(card => {
+                if (category === 'all' || card.getAttribute('data-category') === category) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Product Quick View Modal State
+        let currentModalProduct = { name: '', price: 0, image: '', metrics: '', desc: '', qty: 1 };
+
+        function openProductModal(name, price, image, metrics, desc, stock) {
+            currentModalProduct = { name, price, image, metrics, desc, qty: 1 };
+            document.getElementById('modal-title').innerText = name;
+            document.getElementById('modal-price').innerText = `$${price.toFixed(2)}`;
+            document.getElementById('modal-img').src = image;
+            document.getElementById('modal-metrics').innerText = metrics;
+            document.getElementById('modal-desc').innerText = desc;
+            document.getElementById('modal-stock-badge').innerText = `Only ${stock} left for Friday bake!`;
+            document.getElementById('modal-qty').innerText = '1';
+
+            const modal = document.getElementById('product-modal');
+            const container = document.getElementById('modal-container');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                container.classList.remove('scale-95', 'opacity-0');
+                container.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeProductModal() {
+            const modal = document.getElementById('product-modal');
+            const container = document.getElementById('modal-container');
+            container.classList.remove('scale-100', 'opacity-100');
+            container.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 200);
+        }
+
+        function adjustModalQty(change) {
+            currentModalProduct.qty = Math.max(1, currentModalProduct.qty + change);
+            document.getElementById('modal-qty').innerText = currentModalProduct.qty;
+        }
+
+        function addModalToCart() {
+            for (let i = 0; i < currentModalProduct.qty; i++) {
+                addToCart(currentModalProduct.name, currentModalProduct.price, currentModalProduct.image, false);
+            }
+            closeProductModal();
+            showToast(`Added ${currentModalProduct.qty}x ${currentModalProduct.name} to preorder cart!`);
+        }
+
+        // Cart Drawer Management
+        function toggleCartDrawer(open) {
+            const drawer = document.getElementById('cart-drawer');
+            const panel = document.getElementById('cart-panel');
+            if (open) {
+                drawer.classList.remove('hidden');
+                setTimeout(() => {
+                    panel.classList.remove('translate-x-full');
+                }, 10);
+            } else {
+                panel.classList.add('translate-x-full');
+                setTimeout(() => {
+                    drawer.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        function addToCart(name, price, image, showNotice = true) {
+            const existing = cart.find(item => item.name === name);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({ name, price, image, qty: 1 });
+            }
+            updateCartUI();
+            if (showNotice) {
+                showToast(`Added ${name} to preorder cart!`);
+            }
+        }
+
+        function updateCartQuantity(name, change) {
+            const item = cart.find(i => i.name === name);
+            if (item) {
+                item.qty += change;
+                if (item.qty <= 0) {
+                    cart = cart.filter(i => i.name !== name);
+                }
+            }
+            updateCartUI();
+        }
+
+        function setTip(percentage) {
+            tipPercentage = percentage;
+            document.querySelectorAll('.tip-btn').forEach(btn => {
+                btn.className = 'tip-btn py-1.5 rounded-lg text-xs font-semibold bg-bakerySurface border border-bakeryBg-subtle hover:border-accent text-primary transition-all';
+            });
+            event.target.className = 'tip-btn py-1.5 rounded-lg text-xs font-semibold bg-accent text-white transition-all shadow-sm';
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-items-container');
+            const counter = document.getElementById('cart-counter');
+            
+            let totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+            counter.innerText = totalItems;
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 space-y-3">
+                        <i data-lucide="shopping-bag" class="w-12 h-12 text-bakeryText-muted mx-auto stroke-1"></i>
+                        <p class="font-serif text-lg font-bold text-primary">Your cart is empty</p>
+                        <p class="text-xs text-bakeryText-muted">Browse our weekly drop menu and secure your loaves before they sell out.</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                document.getElementById('cart-subtotal').innerText = '$0.00';
+                document.getElementById('cart-tip').innerText = '$0.00';
+                document.getElementById('cart-total').innerText = '$0.00';
+                return;
+            }
+
+            container.innerHTML = '';
+            let subtotal = 0;
+
+            cart.forEach(item => {
+                subtotal += item.price * item.qty;
+                const div = document.createElement('div');
+                div.className = 'flex items-center gap-4 pt-4 first:pt-0';
+                div.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-lg border border-bakeryBg-subtle shrink-0">
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-serif font-bold text-sm text-primary truncate">${item.name}</h4>
+                        <p class="text-xs font-mono text-accent font-semibold mt-0.5">$${item.price.toFixed(2)}</p>
+                        <div class="flex items-center gap-3 mt-2">
+                            <div class="flex items-center border border-bakeryBg-subtle rounded-md bg-bakeryBg">
+                                <button onclick="updateCartQuantity('${item.name}', -1)" class="px-2 py-0.5 text-xs font-bold text-primary hover:bg-bakeryBg-subtle">-</button>
+                                <span class="px-2.5 text-xs font-mono font-bold text-primary">${item.qty}</span>
+                                <button onclick="updateCartQuantity('${item.name}', 1)" class="px-2 py-0.5 text-xs font-bold text-primary hover:bg-bakeryBg-subtle">+</button>
+                            </div>
+                            <button onclick="updateCartQuantity('${item.name}', -${item.qty})" class="text-xs text-bakeryText-muted hover:text-feedback-error transition-colors">Remove</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            let tipAmount = subtotal * tipPercentage;
+            let total = subtotal + tipAmount;
+
+            document.getElementById('cart-subtotal').innerText = `$${subtotal.toFixed(2)}`;
+            document.getElementById('tip-percentage').innerText = Math.round(tipPercentage * 100);
+            document.getElementById('cart-tip').innerText = `$${tipAmount.toFixed(2)}`;
+            document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
+            document.getElementById('modal-final-total').innerText = `$${total.toFixed(2)}`;
+            lucide.createIcons();
+        }
+
+        // Checkout & Fulfillment Modal
+        function proceedToCheckout() {
+            if (cart.length === 0) {
+                showToast('Your cart is empty. Add items before checking out.', 'error');
+                return;
+            }
+            toggleCartDrawer(false);
+            document.getElementById('checkout-modal').classList.remove('hidden');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkout-modal').classList.add('hidden');
+        }
+
+        function switchFulfillment(mode) {
+            const pickupTab = document.getElementById('tab-pickup');
+            const deliveryTab = document.getElementById('tab-delivery');
+            const pickupView = document.getElementById('view-pickup');
+            const deliveryView = document.getElementById('view-delivery');
+
+            if (mode === 'pickup') {
+                pickupTab.className = 'py-2.5 rounded-lg text-xs font-semibold bg-accent text-white shadow-sm transition-all flex items-center justify-center gap-2';
+                deliveryTab.className = 'py-2.5 rounded-lg text-xs font-semibold text-bakeryText-secondary hover:text-primary transition-all flex items-center justify-center gap-2';
+                pickupView.classList.remove('hidden');
+                deliveryView.classList.add('hidden');
+            } else {
+                deliveryTab.className = 'py-2.5 rounded-lg text-xs font-semibold bg-accent text-white shadow-sm transition-all flex items-center justify-center gap-2';
+                pickupTab.className = 'py-2.5 rounded-lg text-xs font-semibold text-bakeryText-secondary hover:text-primary transition-all flex items-center justify-center gap-2';
+                deliveryView.classList.remove('hidden');
+                pickupView.classList.add('hidden');
+            }
+        }
+
+        function validateZip() {
+            const zip = document.getElementById('delivery-zip').value.trim();
+            const feedback = document.getElementById('zip-feedback');
+            if (zip.length >= 5) {
+                feedback.classList.remove('hidden');
+                showToast('Delivery zone verified successfully!');
+            } else {
+                showToast('Please enter a valid 5-digit ZIP code.', 'error');
+            }
+        }
+
+        function submitOrder() {
+            closeCheckoutModal();
+            cart = [];
+            updateCartUI();
+            showToast('🎉 Preorder successfully secured! Confirmation email & calendar invite dispatched.', 'success');
+        }
+
+        // Account Modal
+        function openAccountModal() {
+            document.getElementById('account-modal').classList.remove('hidden');
+        }
+
+        function closeAccountModal() {
+            document.getElementById('account-modal').classList.add('hidden');
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('account-email').value;
+            closeAccountModal();
+            showToast(`Welcome back, ${email || 'Foodie'}! Accessing saved preorders.`);
+        }
+
+        // FAQ Accordion
+        function toggleFaq(button) {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('i');
+            
+            content.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+        }
+
+        // Form Handlers
+        function handleContactSubmit(e) {
+            e.preventDefault();
+            showToast('Inquiry sent successfully! Our head baker will respond within 24 hours.', 'success');
+            e.target.reset();
+        }
+
+        function handleNewsletterSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('newsletter-email').value;
+            showToast(`Successfully subscribed ${email} to Thursday drop alerts!`, 'success');
+            e.target.reset();
+        }
+
+        // Initialize empty cart state
+        updateCartUI();
+    </script>
+</body>
+</html>

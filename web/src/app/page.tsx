@@ -197,6 +197,138 @@ export default function HomePage() {
         </ol>
       </div>
 
+      {/* Pricing Section */}
+      <div className="relative max-w-5xl mx-auto px-4 py-16 border-t border-skynet-border/50">
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-skynet-amber/10 border border-skynet-amber/30 text-skynet-amber text-xs font-semibold uppercase tracking-wider mb-3">
+            <Sparkles className="w-3.5 h-3.5" />
+            Simple Transparent Plans
+          </div>
+          <h2 className="text-3xl md:text-5xl font-bold text-skynet-ivory tracking-tight mb-3">
+            Pick Your Premium Pack
+          </h2>
+          <p className="text-sm md:text-base text-skynet-dust">
+            Start free, upgrade to use your website, or deploy with your own host and custom domain.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch mb-8">
+          {/* Free Tier */}
+          <div className="rounded-xl p-6 bg-skynet-surface border border-skynet-border flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs uppercase font-semibold text-skynet-dust tracking-wider">
+                  Basic Plan
+                </span>
+                <span className="text-[10px] uppercase font-bold bg-skynet-void px-2 py-0.5 rounded text-skynet-dust border border-skynet-border">
+                  Free
+                </span>
+              </div>
+              <div className="flex items-baseline gap-1 my-3">
+                <span className="text-4xl font-extrabold text-skynet-ivory font-mono">$0</span>
+                <span className="text-xs text-skynet-dust">/ forever</span>
+              </div>
+              <p className="text-xs text-skynet-dust leading-relaxed mb-4">
+                Explore AI synthesis, interactive responsive preview, and 13 agent telemetry.
+              </p>
+              <ul className="space-y-2 border-t border-skynet-border/50 pt-4 text-xs text-skynet-dust">
+                <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-skynet-amber" /> 13-Department Agent Swarm</li>
+                <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-skynet-amber" /> Live Multi-device Preview</li>
+                <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-skynet-amber" /> Full HTML/CSS/JS Viewer</li>
+              </ul>
+            </div>
+            <Link
+              href="/login"
+              className="mt-6 block text-center w-full py-2.5 px-3 rounded-lg text-xs font-semibold bg-skynet-void border border-skynet-border text-skynet-ivory hover:border-skynet-amber transition-colors"
+            >
+              Start for Free
+            </Link>
+          </div>
+
+          {/* Advance Tier */}
+          <div className="rounded-xl p-6 bg-skynet-surface border border-skynet-amber/70 ring-1 ring-skynet-amber/40 shadow-[0_0_25px_rgba(255,185,0,0.15)] flex flex-col justify-between relative">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-skynet-amber text-skynet-void text-[10px] font-bold uppercase tracking-wider py-0.5 px-3 rounded-full">
+              Most Popular
+            </div>
+            <div>
+              <div className="flex items-center justify-between mb-2 mt-1">
+                <span className="text-xs uppercase font-semibold text-skynet-amber tracking-wider">
+                  Advance Plan
+                </span>
+                <span className="text-[10px] uppercase font-bold bg-skynet-amber/20 px-2 py-0.5 rounded text-skynet-amber border border-skynet-amber/40">
+                  Full Use
+                </span>
+              </div>
+              <div className="flex items-baseline gap-1 my-3">
+                <span className="text-4xl font-extrabold text-skynet-ivory font-mono">$19</span>
+                <span className="text-xs text-skynet-dust">/ month</span>
+              </div>
+              <p className="text-xs text-skynet-dust leading-relaxed mb-4">
+                Full use of your website with 1-click clean production code download and cloud hosting.
+              </p>
+              <ul className="space-y-2 border-t border-skynet-border/50 pt-4 text-xs text-skynet-ivory">
+                <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-skynet-amber" /> Full Use &amp; Commercial Rights</li>
+                <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-skynet-amber" /> 1-Click .zip Code Export</li>
+                <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-skynet-amber" /> Skynet Cloud Hosting</li>
+                <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-skynet-amber" /> No Watermarks or Branding</li>
+              </ul>
+            </div>
+            <Link
+              href="/pricing"
+              className="mt-6 block text-center w-full py-2.5 px-3 rounded-lg text-xs font-bold bg-skynet-amber text-skynet-void hover:bg-skynet-amber-bright transition-colors"
+            >
+              Get Advance Plan ($19)
+            </Link>
+          </div>
+
+          {/* Host Tier */}
+          <div className="rounded-xl p-6 bg-skynet-surface border border-skynet-success/50 hover:border-skynet-success shadow-[0_0_25px_rgba(16,185,129,0.1)] flex flex-col justify-between relative">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-skynet-success text-skynet-void text-[10px] font-bold uppercase tracking-wider py-0.5 px-3 rounded-full">
+              Production Host
+            </div>
+            <div>
+              <div className="flex items-center justify-between mb-2 mt-1">
+                <span className="text-xs uppercase font-semibold text-skynet-success tracking-wider">
+                  Deploy with Own Host
+                </span>
+                <span className="text-[10px] uppercase font-bold bg-skynet-success/20 px-2 py-0.5 rounded text-skynet-success border border-skynet-success/40">
+                  Custom Domain
+                </span>
+              </div>
+              <div className="flex items-baseline gap-1 my-3">
+                <span className="text-4xl font-extrabold text-skynet-ivory font-mono">$29</span>
+                <span className="text-xs text-skynet-dust">/ month</span>
+              </div>
+              <p className="text-xs text-skynet-dust leading-relaxed mb-4">
+                Deploy with your own host and connect custom domains with free automated SSL.
+              </p>
+              <ul className="space-y-2 border-t border-skynet-border/50 pt-4 text-xs text-skynet-ivory">
+                <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-skynet-success" /> Deploy to Your Own Host &amp; Server</li>
+                <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-skynet-success" /> Custom Domain (e.g. brand.com)</li>
+                <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-skynet-success" /> Free Automated SSL/TLS</li>
+                <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-skynet-success" /> 1-Click Vercel, Netlify &amp; VPS</li>
+              </ul>
+            </div>
+            <Link
+              href="/pricing"
+              className="mt-6 block text-center w-full py-2.5 px-3 rounded-lg text-xs font-bold bg-skynet-success text-skynet-void hover:bg-emerald-400 transition-colors"
+            >
+              Deploy with Own Host ($29)
+            </Link>
+          </div>
+        </div>
+
+        <div className="text-center">
+          <Link
+            href="/pricing"
+            className="inline-flex items-center gap-2 text-xs font-semibold text-skynet-dust hover:text-skynet-amber transition-colors"
+          >
+            <span>Compare all features in detail</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+      </div>
+
       {/* Trust row */}
       <div className="relative py-16 border-t border-skynet-border/50">
         <div className="max-w-5xl mx-auto px-4">

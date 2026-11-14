@@ -148,3 +148,67 @@ export async function updateApiKey(apiKey: string) {
     body: JSON.stringify({ apiKey }),
   })
 }
+
+/* Plan & Subscription helpers */
+
+export type SubscriptionPlan = "free" | "advance" | "host"
+
+export interface PlanItem {
+  id: SubscriptionPlan
+  name: string
+  price: number
+  priceLabel: string
+  interval: string
+  tagline: string
+  badge?: string
+  popular?: boolean
+  features: string[]
+  limitations?: string[]
+  cta: string
+}
+
+export interface DeployedHostConfig {
+  domain: string
+  target: string
+  url: string
+  deployedAt: string
+  status: "active" | "pending"
+  ssl: "active" | "provisioning"
+}
+
+export async function getPlans() {
+  return apiJson<{ plans: PlanItem[] }>("/plans")
+}
+
+export async function getUserPlan() {
+  return apiJson<{ plan: SubscriptionPlan; email: string; name: string }>("/user/plan")
+}
+
+export async function updateUserPlan(plan: SubscriptionPlan) {
+  return apiJson<{ success: boolean; plan: SubscriptionPlan; message: string }>("/user/plan", {
+    method: "POST",
+    body: JSON.stringify({ plan }),
+  })
+}
+
+export async function deployToHost(
+  projectId: string,
+  hostConfig: {
+    domain: string
+    target: "custom-host" | "vercel" | "netlify" | "github-pages" | "ftp"
+    ftpHost?: string
+    ftpUser?: string
+    serverIp?: string
+    webhookUrl?: string
+  },
+) {
+  return apiJson<{
+    success: boolean
+    message: string
+    deployedHost: DeployedHostConfig
+    dns: { type: string; name: string; target: string; ttl: number; sslStatus: string }
+  }>(`/projects/${projectId}/deploy-host`, {
+    method: "POST",
+    body: JSON.stringify(hostConfig),
+  })
+}

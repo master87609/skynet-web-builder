@@ -1,0 +1,152 @@
+{
+  "id": "skynet-1794630823845",
+  "ownerId": "user-1794630561552",
+  "brief": "build clothes website",
+  "status": "done",
+  "currentPhase": "done",
+  "completedPhases": [
+    "requirements-analysis",
+    "product-strategist",
+    "ux-architect",
+    "ui-design",
+    "database-architect",
+    "backend",
+    "frontend",
+    "content-writer",
+    "qa-tester",
+    "security-auditor",
+    "seo-specialist",
+    "project-manager",
+    "devops"
+  ],
+  "artifacts": [
+    {
+      "owner": "requirements-analysis",
+      "phase": "requirements-analysis",
+      "status": "approved",
+      "updated": "2026-11-14T04:33:48.328Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794630823845\\requirements.md"
+    },
+    {
+      "owner": "requirements-analysis",
+      "phase": "requirements-analysis",
+      "status": "approved",
+      "updated": "2026-11-14T04:33:48.344Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794630823845\\user-stories.md"
+    },
+    {
+      "owner": "product-strategist",
+      "phase": "product-strategist",
+      "status": "approved",
+      "updated": "2026-11-14T04:33:54.627Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794630823845\\business-plan.md"
+    },
+    {
+      "owner": "product-strategist",
+      "phase": "product-strategist",
+      "status": "approved",
+      "updated": "2026-11-14T04:33:54.640Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794630823845\\mvp-scope.md"
+    },
+    {
+      "owner": "ux-architect",
+      "phase": "ux-architect",
+      "status": "approved",
+      "updated": "2026-11-14T04:34:04.829Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794630823845\\sitemap.md"
+    },
+    {
+      "owner": "ux-architect",
+      "phase": "ux-architect",
+      "status": "approved",
+      "updated": "2026-11-14T04:34:04.846Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794630823845\\user-flows.md"
+    },
+    {
+      "owner": "ui-design",
+      "phase": "ui-design",
+      "status": "approved",
+      "updated": "2026-11-14T04:34:12.233Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794630823845\\design\\design-tokens.json"
+    },
+    {
+      "owner": "ui-design",
+      "phase": "ui-design",
+      "status": "approved",
+      "updated": "2026-11-14T04:34:12.244Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794630823845\\design\\component-specs.md"
+    },
+    {
+      "owner": "database-architect",
+      "phase": "database-architect",
+      "status": "approved",
+      "updated": "2026-11-14T04:34:21.108Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794630823845\\data\\data-model.md"
+    },
+    {
+      "owner": "backend",
+      "phase": "backend",
+      "status": "approved",
+      "updated": "2026-11-14T04:34:30.029Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794630823845\\code\\api-contract.md"
+    },
+    {
+      "owner": "frontend",
+      "phase": "frontend",
+      "status": "approved",
+      "updated": "2026-11-14T04:35:04.938Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794630823845\\code\\index.html"
+    },
+    {
+      "owner": "content-writer",
+      "phase": "content-writer",
+      "status": "approved",
+      "updated": "2026-11-14T04:35:12.102Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794630823845\\content\\brand-voice.md"
+    },
+    {
+      "owner": "content-writer",
+      "phase": "content-writer",
+      "status": "approved",
+      "updated": "2026-11-14T04:35:12.119Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794630823845\\content\\copy-review.md"
+    },
+    {
+      "owner": "qa-tester",
+      "phase": "qa-tester",
+      "status": "approved",
+      "updated": "2026-11-14T04:35:16.078Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794630823845\\reports\\qa.md"
+    },
+    {
+      "owner": "security-auditor",
+      "phase": "security-auditor",
+      "status": "approved",
+      "updated": "2026-11-14T04:35:23.124Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794630823845\\reports\\security.md"
+    },
+    {
+      "owner": "seo-specialist",
+      "phase": "seo-specialist",
+      "status": "approved",
+      "updated": "2026-11-14T04:35:28.450Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794630823845\\reports\\seo.md"
+    },
+    {
+      "owner": "project-manager",
+      "phase": "project-manager",
+      "status": "approved",
+      "updated": "2026-11-14T04:35:32.941Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794630823845\\status.md"
+    },
+    {
+      "owner": "devops",
+      "phase": "devops",
+      "status": "approved",
+      "updated": "2026-11-14T04:35:37.816Z",
+      "path": "C:\\Users\\Tejasva\\Downloads\\Website-builder(Skynet)\\data\\projects\\skynet-1794630823845\\deploy-ready.md"
+    }
+  ],
+  "createdAt": "2026-11-14T04:33:43.849Z",
+  "updatedAt": "2026-11-14T04:35:38.110Z"
+}

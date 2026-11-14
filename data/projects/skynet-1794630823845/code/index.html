@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skynet Apparel Hub — Modern Fashion & High-Performance E-Commerce</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: '#111111',
+                            light: '#2D2D2D',
+                            dark: '#000000'
+                        },
+                        accent: {
+                            DEFAULT: '#C5A059',
+                            light: '#D8BD80',
+                            dark: '#9E7E3C'
+                        },
+                        background: {
+                            DEFAULT: '#FAFAFA',
+                            subtle: '#F2F2F2'
+                        },
+                        surface: {
+                            DEFAULT: '#FFFFFF',
+                            elevated: '#FFFFFF',
+                            modal: '#FFFFFF'
+                        },
+                        text: {
+                            primary: '#111111',
+                            secondary: '#666666',
+                            inverse: '#FFFFFF',
+                            muted: '#999999'
+                        },
+                        status: {
+                            success: '#2E7D32',
+                            warning: '#ED6C02',
+                            error: '#D32F2F',
+                            info: '#0288D1'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                        serif: ['Playfair Display', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-background text-text-primary font-sans antialiased selection:bg-accent selection:text-white">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
+    <!-- Sticky Navigation (Header.tsx) -->
+    <header id="header" class="sticky top-0 z-40 w-full bg-surface/90 backdrop-blur-md border-b border-background-subtle transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-2 group">
+                <span class="font-serif text-2xl font-bold tracking-tight text-primary group-hover:text-accent transition-colors">SKYNET</span>
+                <span class="text-xs uppercase tracking-widest font-semibold bg-primary text-text-inverse px-2 py-0.5 rounded-sm">Apparel</span>
+            </a>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden md:flex items-center gap-8">
+                <a href="#catalog" class="text-sm font-medium text-text-secondary hover:text-primary transition-colors pb-1 border-b-2 border-transparent hover:border-accent">Women</a>
+                <a href="#catalog" class="text-sm font-medium text-text-secondary hover:text-primary transition-colors pb-1 border-b-2 border-transparent hover:border-accent">Men</a>
+                <a href="#new-arrivals" class="text-sm font-medium text-text-secondary hover:text-primary transition-colors pb-1 border-b-2 border-transparent hover:border-accent">New Arrivals</a>
+                <a href="#sale" class="text-sm font-medium text-accent hover:text-accent-dark transition-colors pb-1 border-b-2 border-transparent hover:border-accent">Sale</a>
+                <a href="#admin-portal" class="text-sm font-medium text-text-muted hover:text-primary transition-colors">Admin Portal</a>
+            </nav>
+
+            <!-- Utility Icons & Search Trigger -->
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSearch()" class="p-2 text-text-secondary hover:text-primary transition-colors" aria-label="Search">
+                    <i data-lucide="search" class="w-5 h-5"></i>
+                </button>
+                <button onclick="toggleWishlistModal()" class="p-2 text-text-secondary hover:text-primary transition-colors relative" aria-label="Wishlist">
+                    <i data-lucide="heart" class="w-5 h-5"></i>
+                    <span id="wishlist-badge" class="absolute top-1 right-1 bg-accent text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
+                </button>
+                <button onclick="toggleCartDrawer()" class="p-2 text-text-secondary hover:text-primary transition-colors relative" aria-label="Cart">
+                    <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                    <span id="cart-badge" class="absolute top-1 right-1 bg-primary text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">2</span>
+                </button>
+                <button onclick="toggleAuthModal()" class="hidden sm:flex items-center gap-2 text-sm font-medium bg-primary text-text-inverse px-4 py-2 rounded hover:bg-primary-light transition-colors">
+                    <i data-lucide="user" class="w-4 h-4"></i>
+                    <span>Account</span>
+                </button>
+                <!-- Mobile Hamburger Button -->
+                <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-text-secondary hover:text-primary transition-colors" aria-label="Menu">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Live Search Expandable Bar -->
+        <div id="search-bar" class="hidden border-t border-background-subtle bg-surface px-4 py-4 transition-all">
+            <div class="max-w-3xl mx-auto relative">
+                <input type="text" placeholder="Search jackets, dresses, shoes..." class="w-full bg-background-subtle border border-transparent rounded-lg px-4 py-3 pl-11 text-sm focus:outline-none focus:border-accent">
+                <i data-lucide="search" class="w-5 h-5 text-text-muted absolute left-3 top-3.5"></i>
+                <button onclick="toggleSearch()" class="absolute right-3 top-3.5 text-xs text-text-muted hover:text-primary">ESC</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-menu" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden transition-opacity">
+        <div class="fixed inset-y-0 right-0 max-w-xs w-full bg-surface shadow-2xl p-6 flex flex-col justify-between transform translate-x-full transition-transform duration-300" id="mobile-menu-panel">
+            <div>
+                <div class="flex items-center justify-between pb-6 border-b border-background-subtle">
+                    <span class="font-serif text-xl font-bold">Menu</span>
+                    <button onclick="toggleMobileMenu()" class="p-2 text-text-secondary hover:text-primary"><i data-lucide="x" class="w-6 h-6"></i></button>
+                </div>
+                <nav class="flex flex-col gap-4 mt-6">
+                    <a href="#catalog" onclick="toggleMobileMenu()" class="text-lg font-medium text-text-primary hover:text-accent">Women</a>
+                    <a href="#catalog" onclick="toggleMobileMenu()" class="text-lg font-medium text-text-primary hover:text-accent">Men</a>
+                    <a href="#new-arrivals" onclick="toggleMobileMenu()" class="text-lg font-medium text-text-primary hover:text-accent">New Arrivals</a>
+                    <a href="#sale" onclick="toggleMobileMenu()" class="text-lg font-medium text-accent">Sale & Clearance</a>
+                    <a href="#admin-portal" onclick="toggleMobileMenu()" class="text-lg font-medium text-text-muted">Admin Dashboard</a>
+                </nav>
+            </div>
+            <div class="pt-6 border-t border-background-subtle">
+                <button onclick="toggleAuthModal(); toggleMobileMenu();" class="w-full bg-primary text-text-inverse py-3 rounded text-center font-medium">Sign In / Register</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide-out Cart Drawer (CartDrawer.tsx) -->
+    <div id="cart-drawer" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden transition-opacity">
+        <div class="fixed inset-y-0 right-0 max-w-md w-full bg-surface shadow-2xl flex flex-col justify-between transform translate-x-full transition-transform duration-300" id="cart-drawer-panel">
+            <!-- Cart Header -->
+            <div class="p-6 border-b border-background-subtle flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                    <h2 class="font-serif text-xl font-bold">Your Shopping Bag (<span id="cart-count">2</span>)</h2>
+                </div>
+                <button onclick="toggleCartDrawer()" class="p-2 text-text-secondary hover:text-primary"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+
+            <!-- Cart Items List -->
+            <div class="flex-1 overflow-y-auto p-6 space-y-6" id="cart-items-container">
+                <!-- Item 1 -->
+                <div class="flex gap-4 pb-6 border-b border-background-subtle">
+                    <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=300" alt="Silk Evening Dress" class="w-20 h-24 object-cover rounded">
+                    <div class="flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between">
+                                <h3 class="font-medium text-sm">Minimalist Silk Evening Dress</h3>
+                                <button onclick="removeItem(this)" class="text-text-muted hover:text-status-error"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            </div>
+                            <p class="text-xs text-text-secondary mt-1">Size: M | Color: Onyx Black</p>
+                        </div>
+                        <div class="flex justify-between items-center mt-4">
+                            <div class="flex items-center border border-background-subtle rounded">
+                                <button class="px-2 py-0.5 text-xs hover:bg-background-subtle" onclick="adjustQty(this, -1)">-</button>
+                                <span class="px-3 text-xs font-medium">1</span>
+                                <button class="px-2 py-0.5 text-xs hover:bg-background-subtle" onclick="adjustQty(this, 1)">+</button>
+                            </div>
+                            <span class="font-semibold text-sm">$240.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="flex gap-4 pb-6 border-b border-background-subtle">
+                    <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=300" alt="Tailored Wool Blazer" class="w-20 h-24 object-cover rounded">
+                    <div class="flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between">
+                                <h3 class="font-medium text-sm">Tailored Cashmere Wool Blazer</h3>
+                                <button onclick="removeItem(this)" class="text-text-muted hover:text-status-error"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            </div>
+                            <p class="text-xs text-text-secondary mt-1">Size: L | Color: Camel</p>
+                        </div>
+                        <div class="flex justify-between items-center mt-4">
+                            <div class="flex items-center border border-background-subtle rounded">
+                                <button class="px-2 py-0.5 text-xs hover:bg-background-subtle" onclick="adjustQty(this, -1)">-</button>
+                                <span class="px-3 text-xs font-medium">1</span>
+                                <button class="px-2 py-0.5 text-xs hover:bg-background-subtle" onclick="adjustQty(this, 1)">+</button>
+                            </div>
+                            <span class="font-semibold text-sm">$380.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cart Footer Summary -->
+            <div class="p-6 border-t border-background-subtle bg-background-subtle/50 space-y-4">
+                <div class="flex gap-2">
+                    <input type="text" id="promo-input" placeholder="Promo code (e.g. SKYNET10)" class="flex-1 bg-surface border border-background-subtle rounded px-3 py-2 text-xs uppercase focus:outline-none focus:border-accent">
+                    <button onclick="applyPromoCode()" class="bg-primary text-white px-4 py-2 text-xs rounded hover:bg-primary-light">Apply</button>
+                </div>
+                <div class="space-y-1.5 text-sm">
+                    <div class="flex justify-between text-text-secondary">
+                        <span>Subtotal</span>
+                        <span>$620.00</span>
+                    </div>
+                    <div class="flex justify-between text-text-secondary">
+                        <span>Estimated Shipping</span>
+                        <span>Free</span>
+                    </div>
+                    <div class="flex justify-between font-bold text-base pt-2 border-t border-background-subtle">
+                        <span>Total</span>
+                        <span id="cart-total">$620.00</span>
+                    </div>
+                </div>
+                <button onclick="openCheckoutModal()" class="w-full bg-primary text-text-inverse py-3.5 rounded font-medium hover:bg-primary-light transition-colors flex items-center justify-center gap-2">
+                    <i data-lucide="lock" class="w-4 h-4"></i>
+                    <span>Proceed to Secure Checkout</span>
+                </button>
+                <div class="pt-2">
+                    <button onclick="handleExpressPay('Apple Pay')" class="w-full bg-black text-white py-3 rounded font-medium flex items-center justify-center gap-2 hover:bg-neutral-800">
+                        <i data-lucide="apple" class="w-4 h-4 fill-current"></i>
+                        <span>Pay with Apple Pay</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-[85vh] flex items-center justify-center bg-primary text-text-inverse overflow-hidden">
+        <div class="absolute inset-0 z-0 opacity-40">
+            <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=80&w=1920" alt="High Fashion Editorial" class="w-full h-full object-cover">
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-0"></div>
+        
+        <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-20">
+            <span class="inline-block text-accent font-semibold text-xs uppercase tracking-widest bg-accent/10 px-3 py-1 rounded-full mb-6 border border-accent/20">Autumn / Winter 2025 Collection</span>
+            <h1 class="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-6">Redefining Contemporary Elegance</h1>
+            <p class="text-lg sm:text-xl text-text-muted max-w-2xl mx-auto mb-10 font-light">Immaculately tailored garments engineered for the modern aesthetic. Discover sustainable luxury delivered instantly.</p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="#catalog" class="w-full sm:w-auto bg-accent text-primary font-semibold px-8 py-4 rounded hover:bg-accent-light transition-colors">Explore Collection</a>
+                <a href="#new-arrivals" class="w-full sm:w-auto bg-transparent border border-white/30 text-white font-medium px-8 py-4 rounded hover:bg-white/10 transition-colors">New Arrivals</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Categories Grid -->
+    <section class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-end mb-12">
+            <div>
+                <span class="text-accent text-xs font-semibold uppercase tracking-widest">Curated Selections</span>
+                <h2 class="font-serif text-3xl font-bold mt-1">Shop by Category</h2>
+            </div>
+            <a href="#catalog" class="text-sm font-medium hover:text-accent transition-colors flex items-center gap-1">View All Categories <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Category 1 -->
+            <a href="#catalog" class="group relative h-96 rounded-lg overflow-hidden block">
+                <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&q=80&w=800" alt="Women's Apparel" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                <div class="absolute bottom-6 left-6 text-white">
+                    <span class="text-xs uppercase tracking-widest text-accent">Collection</span>
+                    <h3 class="font-serif text-2xl font-bold">Women's Tailoring</h3>
+                    <p class="text-xs text-text-muted mt-1">Dresses, Outerwear, Knitwear</p>
+                </div>
+            </a>
+            <!-- Category 2 -->
+            <a href="#catalog" class="group relative h-96 rounded-lg overflow-hidden block">
+                <img src="https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?auto=format&fit=crop&q=80&w=800" alt="Men's Apparel" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                <div class="absolute bottom-6 left-6 text-white">
+                    <span class="text-xs uppercase tracking-widest text-accent">Collection</span>
+                    <h3 class="font-serif text-2xl font-bold">Men's Essentials</h3>
+                    <p class="text-xs text-text-muted mt-1">Suits, Blazers, Premium Denim</p>
+                </div>
+            </a>
+            <!-- Category 3 -->
+            <a href="#catalog" class="group relative h-96 rounded-lg overflow-hidden block">
+                <img src="https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&q=80&w=800" alt="Luxury Accessories" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                <div class="absolute bottom-6 left-6 text-white">
+                    <span class="text-xs uppercase tracking-widest text-accent">Accessories</span>
+                    <h3 class="font-serif text-2xl font-bold">Leather & Gold</h3>
+                    <p class="text-xs text-text-muted mt-1">Bags, Belts, Minimalist Timepieces</p>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Product Catalog & Interactive Filter Section (PLP) -->
+    <section id="catalog" class="py-20 bg-background-subtle/50 border-t border-b border-background-subtle">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
+                <div>
+                    <span class="text-accent text-xs font-semibold uppercase tracking-widest">Catalog</span>
+                    <h2 class="font-serif text-3xl font-bold mt-1">Featured Apparel & Accessories</h2>
+                </div>
+                <!-- Filter Tabs & Sort Dropdown -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <button onclick="filterCatalog('all')" class="filter-btn px-4 py-2 text-xs font-medium bg-primary text-white rounded transition-colors" data-filter="all">All Items</button>
+                    <button onclick="filterCatalog('women')" class="filter-btn px-4 py-2 text-xs font-medium bg-surface text-text-secondary border border-background-subtle rounded hover:border-primary transition-colors" data-filter="women">Women</button>
+                    <button onclick="filterCatalog('men')" class="filter-btn px-4 py-2 text-xs font-medium bg-surface text-text-secondary border border-background-subtle rounded hover:border-primary transition-colors" data-filter="men">Men</button>
+                    <select class="bg-surface border border-background-subtle rounded px-3 py-2 text-xs font-medium text-text-secondary focus:outline-none focus:border-accent">
+                        <option>Sort by: Newest</option>
+                        <option>Price: Low to High</option>
+                        <option>Price: High to Low</option>
+                        <option>Best Sellers</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Product Card Grid -->
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Product 1 -->
+                <div class="product-card group bg-surface rounded-lg overflow-hidden border border-background-subtle shadow-sm hover:shadow-md transition-all" data-category="women">
+                    <div class="relative aspect-[3/4] overflow-hidden bg-background-subtle">
+                        <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=600" alt="Silk Evening Dress" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <button onclick="toggleWishlist(this)" class="absolute top-3 right-3 p-2 bg-white/80 backdrop-blur rounded-full text-text-primary hover:text-accent transition-colors" aria-label="Wishlist">
+                            <i data-lucide="heart" class="w-4 h-4"></i>
+                        </button>
+                        <span class="absolute top-3 left-3 bg-accent text-primary text-[10px] font-bold px-2 py-0.5 rounded uppercase">New</span>
+                    </div>
+                    <div class="p-4">
+                        <span class="text-xs text-text-muted uppercase tracking-wider">Women's Dresses</span>
+                        <h3 class="font-medium text-sm text-text-primary mt-1 truncate">Minimalist Silk Evening Dress</h3>
+                        <div class="flex justify-between items-center mt-3">
+                            <span class="font-bold text-base">$240.00</span>
+                            <button onclick="openProductModal('Minimalist Silk Evening Dress', '$240.00', 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=600')" class="bg-primary text-white px-3 py-1.5 text-xs rounded hover:bg-primary-light transition-colors">Quick View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="product-card group bg-surface rounded-lg overflow-hidden border border-background-subtle shadow-sm hover:shadow-md transition-all" data-category="men">
+                    <div class="relative aspect-[3/4] overflow-hidden bg-background-subtle">
+                        <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=600" alt="Wool Blazer" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <button onclick="toggleWishlist(this)" class="absolute top-3 right-3 p-2 bg-white/80 backdrop-blur rounded-full text-text-primary hover:text-accent transition-colors" aria-label="Wishlist">
+                            <i data-lucide="heart" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <span class="text-xs text-text-muted uppercase tracking-wider">Men's Outerwear</span>
+                        <h3 class="font-medium text-sm text-text-primary mt-1 truncate">Tailored Cashmere Wool Blazer</h3>
+                        <div class="flex justify-between items-center mt-3">
+                            <span class="font-bold text-base">$380.00</span>
+                            <button onclick="openProductModal('Tailored Cashmere Wool Blazer', '$380.00', 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=600')" class="bg-primary text-white px-3 py-1.5 text-xs rounded hover:bg-primary-light transition-colors">Quick View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="product-card group bg-surface rounded-lg overflow-hidden border border-background-subtle shadow-sm hover:shadow-md transition-all" data-category="women">
+                    <div class="relative aspect-[3/4] overflow-hidden bg-background-subtle">
+                        <img src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&q=80&w=600" alt="Cashmere Turtleneck" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <button onclick="toggleWishlist(this)" class="absolute top-3 right-3 p-2 bg-white/80 backdrop-blur rounded-full text-text-primary hover:text-accent transition-colors" aria-label="Wishlist">
+                            <i data-lucide="heart" class="w-4 h-4"></i>
+                        </button>
+                        <span class="absolute top-3 left-3 bg-status-error text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase">Sale</span>
+                    </div>
+                    <div class="p-4">
+                        <span class="text-xs text-text-muted uppercase tracking-wider">Women's Knitwear</span>
+                        <h3 class="font-medium text-sm text-text-primary mt-1 truncate">Oversized Cashmere Turtleneck</h3>
+                        <div class="flex justify-between items-center mt-3">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-base text-status-error">$165.00</span>
+                                <span class="text-xs text-text-muted line-through">$220.00</span>
+                            </div>
+                            <button onclick="openProductModal('Oversized Cashmere Turtleneck', '$165.00', 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&q=80&w=600')" class="bg-primary text-white px-3 py-1.5 text-xs rounded hover:bg-primary-light transition-colors">Quick View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 4 -->
+                <div class="product-card group bg-surface rounded-lg overflow-hidden border border-background-subtle shadow-sm hover:shadow-md transition-all" data-category="men">
+                    <div class="relative aspect-[3/4] overflow-hidden bg-background-subtle">
+                        <img src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&q=80&w=600" alt="Pleated Trousers" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <button onclick="toggleWishlist(this)" class="absolute top-3 right-3 p-2 bg-white/80 backdrop-blur rounded-full text-text-primary hover:text-accent transition-colors" aria-label="Wishlist">
+                            <i data-lucide="heart" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <span class="text-xs text-text-muted uppercase tracking-wider">Men's Bottoms</span>
+                        <h3 class="font-medium text-sm text-text-primary mt-1 truncate">Italian Wool Pleated Trousers</h3>
+                        <div class="flex justify-between items-center mt-3">
+                            <span class="font-bold text-base">$195.00</span>
+                            <button onclick="openProductModal('Italian Wool Pleated Trousers', '$195.00', 'https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&q=80&w=600')" class="bg-primary text-white px-3 py-1.5 text-xs rounded hover:bg-primary-light transition-colors">Quick View</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Administrator Dashboard Mock / Section (AdminLayout.tsx & InventoryTable.tsx) -->
+    <section id="admin-portal" class="py-20 bg-primary text-text-inverse">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4">
+                <div>
+                    <span class="text-accent text-xs font-semibold uppercase tracking-widest">Restricted Operations</span>
+                    <h2 class="font-serif text-3xl font-bold mt-1 text-white">Store Administrator Portal (Marcus)</h2>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="showAdminTab('overview')" class="admin-tab-btn px-4 py-2 text-xs font-medium bg-accent text-primary rounded" data-tab="overview">Overview</button>
+                    <button onclick="showAdminTab('inventory')" class="admin-tab-btn px-4 py-2 text-xs font-medium bg-primary-light text-text-inverse rounded border border-white/10" data-tab="inventory">Inventory Control</button>
+                    <button onclick="showAdminTab('orders')" class="admin-tab-btn px-4 py-2 text-xs font-medium bg-primary-light text-text-inverse rounded border border-white/10" data-tab="orders">Orders</button>
+                </div>
+            </div>
+
+            <!-- Admin Tab Content: Overview -->
+            <div id="admin-tab-overview" class="admin-tab-content space-y-8">
+                <!-- Metrics Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-primary-light p-6 rounded-lg border border-white/10">
+                        <span class="text-xs text-text-muted uppercase">Today's Revenue</span>
+                        <div class="text-3xl font-bold font-serif mt-2 text-white">$12,845.00</div>
+                        <span class="text-xs text-status-success mt-2 inline-block font-medium">+18.4% vs yesterday</span>
+                    </div>
+                    <div class="bg-primary-light p-6 rounded-lg border border-white/10">
+                        <span class="text-xs text-text-muted uppercase">Active Orders</span>
+                        <div class="text-3xl font-bold font-serif mt-2 text-white">48</div>
+                        <span class="text-xs text-accent mt-2 inline-block font-medium">12 pending fulfillment</span>
+                    </div>
+                    <div class="bg-primary-light p-6 rounded-lg border border-white/10">
+                        <span class="text-xs text-text-muted uppercase">Low Stock Alerts</span>
+                        <div class="text-3xl font-bold font-serif mt-2 text-status-error">3 SKUs</div>
+                        <span class="text-xs text-status-error mt-2 inline-block font-medium">Immediate restock required</span>
+                    </div>
+                    <div class="bg-primary-light p-6 rounded-lg border border-white/10">
+                        <span class="text-xs text-text-muted uppercase">Conversion Rate</span>
+                        <div class="text-3xl font-bold font-serif mt-2 text-white">4.2%</div>
+                        <span class="text-xs text-status-success mt-2 inline-block font-medium">+0.8% mobile spike</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Tab Content: Inventory Control (InventoryTable.tsx) -->
+            <div id="admin-tab-inventory" class="admin-tab-content hidden space-y-6">
+                <div class="bg-primary-light rounded-lg border border-white/10 overflow-hidden">
+                    <div class="p-6 border-b border-white/10 flex justify-between items-center">
+                        <h3 class="font-serif text-lg font-bold text-white">Live Inventory Monitor</h3>
+                        <button onclick="triggerRestockAlert()" class="bg-accent text-primary px-4 py-2 text-xs font-semibold rounded hover:bg-accent-light transition-colors">Restock All Low Units</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-white/10 text-xs text-text-muted uppercase">
+                                    <th class="p-4">SKU / Item</th>
+                                    <th class="p-4">Variant</th>
+                                    <th class="p-4">Stock Count</th>
+                                    <th class="p-4">Status</th>
+                                    <th class="p-4 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm divide-y divide-white/10">
+                                <!-- Low Stock Warning Row -->
+                                <tr class="bg-status-error/10">
+                                    <td class="p-4 flex items-center gap-3">
+                                        <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=100" class="w-10 h-10 object-cover rounded" alt="Dress">
+                                        <div>
+                                            <div class="font-medium text-white">Silk Evening Dress</div>
+                                            <div class="text-xs text-text-muted">SKU: SKN-DRS-01</div>
+                                        </div>
+                                    </td>
+                                    <td class="p-4 text-text-muted">Size: M | Onyx Black</td>
+                                    <td class="p-4 font-bold text-status-error">2 units</td>
+                                    <td class="p-4"><span class="bg-status-error text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase">Low Stock</span></td>
+                                    <td class="p-4 text-right">
+                                        <button onclick="restockItem(this)" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 text-xs rounded transition-colors">+50 Units</button>
+                                    </td>
+                                </tr>
+                                <!-- Normal Stock Row -->
+                                <tr>
+                                    <td class="p-4 flex items-center gap-3">
+                                        <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=100" class="w-10 h-10 object-cover rounded" alt="Blazer">
+                                        <div>
+                                            <div class="font-medium text-white">Cashmere Wool Blazer</div>
+                                            <div class="text-xs text-text-muted">SKU: SKN-BLZ-04</div>
+                                        </div>
+                                    </td>
+                                    <td class="p-4 text-text-muted">Size: L | Camel</td>
+                                    <td class="p-4 font-bold text-white">42 units</td>
+                                    <td class="p-4"><span class="bg-status-success text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase">Optimal</span></td>
+                                    <td class="p-4 text-right">
+                                        <button onclick="restockItem(this)" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 text-xs rounded transition-colors">+50 Units</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Tab Content: Orders -->
+            <div id="admin-tab-orders" class="admin-tab-content hidden space-y-6">
+                <div class="bg-primary-light rounded-lg border border-white/10 overflow-hidden p-6">
+                    <h3 class="font-serif text-lg font-bold text-white mb-4">Recent Customer Orders</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center bg-black/20 p-4 rounded border border-white/5">
+                            <div>
+                                <span class="text-xs text-accent font-mono">#ORD-8924</span>
+                                <div class="font-medium text-white mt-0.5">Chloe Smith — Minimalist Silk Dress (1x)</div>
+                                <span class="text-xs text-text-muted">Ordered 14 mins ago via Apple Pay</span>
+                            </div>
+                            <span class="bg-status-info text-white text-xs px-3 py-1 rounded font-medium">Confirmed</span>
+                        </div>
+                        <div class="flex justify-between items-center bg-black/20 p-4 rounded border border-white/5">
+                            <div>
+                                <span class="text-xs text-accent font-mono">#ORD-8923</span>
+                                <div class="font-medium text-white mt-0.5">Marcus Vance — Wool Blazer (1x)</div>
+                                <span class="text-xs text-text-muted">Ordered 2 hours ago via Credit Card</span>
+                            </div>
+                            <span class="bg-status-success text-white text-xs px-3 py-1 rounded font-medium">Shipped</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Proof / Testimonials -->
+    <section class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+            <span class="text-accent text-xs font-semibold uppercase tracking-widest">Testimonials</span>
+            <h2 class="font-serif text-3xl font-bold mt-1">Loved by Fashion Enthusiasts</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-surface p-8 rounded-lg border border-background-subtle shadow-sm flex flex-col justify-between">
+                <p class="text-text-secondary text-sm leading-relaxed italic">"The express Apple Pay checkout is unreal. I saw the cashmere blazer on Instagram, clicked the link, and completed my purchase in 15 seconds."</p>
+                <div class="flex items-center gap-4 mt-6 pt-6 border-t border-background-subtle">
+                    <div class="w-10 h-10 rounded-full bg-accent text-primary font-bold flex items-center justify-center">CS</div>
+                    <div>
+                        <h4 class="font-bold text-sm">Chloe Vance</h4>
+                        <span class="text-xs text-text-muted">Fashion Blogger, NYC</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-surface p-8 rounded-lg border border-background-subtle shadow-sm flex flex-col justify-between">
+                <p class="text-text-secondary text-sm leading-relaxed italic">"The quality of the silk tailoring rivals high-end Parisian boutiques. Skynet Apparel Hub is my absolute go-to for professional seasonal wear."</p>
+                <div class="flex items-center gap-4 mt-6 pt-6 border-t border-background-subtle">
+                    <div class="w-10 h-10 rounded-full bg-primary text-white font-bold flex items-center justify-center">JD</div>
+                    <div>
+                        <h4 class="font-bold text-sm">Julian De Luca</h4>
+                        <span class="text-xs text-text-muted">Creative Director, Milan</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-surface p-8 rounded-lg border border-background-subtle shadow-sm flex flex-col justify-between">
+                <p class="text-text-secondary text-sm leading-relaxed italic">"Lightning fast delivery and pristine packaging. The size guide was extremely accurate. I couldn't be more impressed."</p>
+                <div class="flex items-center gap-4 mt-6 pt-6 border-t border-background-subtle">
+                    <div class="w-10 h-10 rounded-full bg-accent-light text-primary font-bold flex items-center justify-center">SR</div>
+                    <div>
+                        <h4 class="font-bold text-sm">Sophia Reynolds</h4>
+                        <span class="text-xs text-text-muted">Architect, London</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Accordion -->
+    <section class="py-20 bg-background-subtle/50 border-t border-background-subtle">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="text-accent text-xs font-semibold uppercase tracking-widest">Support & Guidance</span>
+                <h2 class="font-serif text-3xl font-bold mt-1">Frequently Asked Questions</h2>
+            </div>
+            <div class="space-y-4">
+                <div class="bg-surface border border-background-subtle rounded-lg overflow-hidden">
+                    <button onclick="toggleAccordion(this)" class="w-full p-6 text-left font-medium flex justify-between items-center hover:bg-background-subtle/50 transition-colors">
+                        <span>How does express checkout work?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform"></i>
+                    </button>
+                    <div class="hidden px-6 pb-6 text-sm text-text-secondary leading-relaxed">
+                        We integrate directly with Apple Pay and Google Pay. When triggered, your device authenticates via biometric FaceID or TouchID and instantly shares your verified shipping address and payment credentials for 1-click order placement.
+                    </div>
+                </div>
+                <div class="bg-surface border border-background-subtle rounded-lg overflow-hidden">
+                    <button onclick="toggleAccordion(this)" class="w-full p-6 text-left font-medium flex justify-between items-center hover:bg-background-subtle/50 transition-colors">
+                        <span>What is your return and exchange policy?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform"></i>
+                    </button>
+                    <div class="hidden px-6 pb-6 text-sm text-text-secondary leading-relaxed">
+                        We offer complimentary worldwide returns and exchanges within 30 days of purchase. Items must be unworn, unwashed, and returned in their original Skynet packaging with all tags attached.
+                    </div>
+                </div>
+                <div class="bg-surface border border-background-subtle rounded-lg overflow-hidden">
+                    <button onclick="toggleAccordion(this)" class="w-full p-6 text-left font-medium flex justify-between items-center hover:bg-background-subtle/50 transition-colors">
+                        <span>How can I track my active order?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform"></i>
+                    </button>
+                    <div class="hidden px-6 pb-6 text-sm text-text-secondary leading-relaxed">
+                        Once an order is confirmed, you receive an automated SMS and email containing a live tracking link. Registered users can also access real-time fulfillment status directly inside their account dashboard.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-primary text-text-inverse pt-20 pb-12 border-t border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-12 pb-16 border-b border-white/10">
+            <div>
+                <span class="font-serif text-2xl font-bold tracking-tight text-white">SKYNET</span>
+                <p class="text-xs text-text-muted mt-4 leading-relaxed">Engineered apparel for the modern era. Sustainable luxury, impeccable tailoring, and seamless mobile commerce.</p>
+                <div class="flex gap-4 mt-6">
+                    <a href="#" class="text-text-muted hover:text-accent"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+                    <a href="#" class="text-text-muted hover:text-accent"><i data-lucide="twitter" class="w-5 h-5"></i></a>
+                    <a href="#" class="text-text-muted hover:text-accent"><i data-lucide="facebook" class="w-5 h-5"></i></a>
+                </div>
+            </div>
+            <div>
+                <h4 class="font-serif font-bold text-sm tracking-wider uppercase mb-4 text-accent">Customer Care</h4>
+                <ul class="space-y-3 text-sm text-text-muted">
+                    <li><a href="#" class="hover:text-white transition-colors">Contact Us</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Shipping & Returns</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Size Guide</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Order Tracking</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-serif font-bold text-sm tracking-wider uppercase mb-4 text-accent">About Skynet</h4>
+                <ul class="space-y-3 text-sm text-text-muted">
+                    <li><a href="#" class="hover:text-white transition-colors">Our Story & Craft</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Sustainability Goals</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Careers at Skynet</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Press & Editorial</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-serif font-bold text-sm tracking-wider uppercase mb-4 text-accent">Newsletter</h4>
+                <p class="text-xs text-text-muted mb-4">Subscribe to receive private seasonal sale invites and 10% off your first order.</p>
+                <form onsubmit="handleNewsletter(event)" class="space-y-2">
+                    <input type="email" placeholder="Enter your email" required class="w-full bg-primary-light border border-white/10 rounded px-4 py-2.5 text-xs text-white focus:outline-none focus:border-accent">
+                    <button type="submit" class="w-full bg-accent text-primary py-2.5 rounded font-semibold text-xs hover:bg-accent-light transition-colors">Join Club</button>
+                </form>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-text-muted">
+            <p>&copy; 2025 Skynet Apparel Hub Inc. All rights reserved.</p>
+            <div class="flex gap-6 mt-4 sm:mt-0">
+                <a href="#" class="hover:text-white">Privacy Policy</a>
+                <a href="#" class="hover:text-white">Terms of Service</a>
+                <a href="#" class="hover:text-white">Cookie Settings</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Quick View / Product Modal -->
+    <div id="product-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-surface max-w-2xl w-full rounded-lg overflow-hidden shadow-2xl relative animate-in fade-in zoom-in duration-200">
+            <button onclick="closeProductModal()" class="absolute top-4 right-4 p-2 bg-background-subtle rounded-full text-text-secondary hover:text-primary z-10">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="grid grid-cols-1 md:grid-cols-2">
+                <div class="bg-background-subtle aspect-[3/4]">
+                    <img id="modal-img" src="" alt="Product Detail" class="w-full h-full object-cover">
+                </div>
+                <div class="p-6 flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs text-text-muted uppercase">Apparel Hub Exclusive</span>
+                        <h3 id="modal-title" class="font-serif text-2xl font-bold mt-1">Product Title</h3>
+                        <div id="modal-price" class="text-xl font-bold text-accent mt-2">$0.00</div>
+                        
+                        <!-- Variant Selectors -->
+                        <div class="mt-6">
+                            <span class="text-xs font-semibold uppercase text-text-secondary">Select Size</span>
+                            <div class="flex gap-2 mt-2">
+                                <button class="size-btn px-3 py-1.5 border border-background-subtle rounded text-xs font-medium hover:border-accent focus:bg-primary focus:text-white" onclick="selectSize(this)">S</button>
+                                <button class="size-btn px-3 py-1.5 border border-background-subtle rounded text-xs font-medium hover:border-accent focus:bg-primary focus:text-white" onclick="selectSize(this)">M</button>
+                                <button class="size-btn px-3 py-1.5 border border-background-subtle rounded text-xs font-medium hover:border-accent focus:bg-primary focus:text-white" onclick="selectSize(this)">L</button>
+                                <button class="size-btn px-3 py-1.5 border border-background-subtle rounded text-xs font-medium hover:border-accent focus:bg-primary focus:text-white" onclick="selectSize(this)">XL</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 pt-6">
+                        <button onclick="addToBagFromModal()" class="w-full bg-primary text-text-inverse py-3 rounded font-medium hover:bg-primary-light transition-colors">Add to Bag</button>
+                        <button onclick="handleExpressPay('Apple Pay')" class="w-full bg-black text-white py-3 rounded font-medium flex items-center justify-center gap-2 hover:bg-neutral-800">
+                            <i data-lucide="apple" class="w-4 h-4 fill-current"></i>
+                            <span>Express Apple Pay</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth / Account Modal -->
+    <div id="auth-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-surface max-w-md w-full rounded-lg overflow-hidden shadow-2xl relative p-8">
+            <button onclick="toggleAuthModal()" class="absolute top-4 right-4 p-2 bg-background-subtle rounded-full text-text-secondary hover:text-primary">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="text-center mb-6">
+                <span class="font-serif text-2xl font-bold">Welcome to Skynet</span>
+                <p class="text-xs text-text-secondary mt-1">Sign in to manage orders and wishlist</p>
+            </div>
+            <div class="space-y-4">
+                <button onclick="socialAuth('Google')" class="w-full border border-background-subtle py-3 rounded font-medium text-sm flex items-center justify-center gap-3 hover:bg-background-subtle transition-colors">
+                    <i data-lucide="chrome" class="w-4 h-4"></i> Continue with Google
+                </button>
+                <div class="relative flex py-2 items-center">
+                    <div class="flex-grow border-t border-background-subtle"></div>
+                    <span class="flex-shrink mx-4 text-xs text-text-muted uppercase">or email</span>
+                    <div class="flex-grow border-t border-background-subtle"></div>
+                </div>
+                <form onsubmit="handleAuthSubmit(event)" class="space-y-3">
+                    <input type="email" placeholder="Email address" required class="w-full bg-background-subtle border border-transparent rounded px-4 py-3 text-sm focus:outline-none focus:border-accent">
+                    <input type="password" placeholder="Password" required class="w-full bg-background-subtle border border-transparent rounded px-4 py-3 text-sm focus:outline-none focus:border-accent">
+                    <button type="submit" class="w-full bg-primary text-text-inverse py-3 rounded font-medium text-sm hover:bg-primary-light transition-colors">Sign In</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wishlist Modal -->
+    <div id="wishlist-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-surface max-w-lg w-full rounded-lg overflow-hidden shadow-2xl relative p-6">
+            <button onclick="toggleWishlistModal()" class="absolute top-4 right-4 p-2 bg-background-subtle rounded-full text-text-secondary hover:text-primary">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <h3 class="font-serif text-xl font-bold mb-4">Saved Wishlist Items</h3>
+            <div id="wishlist-items-container" class="space-y-4 max-h-96 overflow-y-auto">
+                <p class="text-sm text-text-muted py-8 text-center">Your wishlist is currently empty. Tap the heart icon on any product card to save items.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Secure Checkout Flow Modal -->
+    <div id="checkout-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-surface max-w-xl w-full rounded-lg overflow-hidden shadow-2xl relative p-8">
+            <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 p-2 bg-background-subtle rounded-full text-text-secondary hover:text-primary">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="mb-6">
+                <span class="text-xs uppercase text-accent font-semibold tracking-widest">Secure SSL Checkout</span>
+                <h3 class="font-serif text-2xl font-bold mt-1">Complete Your Order</h3>
+            </div>
+            <form onsubmit="completeOrder(event)" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="text" placeholder="First Name" required class="bg-background-subtle border border-transparent rounded px-4 py-3 text-sm focus:outline-none focus:border-accent">
+                    <input type="text" placeholder="Last Name" required class="bg-background-subtle border border-transparent rounded px-4 py-3 text-sm focus:outline-none focus:border-accent">
+                </div>
+                <input type="email" placeholder="Email Address for Tracking" required class="w-full bg-background-subtle border border-transparent rounded px-4 py-3 text-sm focus:outline-none focus:border-accent">
+                <input type="text" placeholder="Shipping Street Address" required class="w-full bg-background-subtle border border-transparent rounded px-4 py-3 text-sm focus:outline-none focus:border-accent">
+                <div class="grid grid-cols-3 gap-4">
+                    <input type="text" placeholder="City" required class="bg-background-subtle border border-transparent rounded px-4 py-3 text-sm focus:outline-none focus:border-accent">
+                    <input type="text" placeholder="State" required class="bg-background-subtle border border-transparent rounded px-4 py-3 text-sm focus:outline-none focus:border-accent">
+                    <input type="text" placeholder="Postal Code" required class="bg-background-subtle border border-transparent rounded px-4 py-3 text-sm focus:outline-none focus:border-accent">
+                </div>
+                <div class="pt-4 border-t border-background-subtle flex justify-between items-center">
+                    <div>
+                        <span class="text-xs text-text-muted">Total Due:</span>
+                        <div class="font-bold text-lg" id="checkout-modal-total">$620.00</div>
+                    </div>
+                    <button type="submit" class="bg-primary text-white px-8 py-3.5 rounded font-medium hover:bg-primary-light transition-colors">Authorize & Pay</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Toast notification system
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `pointer-events-auto bg-primary text-white px-6 py-3 rounded-lg shadow-xl flex items-center gap-3 transform translate-y-4 opacity-0 transition-all duration-300 border-l-4 ${type === 'success' ? 'border-status-success' : 'border-status-error'}`;
+            toast.innerHTML = `
+                <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="w-5 h-5 ${type === 'success' ? 'text-status-success' : 'text-status-error'}"></i>
+                <span class="text-sm font-medium">${message}</span>
+            `;
+            container.appendChild(toast);
+            lucide.createIcons();
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-4', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // Search Bar Toggle
+        function toggleSearch() {
+            const searchBar = document.getElementById('search-bar');
+            searchBar.classList.toggle('hidden');
+            if(!searchBar.classList.contains('hidden')) {
+                searchBar.querySelector('input').focus();
+            }
+        }
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const panel = document.getElementById('mobile-menu-panel');
+            if(menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                setTimeout(() => panel.classList.remove('translate-x-full'), 10);
+            } else {
+                panel.classList.add('translate-x-full');
+                setTimeout(() => menu.classList.add('hidden'), 300);
+            }
+        }
+
+        // Cart Drawer Toggle
+        function toggleCartDrawer() {
+            const drawer = document.getElementById('cart-drawer');
+            const panel = document.getElementById('cart-drawer-panel');
+            if(drawer.classList.contains('hidden')) {
+                drawer.classList.remove('hidden');
+                setTimeout(() => panel.classList.remove('translate-x-full'), 10);
+            } else {
+                panel.classList.add('translate-x-full');
+                setTimeout(() => drawer.classList.add('hidden'), 300);
+            }
+        }
+
+        // Auth Modal Toggle
+        function toggleAuthModal() {
+            const modal = document.getElementById('auth-modal');
+            modal.classList.toggle('hidden');
+            modal.classList.toggle('flex');
+        }
+
+        // Wishlist Modal Toggle
+        let wishlistItemsCount = 0;
+        function toggleWishlistModal() {
+            const modal = document.getElementById('wishlist-modal');
+            modal.classList.toggle('hidden');
+            modal.classList.toggle('flex');
+        }
+
+        function toggleWishlist(btn) {
+            const icon = btn.querySelector('lucide-icon') || btn.querySelector('svg');
+            btn.classList.toggle('text-accent');
+            if(btn.classList.contains('text-accent')) {
+                wishlistItemsCount++;
+                showToast('Item saved to your wishlist!');
+            } else {
+                wishlistItemsCount = Math.max(0, wishlistItemsCount - 1);
+                showToast('Item removed from wishlist.');
+            }
+            document.getElementById('wishlist-badge').innerText = wishlistItemsCount;
+        }
+
+        // Catalog Filtering
+        function filterCatalog(category) {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if(btn.getAttribute('data-filter') === category) {
+                    btn.className = 'filter-btn px-4 py-2 text-xs font-medium bg-primary text-white rounded transition-colors';
+                } else {
+                    btn.className = 'filter-btn px-4 py-2 text-xs font-medium bg-surface text-text-secondary border border-background-subtle rounded hover:border-primary transition-colors';
+                }
+            });
+
+            document.querySelectorAll('.product-card').forEach(card => {
+                if(category === 'all' || card.getAttribute('data-category') === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Admin Dashboard Tabs
+        function showAdminTab(tabName) {
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+                if(btn.getAttribute('data-tab') === tabName) {
+                    btn.className = 'admin-tab-btn px-4 py-2 text-xs font-medium bg-accent text-primary rounded';
+                } else {
+                    btn.className = 'admin-tab-btn px-4 py-2 text-xs font-medium bg-primary-light text-text-inverse rounded border border-white/10';
+                }
+            });
+
+            document.querySelectorAll('.admin-tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById(`admin-tab-${tabName}`).classList.remove('hidden');
+        }
+
+        // Accordion Toggle
+        function toggleAccordion(btn) {
+            const content = btn.nextElementSibling;
+            const icon = btn.querySelector('svg');
+            content.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+        }
+
+        // Quick View Modal
+        function openProductModal(title, price, img) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-price').innerText = price;
+            document.getElementById('modal-img').src = img;
+            const modal = document.getElementById('product-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeProductModal() {
+            const modal = document.getElementById('product-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        function selectSize(btn) {
+            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('bg-primary', 'text-white'));
+            btn.classList.add('bg-primary', 'text-white');
+        }
+
+        function addToBagFromModal() {
+            closeProductModal();
+            showToast('Item successfully added to shopping bag!');
+            let badge = document.getElementById('cart-badge');
+            badge.innerText = parseInt(badge.innerText) + 1;
+            document.getElementById('cart-count').innerText = badge.innerText;
+        }
+
+        // Cart Actions
+        function removeItem(btn) {
+            btn.closest('.flex.gap-4').remove();
+            showToast('Item removed from bag.');
+            let badge = document.getElementById('cart-badge');
+            let count = Math.max(0, parseInt(badge.innerText) - 1);
+            badge.innerText = count;
+            document.getElementById('cart-count').innerText = count;
+        }
+
+        function adjustQty(btn, delta) {
+            const span = btn.parentElement.querySelector('span');
+            let qty = parseInt(span.innerText) + delta;
+            if(qty < 1) qty = 1;
+            span.innerText = qty;
+        }
+
+        function applyPromoCode() {
+            const code = document.getElementById('promo-input').value.trim();
+            if(code.toUpperCase() === 'SKYNET10') {
+                showToast('Promo code applied: 10% off!');
+            } else {
+                showToast('Invalid promo code. Try SKYNET10', 'error');
+            }
+        }
+
+        function handleExpressPay(method) {
+            toggleCartDrawer();
+            closeProductModal();
+            showToast(`${method} authorization approved! Order confirmed.`);
+        }
+
+        function openCheckoutModal() {
+            toggleCartDrawer();
+            const modal = document.getElementById('checkout-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeCheckoutModal() {
+            const modal = document.getElementById('checkout-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        function completeOrder(e) {
+            e.preventDefault();
+            closeCheckoutModal();
+            showToast('Order successfully placed! Tracking SMS sent.');
+        }
+
+        function restockItem(btn) {
+            showToast('Inventory updated: +50 units added to SKU.');
+        }
+
+        function triggerRestockAlert() {
+            showToast('All depleted low-stock SKUs successfully restocked.');
+        }
+
+        function handleNewsletter(e) {
+            e.preventDefault();
+            showToast('Successfully subscribed! Check your inbox for the 10% off code.');
+            e.target.reset();
+        }
+
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            toggleAuthModal();
+            showToast('Successfully authenticated as Chloe!');
+        }
+
+        function socialAuth(provider) {
+            toggleAuthModal();
+            showToast(`Authenticated successfully with ${provider}!`);
+        }
+    </script>
+</body>
+</html>
